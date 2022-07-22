@@ -99,7 +99,7 @@ def scheduler_jobs():
         minute=0,
         timezone=const.TIME_ZONE
     )
-    scheduler.add_job(send_weather, 'interval', seconds=10, timezone=const.TIME_ZONE)
+    # scheduler.add_job(send_weather, 'interval', seconds=10, timezone=const.TIME_ZONE)
 
 
 async def on_startup(_):
