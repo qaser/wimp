@@ -103,7 +103,7 @@ def scheduler_jobs():
         minute=15,
         timezone=const.TIME_ZONE
     )
-    scheduler.add_job(send_morning_wish, 'interval', seconds=10, timezone=const.TIME_ZONE)
+    # scheduler.add_job(send_morning_wish, 'interval', seconds=10, timezone=const.TIME_ZONE)
 
 
 async def on_startup(_):
