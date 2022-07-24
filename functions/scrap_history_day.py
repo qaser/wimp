@@ -29,7 +29,3 @@ def scrap_history_day():
         f'{event} \n'
         f'Узнать больше: {const.URL_HISTORY_DAY}{link}'
     )
-
-
-if __name__ == '__main__':
-    scrap_history_day()

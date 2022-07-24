@@ -3,6 +3,8 @@ import os
 import utils.constants as const
 from dotenv import load_dotenv
 
+from functions.text_generators import weather_text_generator
+
 
 load_dotenv()
 
@@ -16,15 +18,14 @@ def request_weather():
     fact_cond = const.CONDITIONS_WEATHER[resp['fact']['condition']]
     parts = resp['forecast']['parts']
     forecast_text = ''
+    text_prefix = weather_text_generator(fact_temp, fact_cond)
     for part in parts:
         day_part = const.DAY_PARTS[part['part_name']]
         temperature = part['temp_avg']
         condition = const.CONDITIONS_WEATHER[part['condition']]
         forecast_text = forecast_text + f'{day_part}: {temperature}\u2103 , {condition} \n'
-    now_text = ('По моим данным сейчас в посёлке Лыхма '
-               f'температура воздуха {fact_temp}\u2103 , {fact_cond}')
+    now_text = (f'{text_prefix}'
+               f' температура воздуха {fact_temp}\u2103 , {fact_cond}')
     return '{}\n{}'.format(now_text, forecast_text)
 
-
-if __name__ == '__main__':
-    request_weather()
+request_weather()
