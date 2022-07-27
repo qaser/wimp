@@ -4,8 +4,8 @@ URL_HISTORY_DAY = 'https://www.denvistorii.ru/'
 LAT_LYHMA = '63.2190753'
 LON_LYHMA = '66.9436997'
 LANG_CODE = 'ru_RU'
-# TIME_ZONE = 'Asia/Yekaterinburg'
-TIME_ZONE = 'Europe/Moscow'
+TIME_ZONE = 'Asia/Yekaterinburg'
+# TIME_ZONE = 'Europe/Moscow'
 DAY_PARTS = {
     'morning': 'Утром',
     'day': 'Днём',

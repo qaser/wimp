@@ -2,15 +2,17 @@
 
 import logging
 import os
+from xml.dom.expatbuilder import TEXT_NODE
 
 from aiogram import Bot, Dispatcher, executor, types
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
 from dotenv import load_dotenv
 
-from functions.text_generators import hello_generator, wish_generator
+from functions.text_generators import hello_generator, wish_generator, month_plan_generator
 from functions.request_weather import request_weather
 from functions.scrap_history_day import scrap_history_day
 from functions.second_level_apk_check import second_level_apk_check
+from functions.plan_check import plan_pat_check, plan_tu_check
 import utils.constants as const
 from texts.apk import APK_2_REMAINDER
 
@@ -21,8 +23,8 @@ load_dotenv()
 scheduler = AsyncIOScheduler()
 
 TELEGRAM_TOKEN = os.getenv('TELEGRAM_TOKEN')
-# CHAT_ID = os.getenv('CHAT_ID')  # чат КС-5,6
-CHAT_ID = '-1001412759045'  # тестовый чат
+CHAT_ID = os.getenv('CHAT_ID')  # чат КС-5,6
+# CHAT_ID = '-1001412759045'  # тестовый чат
 
 
 logging.basicConfig(
@@ -67,6 +69,23 @@ async def send_apk_2_remainder():
         await bot.send_message(chat_id=CHAT_ID, text=message)
 
 
+# async def send_month_plan():
+
+#     text_month_plan = month_plan_generator()
+#     await bot.send_message(chat_id=CHAT_ID, text=text_month_plan)
+
+
+async def send_tu_theme():
+    check = plan_tu_check().get('check')
+    if check:
+        list_tu = plan_tu_check().get('data')
+        text = ''
+        for theme in list_tu:
+            text = '{}\n{}\n'.format(text, theme)
+        message = f'Сегодня по плану должна быть техучёба. Темы:\n{text}'
+        await bot.send_message(chat_id=CHAT_ID, text=message)
+
+
 def scheduler_jobs():
     # по буням в 15:00 отправляет заметку о сегодняшнем дне
     # scheduler.add_job(
@@ -78,22 +97,22 @@ def scheduler_jobs():
     #     timezone=const.TIME_ZONE
     # )
     # по будням в 06:45 отправляет утреннее приветствие
-    scheduler.add_job(
-        send_morning_hello,
-        'cron',
-        day_of_week='mon-fri',
-        hour=7,
-        minute=0,
-        timezone=const.TIME_ZONE
-    )
-    scheduler.add_job(
-        send_morning_wish,
-        'cron',
-        day_of_week='mon-sun',
-        hour=8,
-        minute=0,
-        timezone=const.TIME_ZONE
-    )
+    # scheduler.add_job(
+    #     send_morning_hello,
+    #     'cron',
+    #     day_of_week='mon-fri',
+    #     hour=7,
+    #     minute=0,
+    #     timezone=const.TIME_ZONE
+    # )
+    # scheduler.add_job(
+    #     send_morning_wish,
+    #     'cron',
+    #     day_of_week='mon-sun',
+    #     hour=8,
+    #     minute=0,
+    #     timezone=const.TIME_ZONE
+    # )
     # по будням проверяет дату и отправляет напоминание о 2-ом уровне АПК
     scheduler.add_job(
         send_apk_2_remainder,
@@ -103,7 +122,15 @@ def scheduler_jobs():
         minute=15,
         timezone=const.TIME_ZONE
     )
-    # scheduler.add_job(send_morning_wish, 'interval', seconds=10, timezone=const.TIME_ZONE)
+    scheduler.add_job(
+        send_tu_theme,
+        'cron',
+        day_of_week='mon-sun',
+        hour=8,
+        minute=0,
+        timezone=const.TIME_ZONE
+    )
+    # scheduler.add_job(send_tu_theme, 'interval', seconds=10, timezone=const.TIME_ZONE)
 
 
 async def on_startup(_):

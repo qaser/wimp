@@ -7883,3 +7883,627 @@ Traceback (most recent call last):
   File "C:\Dev\gks_56_bot\venv\lib\site-packages\aiogram\utils\exceptions.py", line 140, in detect
     raise err(cls.text or description)
 aiogram.utils.exceptions.TerminatedByOtherGetUpdates: Terminated by other getupdates request; make sure that only one bot instance is running
+28.07.22 01:24:10 - Scheduler started
+28.07.22 01:24:10 - Bot: Wimp [@gks56_bot]
+28.07.22 01:24:10 - Updates were skipped successfully.
+28.07.22 01:24:10 - Added job "send_morning_hello" to job store "default"
+28.07.22 01:24:10 - Added job "send_morning_wish" to job store "default"
+28.07.22 01:24:10 - Added job "send_apk_2_remainder" to job store "default"
+28.07.22 01:24:10 - Goodbye!
+28.07.22 01:24:31 - Scheduler started
+28.07.22 01:24:31 - Bot: Wimp [@gks56_bot]
+28.07.22 01:24:31 - Updates were skipped successfully.
+28.07.22 01:24:31 - Added job "send_morning_hello" to job store "default"
+28.07.22 01:24:31 - Added job "send_morning_wish" to job store "default"
+28.07.22 01:24:31 - Added job "send_apk_2_remainder" to job store "default"
+28.07.22 01:24:31 - Added job "send_tu_theme" to job store "default"
+28.07.22 01:24:31 - Start polling.
+28.07.22 01:24:37 - Cause exception while getting updates.
+Traceback (most recent call last):
+  File "C:\Dev\gks_56_bot\venv\lib\site-packages\aiogram\dispatcher\dispatcher.py", line 381, in start_polling
+    updates = await self.bot.get_updates(
+  File "C:\Dev\gks_56_bot\venv\lib\site-packages\aiogram\bot\bot.py", line 110, in get_updates
+    result = await self.request(api.Methods.GET_UPDATES, payload)
+  File "C:\Dev\gks_56_bot\venv\lib\site-packages\aiogram\bot\base.py", line 231, in request
+    return await api.make_request(await self.get_session(), self.server, self.__token, method, data, files,
+  File "C:\Dev\gks_56_bot\venv\lib\site-packages\aiogram\bot\api.py", line 140, in make_request
+    return check_result(method, response.content_type, response.status, await response.text())
+  File "C:\Dev\gks_56_bot\venv\lib\site-packages\aiogram\bot\api.py", line 119, in check_result
+    exceptions.ConflictError.detect(description)
+  File "C:\Dev\gks_56_bot\venv\lib\site-packages\aiogram\utils\exceptions.py", line 140, in detect
+    raise err(cls.text or description)
+aiogram.utils.exceptions.TerminatedByOtherGetUpdates: Terminated by other getupdates request; make sure that only one bot instance is running
+28.07.22 01:24:41 - Running job "send_tu_theme (trigger: interval[0:00:10], next run at: 2022-07-27 23:24:51 MSK)" (scheduled at 2022-07-27 23:24:41.953145+03:00)
+28.07.22 01:24:41 - Job "send_tu_theme (trigger: interval[0:00:10], next run at: 2022-07-27 23:24:51 MSK)" executed successfully
+28.07.22 01:24:47 - Cause exception while getting updates.
+Traceback (most recent call last):
+  File "C:\Dev\gks_56_bot\venv\lib\site-packages\aiogram\dispatcher\dispatcher.py", line 381, in start_polling
+    updates = await self.bot.get_updates(
+  File "C:\Dev\gks_56_bot\venv\lib\site-packages\aiogram\bot\bot.py", line 110, in get_updates
+    result = await self.request(api.Methods.GET_UPDATES, payload)
+  File "C:\Dev\gks_56_bot\venv\lib\site-packages\aiogram\bot\base.py", line 231, in request
+    return await api.make_request(await self.get_session(), self.server, self.__token, method, data, files,
+  File "C:\Dev\gks_56_bot\venv\lib\site-packages\aiogram\bot\api.py", line 140, in make_request
+    return check_result(method, response.content_type, response.status, await response.text())
+  File "C:\Dev\gks_56_bot\venv\lib\site-packages\aiogram\bot\api.py", line 119, in check_result
+    exceptions.ConflictError.detect(description)
+  File "C:\Dev\gks_56_bot\venv\lib\site-packages\aiogram\utils\exceptions.py", line 140, in detect
+    raise err(cls.text or description)
+aiogram.utils.exceptions.TerminatedByOtherGetUpdates: Terminated by other getupdates request; make sure that only one bot instance is running
+28.07.22 01:24:51 - Running job "send_tu_theme (trigger: interval[0:00:10], next run at: 2022-07-27 23:25:01 MSK)" (scheduled at 2022-07-27 23:24:51.953145+03:00)
+28.07.22 01:24:51 - Job "send_tu_theme (trigger: interval[0:00:10], next run at: 2022-07-27 23:25:01 MSK)" executed successfully
+28.07.22 01:24:58 - Cause exception while getting updates.
+Traceback (most recent call last):
+  File "C:\Dev\gks_56_bot\venv\lib\site-packages\aiogram\dispatcher\dispatcher.py", line 381, in start_polling
+    updates = await self.bot.get_updates(
+  File "C:\Dev\gks_56_bot\venv\lib\site-packages\aiogram\bot\bot.py", line 110, in get_updates
+    result = await self.request(api.Methods.GET_UPDATES, payload)
+  File "C:\Dev\gks_56_bot\venv\lib\site-packages\aiogram\bot\base.py", line 231, in request
+    return await api.make_request(await self.get_session(), self.server, self.__token, method, data, files,
+  File "C:\Dev\gks_56_bot\venv\lib\site-packages\aiogram\bot\api.py", line 140, in make_request
+    return check_result(method, response.content_type, response.status, await response.text())
+  File "C:\Dev\gks_56_bot\venv\lib\site-packages\aiogram\bot\api.py", line 119, in check_result
+    exceptions.ConflictError.detect(description)
+  File "C:\Dev\gks_56_bot\venv\lib\site-packages\aiogram\utils\exceptions.py", line 140, in detect
+    raise err(cls.text or description)
+aiogram.utils.exceptions.TerminatedByOtherGetUpdates: Terminated by other getupdates request; make sure that only one bot instance is running
+28.07.22 01:25:01 - Running job "send_tu_theme (trigger: interval[0:00:10], next run at: 2022-07-27 23:25:11 MSK)" (scheduled at 2022-07-27 23:25:01.953145+03:00)
+28.07.22 01:25:01 - Job "send_tu_theme (trigger: interval[0:00:10], next run at: 2022-07-27 23:25:11 MSK)" executed successfully
+28.07.22 01:25:08 - Cause exception while getting updates.
+Traceback (most recent call last):
+  File "C:\Dev\gks_56_bot\venv\lib\site-packages\aiogram\dispatcher\dispatcher.py", line 381, in start_polling
+    updates = await self.bot.get_updates(
+  File "C:\Dev\gks_56_bot\venv\lib\site-packages\aiogram\bot\bot.py", line 110, in get_updates
+    result = await self.request(api.Methods.GET_UPDATES, payload)
+  File "C:\Dev\gks_56_bot\venv\lib\site-packages\aiogram\bot\base.py", line 231, in request
+    return await api.make_request(await self.get_session(), self.server, self.__token, method, data, files,
+  File "C:\Dev\gks_56_bot\venv\lib\site-packages\aiogram\bot\api.py", line 140, in make_request
+    return check_result(method, response.content_type, response.status, await response.text())
+  File "C:\Dev\gks_56_bot\venv\lib\site-packages\aiogram\bot\api.py", line 119, in check_result
+    exceptions.ConflictError.detect(description)
+  File "C:\Dev\gks_56_bot\venv\lib\site-packages\aiogram\utils\exceptions.py", line 140, in detect
+    raise err(cls.text or description)
+aiogram.utils.exceptions.TerminatedByOtherGetUpdates: Terminated by other getupdates request; make sure that only one bot instance is running
+28.07.22 01:25:11 - Running job "send_tu_theme (trigger: interval[0:00:10], next run at: 2022-07-27 23:25:21 MSK)" (scheduled at 2022-07-27 23:25:11.953145+03:00)
+28.07.22 01:25:11 - Job "send_tu_theme (trigger: interval[0:00:10], next run at: 2022-07-27 23:25:21 MSK)" executed successfully
+28.07.22 01:25:41 - Scheduler started
+28.07.22 01:25:41 - Bot: Wimp [@gks56_bot]
+28.07.22 01:25:41 - Updates were skipped successfully.
+28.07.22 01:25:41 - Added job "send_morning_hello" to job store "default"
+28.07.22 01:25:41 - Added job "send_morning_wish" to job store "default"
+28.07.22 01:25:41 - Added job "send_apk_2_remainder" to job store "default"
+28.07.22 01:25:42 - Added job "send_tu_theme" to job store "default"
+28.07.22 01:25:42 - Start polling.
+28.07.22 01:25:47 - Cause exception while getting updates.
+Traceback (most recent call last):
+  File "C:\Dev\gks_56_bot\venv\lib\site-packages\aiogram\dispatcher\dispatcher.py", line 381, in start_polling
+    updates = await self.bot.get_updates(
+  File "C:\Dev\gks_56_bot\venv\lib\site-packages\aiogram\bot\bot.py", line 110, in get_updates
+    result = await self.request(api.Methods.GET_UPDATES, payload)
+  File "C:\Dev\gks_56_bot\venv\lib\site-packages\aiogram\bot\base.py", line 231, in request
+    return await api.make_request(await self.get_session(), self.server, self.__token, method, data, files,
+  File "C:\Dev\gks_56_bot\venv\lib\site-packages\aiogram\bot\api.py", line 140, in make_request
+    return check_result(method, response.content_type, response.status, await response.text())
+  File "C:\Dev\gks_56_bot\venv\lib\site-packages\aiogram\bot\api.py", line 119, in check_result
+    exceptions.ConflictError.detect(description)
+  File "C:\Dev\gks_56_bot\venv\lib\site-packages\aiogram\utils\exceptions.py", line 140, in detect
+    raise err(cls.text or description)
+aiogram.utils.exceptions.TerminatedByOtherGetUpdates: Terminated by other getupdates request; make sure that only one bot instance is running
+28.07.22 01:25:52 - Running job "send_tu_theme (trigger: interval[0:00:10], next run at: 2022-07-27 23:26:02 MSK)" (scheduled at 2022-07-27 23:25:52.003972+03:00)
+28.07.22 01:25:52 - Job "send_tu_theme (trigger: interval[0:00:10], next run at: 2022-07-27 23:26:02 MSK)" executed successfully
+28.07.22 01:25:57 - Cause exception while getting updates.
+Traceback (most recent call last):
+  File "C:\Dev\gks_56_bot\venv\lib\site-packages\aiogram\dispatcher\dispatcher.py", line 381, in start_polling
+    updates = await self.bot.get_updates(
+  File "C:\Dev\gks_56_bot\venv\lib\site-packages\aiogram\bot\bot.py", line 110, in get_updates
+    result = await self.request(api.Methods.GET_UPDATES, payload)
+  File "C:\Dev\gks_56_bot\venv\lib\site-packages\aiogram\bot\base.py", line 231, in request
+    return await api.make_request(await self.get_session(), self.server, self.__token, method, data, files,
+  File "C:\Dev\gks_56_bot\venv\lib\site-packages\aiogram\bot\api.py", line 140, in make_request
+    return check_result(method, response.content_type, response.status, await response.text())
+  File "C:\Dev\gks_56_bot\venv\lib\site-packages\aiogram\bot\api.py", line 119, in check_result
+    exceptions.ConflictError.detect(description)
+  File "C:\Dev\gks_56_bot\venv\lib\site-packages\aiogram\utils\exceptions.py", line 140, in detect
+    raise err(cls.text or description)
+aiogram.utils.exceptions.TerminatedByOtherGetUpdates: Terminated by other getupdates request; make sure that only one bot instance is running
+28.07.22 01:26:02 - Running job "send_tu_theme (trigger: interval[0:00:10], next run at: 2022-07-27 23:26:12 MSK)" (scheduled at 2022-07-27 23:26:02.003972+03:00)
+28.07.22 01:26:02 - Job "send_tu_theme (trigger: interval[0:00:10], next run at: 2022-07-27 23:26:12 MSK)" executed successfully
+28.07.22 01:26:08 - Cause exception while getting updates.
+Traceback (most recent call last):
+  File "C:\Dev\gks_56_bot\venv\lib\site-packages\aiogram\dispatcher\dispatcher.py", line 381, in start_polling
+    updates = await self.bot.get_updates(
+  File "C:\Dev\gks_56_bot\venv\lib\site-packages\aiogram\bot\bot.py", line 110, in get_updates
+    result = await self.request(api.Methods.GET_UPDATES, payload)
+  File "C:\Dev\gks_56_bot\venv\lib\site-packages\aiogram\bot\base.py", line 231, in request
+    return await api.make_request(await self.get_session(), self.server, self.__token, method, data, files,
+  File "C:\Dev\gks_56_bot\venv\lib\site-packages\aiogram\bot\api.py", line 140, in make_request
+    return check_result(method, response.content_type, response.status, await response.text())
+  File "C:\Dev\gks_56_bot\venv\lib\site-packages\aiogram\bot\api.py", line 119, in check_result
+    exceptions.ConflictError.detect(description)
+  File "C:\Dev\gks_56_bot\venv\lib\site-packages\aiogram\utils\exceptions.py", line 140, in detect
+    raise err(cls.text or description)
+aiogram.utils.exceptions.TerminatedByOtherGetUpdates: Terminated by other getupdates request; make sure that only one bot instance is running
+28.07.22 01:26:12 - Running job "send_tu_theme (trigger: interval[0:00:10], next run at: 2022-07-27 23:26:22 MSK)" (scheduled at 2022-07-27 23:26:12.003972+03:00)
+28.07.22 01:26:12 - Job "send_tu_theme (trigger: interval[0:00:10], next run at: 2022-07-27 23:26:22 MSK)" executed successfully
+28.07.22 01:26:18 - Cause exception while getting updates.
+Traceback (most recent call last):
+  File "C:\Dev\gks_56_bot\venv\lib\site-packages\aiogram\dispatcher\dispatcher.py", line 381, in start_polling
+    updates = await self.bot.get_updates(
+  File "C:\Dev\gks_56_bot\venv\lib\site-packages\aiogram\bot\bot.py", line 110, in get_updates
+    result = await self.request(api.Methods.GET_UPDATES, payload)
+  File "C:\Dev\gks_56_bot\venv\lib\site-packages\aiogram\bot\base.py", line 231, in request
+    return await api.make_request(await self.get_session(), self.server, self.__token, method, data, files,
+  File "C:\Dev\gks_56_bot\venv\lib\site-packages\aiogram\bot\api.py", line 140, in make_request
+    return check_result(method, response.content_type, response.status, await response.text())
+  File "C:\Dev\gks_56_bot\venv\lib\site-packages\aiogram\bot\api.py", line 119, in check_result
+    exceptions.ConflictError.detect(description)
+  File "C:\Dev\gks_56_bot\venv\lib\site-packages\aiogram\utils\exceptions.py", line 140, in detect
+    raise err(cls.text or description)
+aiogram.utils.exceptions.TerminatedByOtherGetUpdates: Terminated by other getupdates request; make sure that only one bot instance is running
+28.07.22 01:26:22 - Running job "send_tu_theme (trigger: interval[0:00:10], next run at: 2022-07-27 23:26:32 MSK)" (scheduled at 2022-07-27 23:26:22.003972+03:00)
+28.07.22 01:26:22 - Job "send_tu_theme (trigger: interval[0:00:10], next run at: 2022-07-27 23:26:32 MSK)" executed successfully
+28.07.22 01:26:28 - Cause exception while getting updates.
+Traceback (most recent call last):
+  File "C:\Dev\gks_56_bot\venv\lib\site-packages\aiogram\dispatcher\dispatcher.py", line 381, in start_polling
+    updates = await self.bot.get_updates(
+  File "C:\Dev\gks_56_bot\venv\lib\site-packages\aiogram\bot\bot.py", line 110, in get_updates
+    result = await self.request(api.Methods.GET_UPDATES, payload)
+  File "C:\Dev\gks_56_bot\venv\lib\site-packages\aiogram\bot\base.py", line 231, in request
+    return await api.make_request(await self.get_session(), self.server, self.__token, method, data, files,
+  File "C:\Dev\gks_56_bot\venv\lib\site-packages\aiogram\bot\api.py", line 140, in make_request
+    return check_result(method, response.content_type, response.status, await response.text())
+  File "C:\Dev\gks_56_bot\venv\lib\site-packages\aiogram\bot\api.py", line 119, in check_result
+    exceptions.ConflictError.detect(description)
+  File "C:\Dev\gks_56_bot\venv\lib\site-packages\aiogram\utils\exceptions.py", line 140, in detect
+    raise err(cls.text or description)
+aiogram.utils.exceptions.TerminatedByOtherGetUpdates: Terminated by other getupdates request; make sure that only one bot instance is running
+28.07.22 01:26:32 - Running job "send_tu_theme (trigger: interval[0:00:10], next run at: 2022-07-27 23:26:42 MSK)" (scheduled at 2022-07-27 23:26:32.003972+03:00)
+28.07.22 01:26:32 - Job "send_tu_theme (trigger: interval[0:00:10], next run at: 2022-07-27 23:26:42 MSK)" executed successfully
+28.07.22 01:26:38 - Cause exception while getting updates.
+Traceback (most recent call last):
+  File "C:\Dev\gks_56_bot\venv\lib\site-packages\aiogram\dispatcher\dispatcher.py", line 381, in start_polling
+    updates = await self.bot.get_updates(
+  File "C:\Dev\gks_56_bot\venv\lib\site-packages\aiogram\bot\bot.py", line 110, in get_updates
+    result = await self.request(api.Methods.GET_UPDATES, payload)
+  File "C:\Dev\gks_56_bot\venv\lib\site-packages\aiogram\bot\base.py", line 231, in request
+    return await api.make_request(await self.get_session(), self.server, self.__token, method, data, files,
+  File "C:\Dev\gks_56_bot\venv\lib\site-packages\aiogram\bot\api.py", line 140, in make_request
+    return check_result(method, response.content_type, response.status, await response.text())
+  File "C:\Dev\gks_56_bot\venv\lib\site-packages\aiogram\bot\api.py", line 119, in check_result
+    exceptions.ConflictError.detect(description)
+  File "C:\Dev\gks_56_bot\venv\lib\site-packages\aiogram\utils\exceptions.py", line 140, in detect
+    raise err(cls.text or description)
+aiogram.utils.exceptions.TerminatedByOtherGetUpdates: Terminated by other getupdates request; make sure that only one bot instance is running
+28.07.22 01:26:42 - Running job "send_tu_theme (trigger: interval[0:00:10], next run at: 2022-07-27 23:26:52 MSK)" (scheduled at 2022-07-27 23:26:42.003972+03:00)
+28.07.22 01:26:42 - Job "send_tu_theme (trigger: interval[0:00:10], next run at: 2022-07-27 23:26:52 MSK)" executed successfully
+28.07.22 01:28:11 - Scheduler started
+28.07.22 01:28:11 - Bot: Wimp [@gks56_bot]
+28.07.22 01:28:12 - Updates were skipped successfully.
+28.07.22 01:28:12 - Added job "send_morning_hello" to job store "default"
+28.07.22 01:28:12 - Added job "send_morning_wish" to job store "default"
+28.07.22 01:28:12 - Added job "send_apk_2_remainder" to job store "default"
+28.07.22 01:28:12 - Added job "send_tu_theme" to job store "default"
+28.07.22 01:28:12 - Start polling.
+28.07.22 01:28:17 - Cause exception while getting updates.
+Traceback (most recent call last):
+  File "C:\Dev\gks_56_bot\venv\lib\site-packages\aiogram\dispatcher\dispatcher.py", line 381, in start_polling
+    updates = await self.bot.get_updates(
+  File "C:\Dev\gks_56_bot\venv\lib\site-packages\aiogram\bot\bot.py", line 110, in get_updates
+    result = await self.request(api.Methods.GET_UPDATES, payload)
+  File "C:\Dev\gks_56_bot\venv\lib\site-packages\aiogram\bot\base.py", line 231, in request
+    return await api.make_request(await self.get_session(), self.server, self.__token, method, data, files,
+  File "C:\Dev\gks_56_bot\venv\lib\site-packages\aiogram\bot\api.py", line 140, in make_request
+    return check_result(method, response.content_type, response.status, await response.text())
+  File "C:\Dev\gks_56_bot\venv\lib\site-packages\aiogram\bot\api.py", line 119, in check_result
+    exceptions.ConflictError.detect(description)
+  File "C:\Dev\gks_56_bot\venv\lib\site-packages\aiogram\utils\exceptions.py", line 140, in detect
+    raise err(cls.text or description)
+aiogram.utils.exceptions.TerminatedByOtherGetUpdates: Terminated by other getupdates request; make sure that only one bot instance is running
+28.07.22 01:28:22 - Running job "send_tu_theme (trigger: interval[0:00:10], next run at: 2022-07-27 23:28:32 MSK)" (scheduled at 2022-07-27 23:28:22.247240+03:00)
+28.07.22 01:28:22 - Job "send_tu_theme (trigger: interval[0:00:10], next run at: 2022-07-27 23:28:32 MSK)" executed successfully
+28.07.22 01:28:28 - Cause exception while getting updates.
+Traceback (most recent call last):
+  File "C:\Dev\gks_56_bot\venv\lib\site-packages\aiogram\dispatcher\dispatcher.py", line 381, in start_polling
+    updates = await self.bot.get_updates(
+  File "C:\Dev\gks_56_bot\venv\lib\site-packages\aiogram\bot\bot.py", line 110, in get_updates
+    result = await self.request(api.Methods.GET_UPDATES, payload)
+  File "C:\Dev\gks_56_bot\venv\lib\site-packages\aiogram\bot\base.py", line 231, in request
+    return await api.make_request(await self.get_session(), self.server, self.__token, method, data, files,
+  File "C:\Dev\gks_56_bot\venv\lib\site-packages\aiogram\bot\api.py", line 140, in make_request
+    return check_result(method, response.content_type, response.status, await response.text())
+  File "C:\Dev\gks_56_bot\venv\lib\site-packages\aiogram\bot\api.py", line 119, in check_result
+    exceptions.ConflictError.detect(description)
+  File "C:\Dev\gks_56_bot\venv\lib\site-packages\aiogram\utils\exceptions.py", line 140, in detect
+    raise err(cls.text or description)
+aiogram.utils.exceptions.TerminatedByOtherGetUpdates: Terminated by other getupdates request; make sure that only one bot instance is running
+28.07.22 01:28:32 - Running job "send_tu_theme (trigger: interval[0:00:10], next run at: 2022-07-27 23:28:42 MSK)" (scheduled at 2022-07-27 23:28:32.247240+03:00)
+28.07.22 01:28:32 - Job "send_tu_theme (trigger: interval[0:00:10], next run at: 2022-07-27 23:28:42 MSK)" executed successfully
+28.07.22 01:28:38 - Cause exception while getting updates.
+Traceback (most recent call last):
+  File "C:\Dev\gks_56_bot\venv\lib\site-packages\aiogram\dispatcher\dispatcher.py", line 381, in start_polling
+    updates = await self.bot.get_updates(
+  File "C:\Dev\gks_56_bot\venv\lib\site-packages\aiogram\bot\bot.py", line 110, in get_updates
+    result = await self.request(api.Methods.GET_UPDATES, payload)
+  File "C:\Dev\gks_56_bot\venv\lib\site-packages\aiogram\bot\base.py", line 231, in request
+    return await api.make_request(await self.get_session(), self.server, self.__token, method, data, files,
+  File "C:\Dev\gks_56_bot\venv\lib\site-packages\aiogram\bot\api.py", line 140, in make_request
+    return check_result(method, response.content_type, response.status, await response.text())
+  File "C:\Dev\gks_56_bot\venv\lib\site-packages\aiogram\bot\api.py", line 119, in check_result
+    exceptions.ConflictError.detect(description)
+  File "C:\Dev\gks_56_bot\venv\lib\site-packages\aiogram\utils\exceptions.py", line 140, in detect
+    raise err(cls.text or description)
+aiogram.utils.exceptions.TerminatedByOtherGetUpdates: Terminated by other getupdates request; make sure that only one bot instance is running
+28.07.22 01:28:42 - Running job "send_tu_theme (trigger: interval[0:00:10], next run at: 2022-07-27 23:28:52 MSK)" (scheduled at 2022-07-27 23:28:42.247240+03:00)
+28.07.22 01:28:42 - Job "send_tu_theme (trigger: interval[0:00:10], next run at: 2022-07-27 23:28:52 MSK)" executed successfully
+28.07.22 01:28:48 - Cause exception while getting updates.
+Traceback (most recent call last):
+  File "C:\Dev\gks_56_bot\venv\lib\site-packages\aiogram\dispatcher\dispatcher.py", line 381, in start_polling
+    updates = await self.bot.get_updates(
+  File "C:\Dev\gks_56_bot\venv\lib\site-packages\aiogram\bot\bot.py", line 110, in get_updates
+    result = await self.request(api.Methods.GET_UPDATES, payload)
+  File "C:\Dev\gks_56_bot\venv\lib\site-packages\aiogram\bot\base.py", line 231, in request
+    return await api.make_request(await self.get_session(), self.server, self.__token, method, data, files,
+  File "C:\Dev\gks_56_bot\venv\lib\site-packages\aiogram\bot\api.py", line 140, in make_request
+    return check_result(method, response.content_type, response.status, await response.text())
+  File "C:\Dev\gks_56_bot\venv\lib\site-packages\aiogram\bot\api.py", line 119, in check_result
+    exceptions.ConflictError.detect(description)
+  File "C:\Dev\gks_56_bot\venv\lib\site-packages\aiogram\utils\exceptions.py", line 140, in detect
+    raise err(cls.text or description)
+aiogram.utils.exceptions.TerminatedByOtherGetUpdates: Terminated by other getupdates request; make sure that only one bot instance is running
+28.07.22 01:28:52 - Running job "send_tu_theme (trigger: interval[0:00:10], next run at: 2022-07-27 23:29:02 MSK)" (scheduled at 2022-07-27 23:28:52.247240+03:00)
+28.07.22 01:28:52 - Job "send_tu_theme (trigger: interval[0:00:10], next run at: 2022-07-27 23:29:02 MSK)" executed successfully
+28.07.22 01:28:58 - Cause exception while getting updates.
+Traceback (most recent call last):
+  File "C:\Dev\gks_56_bot\venv\lib\site-packages\aiogram\dispatcher\dispatcher.py", line 381, in start_polling
+    updates = await self.bot.get_updates(
+  File "C:\Dev\gks_56_bot\venv\lib\site-packages\aiogram\bot\bot.py", line 110, in get_updates
+    result = await self.request(api.Methods.GET_UPDATES, payload)
+  File "C:\Dev\gks_56_bot\venv\lib\site-packages\aiogram\bot\base.py", line 231, in request
+    return await api.make_request(await self.get_session(), self.server, self.__token, method, data, files,
+  File "C:\Dev\gks_56_bot\venv\lib\site-packages\aiogram\bot\api.py", line 140, in make_request
+    return check_result(method, response.content_type, response.status, await response.text())
+  File "C:\Dev\gks_56_bot\venv\lib\site-packages\aiogram\bot\api.py", line 119, in check_result
+    exceptions.ConflictError.detect(description)
+  File "C:\Dev\gks_56_bot\venv\lib\site-packages\aiogram\utils\exceptions.py", line 140, in detect
+    raise err(cls.text or description)
+aiogram.utils.exceptions.TerminatedByOtherGetUpdates: Terminated by other getupdates request; make sure that only one bot instance is running
+28.07.22 01:29:02 - Running job "send_tu_theme (trigger: interval[0:00:10], next run at: 2022-07-27 23:29:12 MSK)" (scheduled at 2022-07-27 23:29:02.247240+03:00)
+28.07.22 01:29:02 - Job "send_tu_theme (trigger: interval[0:00:10], next run at: 2022-07-27 23:29:12 MSK)" executed successfully
+28.07.22 01:29:09 - Cause exception while getting updates.
+Traceback (most recent call last):
+  File "C:\Dev\gks_56_bot\venv\lib\site-packages\aiogram\dispatcher\dispatcher.py", line 381, in start_polling
+    updates = await self.bot.get_updates(
+  File "C:\Dev\gks_56_bot\venv\lib\site-packages\aiogram\bot\bot.py", line 110, in get_updates
+    result = await self.request(api.Methods.GET_UPDATES, payload)
+  File "C:\Dev\gks_56_bot\venv\lib\site-packages\aiogram\bot\base.py", line 231, in request
+    return await api.make_request(await self.get_session(), self.server, self.__token, method, data, files,
+  File "C:\Dev\gks_56_bot\venv\lib\site-packages\aiogram\bot\api.py", line 140, in make_request
+    return check_result(method, response.content_type, response.status, await response.text())
+  File "C:\Dev\gks_56_bot\venv\lib\site-packages\aiogram\bot\api.py", line 119, in check_result
+    exceptions.ConflictError.detect(description)
+  File "C:\Dev\gks_56_bot\venv\lib\site-packages\aiogram\utils\exceptions.py", line 140, in detect
+    raise err(cls.text or description)
+aiogram.utils.exceptions.TerminatedByOtherGetUpdates: Terminated by other getupdates request; make sure that only one bot instance is running
+28.07.22 01:29:12 - Running job "send_tu_theme (trigger: interval[0:00:10], next run at: 2022-07-27 23:29:22 MSK)" (scheduled at 2022-07-27 23:29:12.247240+03:00)
+28.07.22 01:29:12 - Job "send_tu_theme (trigger: interval[0:00:10], next run at: 2022-07-27 23:29:22 MSK)" executed successfully
+28.07.22 01:29:19 - Cause exception while getting updates.
+Traceback (most recent call last):
+  File "C:\Dev\gks_56_bot\venv\lib\site-packages\aiogram\dispatcher\dispatcher.py", line 381, in start_polling
+    updates = await self.bot.get_updates(
+  File "C:\Dev\gks_56_bot\venv\lib\site-packages\aiogram\bot\bot.py", line 110, in get_updates
+    result = await self.request(api.Methods.GET_UPDATES, payload)
+  File "C:\Dev\gks_56_bot\venv\lib\site-packages\aiogram\bot\base.py", line 231, in request
+    return await api.make_request(await self.get_session(), self.server, self.__token, method, data, files,
+  File "C:\Dev\gks_56_bot\venv\lib\site-packages\aiogram\bot\api.py", line 140, in make_request
+    return check_result(method, response.content_type, response.status, await response.text())
+  File "C:\Dev\gks_56_bot\venv\lib\site-packages\aiogram\bot\api.py", line 119, in check_result
+    exceptions.ConflictError.detect(description)
+  File "C:\Dev\gks_56_bot\venv\lib\site-packages\aiogram\utils\exceptions.py", line 140, in detect
+    raise err(cls.text or description)
+aiogram.utils.exceptions.TerminatedByOtherGetUpdates: Terminated by other getupdates request; make sure that only one bot instance is running
+28.07.22 01:29:22 - Running job "send_tu_theme (trigger: interval[0:00:10], next run at: 2022-07-27 23:29:32 MSK)" (scheduled at 2022-07-27 23:29:22.247240+03:00)
+28.07.22 01:29:22 - Job "send_tu_theme (trigger: interval[0:00:10], next run at: 2022-07-27 23:29:32 MSK)" executed successfully
+28.07.22 01:29:29 - Cause exception while getting updates.
+Traceback (most recent call last):
+  File "C:\Dev\gks_56_bot\venv\lib\site-packages\aiogram\dispatcher\dispatcher.py", line 381, in start_polling
+    updates = await self.bot.get_updates(
+  File "C:\Dev\gks_56_bot\venv\lib\site-packages\aiogram\bot\bot.py", line 110, in get_updates
+    result = await self.request(api.Methods.GET_UPDATES, payload)
+  File "C:\Dev\gks_56_bot\venv\lib\site-packages\aiogram\bot\base.py", line 231, in request
+    return await api.make_request(await self.get_session(), self.server, self.__token, method, data, files,
+  File "C:\Dev\gks_56_bot\venv\lib\site-packages\aiogram\bot\api.py", line 140, in make_request
+    return check_result(method, response.content_type, response.status, await response.text())
+  File "C:\Dev\gks_56_bot\venv\lib\site-packages\aiogram\bot\api.py", line 119, in check_result
+    exceptions.ConflictError.detect(description)
+  File "C:\Dev\gks_56_bot\venv\lib\site-packages\aiogram\utils\exceptions.py", line 140, in detect
+    raise err(cls.text or description)
+aiogram.utils.exceptions.TerminatedByOtherGetUpdates: Terminated by other getupdates request; make sure that only one bot instance is running
+28.07.22 01:29:32 - Running job "send_tu_theme (trigger: interval[0:00:10], next run at: 2022-07-27 23:29:42 MSK)" (scheduled at 2022-07-27 23:29:32.247240+03:00)
+28.07.22 01:29:32 - Job "send_tu_theme (trigger: interval[0:00:10], next run at: 2022-07-27 23:29:42 MSK)" executed successfully
+28.07.22 01:29:39 - Cause exception while getting updates.
+Traceback (most recent call last):
+  File "C:\Dev\gks_56_bot\venv\lib\site-packages\aiogram\dispatcher\dispatcher.py", line 381, in start_polling
+    updates = await self.bot.get_updates(
+  File "C:\Dev\gks_56_bot\venv\lib\site-packages\aiogram\bot\bot.py", line 110, in get_updates
+    result = await self.request(api.Methods.GET_UPDATES, payload)
+  File "C:\Dev\gks_56_bot\venv\lib\site-packages\aiogram\bot\base.py", line 231, in request
+    return await api.make_request(await self.get_session(), self.server, self.__token, method, data, files,
+  File "C:\Dev\gks_56_bot\venv\lib\site-packages\aiogram\bot\api.py", line 140, in make_request
+    return check_result(method, response.content_type, response.status, await response.text())
+  File "C:\Dev\gks_56_bot\venv\lib\site-packages\aiogram\bot\api.py", line 119, in check_result
+    exceptions.ConflictError.detect(description)
+  File "C:\Dev\gks_56_bot\venv\lib\site-packages\aiogram\utils\exceptions.py", line 140, in detect
+    raise err(cls.text or description)
+aiogram.utils.exceptions.TerminatedByOtherGetUpdates: Terminated by other getupdates request; make sure that only one bot instance is running
+28.07.22 01:29:42 - Running job "send_tu_theme (trigger: interval[0:00:10], next run at: 2022-07-27 23:29:52 MSK)" (scheduled at 2022-07-27 23:29:42.247240+03:00)
+28.07.22 01:29:42 - Job "send_tu_theme (trigger: interval[0:00:10], next run at: 2022-07-27 23:29:52 MSK)" executed successfully
+28.07.22 01:29:50 - Cause exception while getting updates.
+Traceback (most recent call last):
+  File "C:\Dev\gks_56_bot\venv\lib\site-packages\aiogram\dispatcher\dispatcher.py", line 381, in start_polling
+    updates = await self.bot.get_updates(
+  File "C:\Dev\gks_56_bot\venv\lib\site-packages\aiogram\bot\bot.py", line 110, in get_updates
+    result = await self.request(api.Methods.GET_UPDATES, payload)
+  File "C:\Dev\gks_56_bot\venv\lib\site-packages\aiogram\bot\base.py", line 231, in request
+    return await api.make_request(await self.get_session(), self.server, self.__token, method, data, files,
+  File "C:\Dev\gks_56_bot\venv\lib\site-packages\aiogram\bot\api.py", line 140, in make_request
+    return check_result(method, response.content_type, response.status, await response.text())
+  File "C:\Dev\gks_56_bot\venv\lib\site-packages\aiogram\bot\api.py", line 119, in check_result
+    exceptions.ConflictError.detect(description)
+  File "C:\Dev\gks_56_bot\venv\lib\site-packages\aiogram\utils\exceptions.py", line 140, in detect
+    raise err(cls.text or description)
+aiogram.utils.exceptions.TerminatedByOtherGetUpdates: Terminated by other getupdates request; make sure that only one bot instance is running
+28.07.22 01:29:57 - Scheduler started
+28.07.22 01:29:57 - Bot: Wimp [@gks56_bot]
+28.07.22 01:29:57 - Updates were skipped successfully.
+28.07.22 01:29:57 - Added job "send_morning_hello" to job store "default"
+28.07.22 01:29:57 - Added job "send_morning_wish" to job store "default"
+28.07.22 01:29:57 - Added job "send_apk_2_remainder" to job store "default"
+28.07.22 01:29:57 - Added job "send_tu_theme" to job store "default"
+28.07.22 01:29:57 - Start polling.
+28.07.22 01:30:03 - Cause exception while getting updates.
+Traceback (most recent call last):
+  File "C:\Dev\gks_56_bot\venv\lib\site-packages\aiogram\dispatcher\dispatcher.py", line 381, in start_polling
+    updates = await self.bot.get_updates(
+  File "C:\Dev\gks_56_bot\venv\lib\site-packages\aiogram\bot\bot.py", line 110, in get_updates
+    result = await self.request(api.Methods.GET_UPDATES, payload)
+  File "C:\Dev\gks_56_bot\venv\lib\site-packages\aiogram\bot\base.py", line 231, in request
+    return await api.make_request(await self.get_session(), self.server, self.__token, method, data, files,
+  File "C:\Dev\gks_56_bot\venv\lib\site-packages\aiogram\bot\api.py", line 140, in make_request
+    return check_result(method, response.content_type, response.status, await response.text())
+  File "C:\Dev\gks_56_bot\venv\lib\site-packages\aiogram\bot\api.py", line 119, in check_result
+    exceptions.ConflictError.detect(description)
+  File "C:\Dev\gks_56_bot\venv\lib\site-packages\aiogram\utils\exceptions.py", line 140, in detect
+    raise err(cls.text or description)
+aiogram.utils.exceptions.TerminatedByOtherGetUpdates: Terminated by other getupdates request; make sure that only one bot instance is running
+28.07.22 01:30:07 - Running job "send_tu_theme (trigger: interval[0:00:10], next run at: 2022-07-27 23:30:17 MSK)" (scheduled at 2022-07-27 23:30:07.855584+03:00)
+28.07.22 01:30:07 - Job "send_tu_theme (trigger: interval[0:00:10], next run at: 2022-07-27 23:30:17 MSK)" executed successfully
+28.07.22 01:30:14 - Cause exception while getting updates.
+Traceback (most recent call last):
+  File "C:\Dev\gks_56_bot\venv\lib\site-packages\aiogram\dispatcher\dispatcher.py", line 381, in start_polling
+    updates = await self.bot.get_updates(
+  File "C:\Dev\gks_56_bot\venv\lib\site-packages\aiogram\bot\bot.py", line 110, in get_updates
+    result = await self.request(api.Methods.GET_UPDATES, payload)
+  File "C:\Dev\gks_56_bot\venv\lib\site-packages\aiogram\bot\base.py", line 231, in request
+    return await api.make_request(await self.get_session(), self.server, self.__token, method, data, files,
+  File "C:\Dev\gks_56_bot\venv\lib\site-packages\aiogram\bot\api.py", line 140, in make_request
+    return check_result(method, response.content_type, response.status, await response.text())
+  File "C:\Dev\gks_56_bot\venv\lib\site-packages\aiogram\bot\api.py", line 119, in check_result
+    exceptions.ConflictError.detect(description)
+  File "C:\Dev\gks_56_bot\venv\lib\site-packages\aiogram\utils\exceptions.py", line 140, in detect
+    raise err(cls.text or description)
+aiogram.utils.exceptions.TerminatedByOtherGetUpdates: Terminated by other getupdates request; make sure that only one bot instance is running
+28.07.22 01:30:17 - Running job "send_tu_theme (trigger: interval[0:00:10], next run at: 2022-07-27 23:30:27 MSK)" (scheduled at 2022-07-27 23:30:17.855584+03:00)
+28.07.22 01:30:17 - Job "send_tu_theme (trigger: interval[0:00:10], next run at: 2022-07-27 23:30:27 MSK)" executed successfully
+28.07.22 01:31:02 - Scheduler started
+28.07.22 01:31:02 - Bot: Wimp [@gks56_bot]
+28.07.22 01:31:03 - Updates were skipped successfully.
+28.07.22 01:31:03 - Added job "send_morning_hello" to job store "default"
+28.07.22 01:31:03 - Added job "send_morning_wish" to job store "default"
+28.07.22 01:31:03 - Added job "send_apk_2_remainder" to job store "default"
+28.07.22 01:31:03 - Added job "send_tu_theme" to job store "default"
+28.07.22 01:31:03 - Start polling.
+28.07.22 01:31:08 - Cause exception while getting updates.
+Traceback (most recent call last):
+  File "C:\Dev\gks_56_bot\venv\lib\site-packages\aiogram\dispatcher\dispatcher.py", line 381, in start_polling
+    updates = await self.bot.get_updates(
+  File "C:\Dev\gks_56_bot\venv\lib\site-packages\aiogram\bot\bot.py", line 110, in get_updates
+    result = await self.request(api.Methods.GET_UPDATES, payload)
+  File "C:\Dev\gks_56_bot\venv\lib\site-packages\aiogram\bot\base.py", line 231, in request
+    return await api.make_request(await self.get_session(), self.server, self.__token, method, data, files,
+  File "C:\Dev\gks_56_bot\venv\lib\site-packages\aiogram\bot\api.py", line 140, in make_request
+    return check_result(method, response.content_type, response.status, await response.text())
+  File "C:\Dev\gks_56_bot\venv\lib\site-packages\aiogram\bot\api.py", line 119, in check_result
+    exceptions.ConflictError.detect(description)
+  File "C:\Dev\gks_56_bot\venv\lib\site-packages\aiogram\utils\exceptions.py", line 140, in detect
+    raise err(cls.text or description)
+aiogram.utils.exceptions.TerminatedByOtherGetUpdates: Terminated by other getupdates request; make sure that only one bot instance is running
+28.07.22 01:31:13 - Running job "send_tu_theme (trigger: interval[0:00:10], next run at: 2022-07-27 23:31:23 MSK)" (scheduled at 2022-07-27 23:31:13.219526+03:00)
+28.07.22 01:31:13 - Job "send_tu_theme (trigger: interval[0:00:10], next run at: 2022-07-27 23:31:23 MSK)" executed successfully
+28.07.22 01:31:18 - Cause exception while getting updates.
+Traceback (most recent call last):
+  File "C:\Dev\gks_56_bot\venv\lib\site-packages\aiogram\dispatcher\dispatcher.py", line 381, in start_polling
+    updates = await self.bot.get_updates(
+  File "C:\Dev\gks_56_bot\venv\lib\site-packages\aiogram\bot\bot.py", line 110, in get_updates
+    result = await self.request(api.Methods.GET_UPDATES, payload)
+  File "C:\Dev\gks_56_bot\venv\lib\site-packages\aiogram\bot\base.py", line 231, in request
+    return await api.make_request(await self.get_session(), self.server, self.__token, method, data, files,
+  File "C:\Dev\gks_56_bot\venv\lib\site-packages\aiogram\bot\api.py", line 140, in make_request
+    return check_result(method, response.content_type, response.status, await response.text())
+  File "C:\Dev\gks_56_bot\venv\lib\site-packages\aiogram\bot\api.py", line 119, in check_result
+    exceptions.ConflictError.detect(description)
+  File "C:\Dev\gks_56_bot\venv\lib\site-packages\aiogram\utils\exceptions.py", line 140, in detect
+    raise err(cls.text or description)
+aiogram.utils.exceptions.TerminatedByOtherGetUpdates: Terminated by other getupdates request; make sure that only one bot instance is running
+28.07.22 01:31:29 - Scheduler started
+28.07.22 01:31:30 - Bot: Wimp [@gks56_bot]
+28.07.22 01:31:30 - Updates were skipped successfully.
+28.07.22 01:31:30 - Added job "send_morning_hello" to job store "default"
+28.07.22 01:31:30 - Added job "send_morning_wish" to job store "default"
+28.07.22 01:31:30 - Added job "send_apk_2_remainder" to job store "default"
+28.07.22 01:31:30 - Added job "send_tu_theme" to job store "default"
+28.07.22 01:31:30 - Start polling.
+28.07.22 01:31:35 - Cause exception while getting updates.
+Traceback (most recent call last):
+  File "C:\Dev\gks_56_bot\venv\lib\site-packages\aiogram\dispatcher\dispatcher.py", line 381, in start_polling
+    updates = await self.bot.get_updates(
+  File "C:\Dev\gks_56_bot\venv\lib\site-packages\aiogram\bot\bot.py", line 110, in get_updates
+    result = await self.request(api.Methods.GET_UPDATES, payload)
+  File "C:\Dev\gks_56_bot\venv\lib\site-packages\aiogram\bot\base.py", line 231, in request
+    return await api.make_request(await self.get_session(), self.server, self.__token, method, data, files,
+  File "C:\Dev\gks_56_bot\venv\lib\site-packages\aiogram\bot\api.py", line 140, in make_request
+    return check_result(method, response.content_type, response.status, await response.text())
+  File "C:\Dev\gks_56_bot\venv\lib\site-packages\aiogram\bot\api.py", line 119, in check_result
+    exceptions.ConflictError.detect(description)
+  File "C:\Dev\gks_56_bot\venv\lib\site-packages\aiogram\utils\exceptions.py", line 140, in detect
+    raise err(cls.text or description)
+aiogram.utils.exceptions.TerminatedByOtherGetUpdates: Terminated by other getupdates request; make sure that only one bot instance is running
+28.07.22 01:31:40 - Running job "send_tu_theme (trigger: interval[0:00:10], next run at: 2022-07-27 23:31:50 MSK)" (scheduled at 2022-07-27 23:31:40.502453+03:00)
+28.07.22 01:31:40 - Job "send_tu_theme (trigger: interval[0:00:10], next run at: 2022-07-27 23:31:50 MSK)" executed successfully
+28.07.22 01:31:46 - Cause exception while getting updates.
+Traceback (most recent call last):
+  File "C:\Dev\gks_56_bot\venv\lib\site-packages\aiogram\dispatcher\dispatcher.py", line 381, in start_polling
+    updates = await self.bot.get_updates(
+  File "C:\Dev\gks_56_bot\venv\lib\site-packages\aiogram\bot\bot.py", line 110, in get_updates
+    result = await self.request(api.Methods.GET_UPDATES, payload)
+  File "C:\Dev\gks_56_bot\venv\lib\site-packages\aiogram\bot\base.py", line 231, in request
+    return await api.make_request(await self.get_session(), self.server, self.__token, method, data, files,
+  File "C:\Dev\gks_56_bot\venv\lib\site-packages\aiogram\bot\api.py", line 140, in make_request
+    return check_result(method, response.content_type, response.status, await response.text())
+  File "C:\Dev\gks_56_bot\venv\lib\site-packages\aiogram\bot\api.py", line 119, in check_result
+    exceptions.ConflictError.detect(description)
+  File "C:\Dev\gks_56_bot\venv\lib\site-packages\aiogram\utils\exceptions.py", line 140, in detect
+    raise err(cls.text or description)
+aiogram.utils.exceptions.TerminatedByOtherGetUpdates: Terminated by other getupdates request; make sure that only one bot instance is running
+28.07.22 01:31:50 - Running job "send_tu_theme (trigger: interval[0:00:10], next run at: 2022-07-27 23:32:00 MSK)" (scheduled at 2022-07-27 23:31:50.502453+03:00)
+28.07.22 01:31:50 - Job "send_tu_theme (trigger: interval[0:00:10], next run at: 2022-07-27 23:32:00 MSK)" executed successfully
+28.07.22 01:31:56 - Cause exception while getting updates.
+Traceback (most recent call last):
+  File "C:\Dev\gks_56_bot\venv\lib\site-packages\aiogram\dispatcher\dispatcher.py", line 381, in start_polling
+    updates = await self.bot.get_updates(
+  File "C:\Dev\gks_56_bot\venv\lib\site-packages\aiogram\bot\bot.py", line 110, in get_updates
+    result = await self.request(api.Methods.GET_UPDATES, payload)
+  File "C:\Dev\gks_56_bot\venv\lib\site-packages\aiogram\bot\base.py", line 231, in request
+    return await api.make_request(await self.get_session(), self.server, self.__token, method, data, files,
+  File "C:\Dev\gks_56_bot\venv\lib\site-packages\aiogram\bot\api.py", line 140, in make_request
+    return check_result(method, response.content_type, response.status, await response.text())
+  File "C:\Dev\gks_56_bot\venv\lib\site-packages\aiogram\bot\api.py", line 119, in check_result
+    exceptions.ConflictError.detect(description)
+  File "C:\Dev\gks_56_bot\venv\lib\site-packages\aiogram\utils\exceptions.py", line 140, in detect
+    raise err(cls.text or description)
+aiogram.utils.exceptions.TerminatedByOtherGetUpdates: Terminated by other getupdates request; make sure that only one bot instance is running
+28.07.22 01:32:00 - Running job "send_tu_theme (trigger: interval[0:00:10], next run at: 2022-07-27 23:32:10 MSK)" (scheduled at 2022-07-27 23:32:00.502453+03:00)
+28.07.22 01:32:00 - Job "send_tu_theme (trigger: interval[0:00:10], next run at: 2022-07-27 23:32:10 MSK)" executed successfully
+28.07.22 01:32:40 - Scheduler started
+28.07.22 01:32:40 - Bot: Wimp [@gks56_bot]
+28.07.22 01:32:40 - Updates were skipped successfully.
+28.07.22 01:32:40 - Added job "send_morning_hello" to job store "default"
+28.07.22 01:32:40 - Added job "send_morning_wish" to job store "default"
+28.07.22 01:32:40 - Added job "send_apk_2_remainder" to job store "default"
+28.07.22 01:32:40 - Added job "send_tu_theme" to job store "default"
+28.07.22 01:32:40 - Start polling.
+28.07.22 01:32:46 - Cause exception while getting updates.
+Traceback (most recent call last):
+  File "C:\Dev\gks_56_bot\venv\lib\site-packages\aiogram\dispatcher\dispatcher.py", line 381, in start_polling
+    updates = await self.bot.get_updates(
+  File "C:\Dev\gks_56_bot\venv\lib\site-packages\aiogram\bot\bot.py", line 110, in get_updates
+    result = await self.request(api.Methods.GET_UPDATES, payload)
+  File "C:\Dev\gks_56_bot\venv\lib\site-packages\aiogram\bot\base.py", line 231, in request
+    return await api.make_request(await self.get_session(), self.server, self.__token, method, data, files,
+  File "C:\Dev\gks_56_bot\venv\lib\site-packages\aiogram\bot\api.py", line 140, in make_request
+    return check_result(method, response.content_type, response.status, await response.text())
+  File "C:\Dev\gks_56_bot\venv\lib\site-packages\aiogram\bot\api.py", line 119, in check_result
+    exceptions.ConflictError.detect(description)
+  File "C:\Dev\gks_56_bot\venv\lib\site-packages\aiogram\utils\exceptions.py", line 140, in detect
+    raise err(cls.text or description)
+aiogram.utils.exceptions.TerminatedByOtherGetUpdates: Terminated by other getupdates request; make sure that only one bot instance is running
+28.07.22 01:32:50 - Running job "send_tu_theme (trigger: interval[0:00:10], next run at: 2022-07-27 23:33:00 MSK)" (scheduled at 2022-07-27 23:32:50.813382+03:00)
+28.07.22 01:32:50 - Job "send_tu_theme (trigger: interval[0:00:10], next run at: 2022-07-27 23:33:00 MSK)" executed successfully
+28.07.22 01:32:56 - Cause exception while getting updates.
+Traceback (most recent call last):
+  File "C:\Dev\gks_56_bot\venv\lib\site-packages\aiogram\dispatcher\dispatcher.py", line 381, in start_polling
+    updates = await self.bot.get_updates(
+  File "C:\Dev\gks_56_bot\venv\lib\site-packages\aiogram\bot\bot.py", line 110, in get_updates
+    result = await self.request(api.Methods.GET_UPDATES, payload)
+  File "C:\Dev\gks_56_bot\venv\lib\site-packages\aiogram\bot\base.py", line 231, in request
+    return await api.make_request(await self.get_session(), self.server, self.__token, method, data, files,
+  File "C:\Dev\gks_56_bot\venv\lib\site-packages\aiogram\bot\api.py", line 140, in make_request
+    return check_result(method, response.content_type, response.status, await response.text())
+  File "C:\Dev\gks_56_bot\venv\lib\site-packages\aiogram\bot\api.py", line 119, in check_result
+    exceptions.ConflictError.detect(description)
+  File "C:\Dev\gks_56_bot\venv\lib\site-packages\aiogram\utils\exceptions.py", line 140, in detect
+    raise err(cls.text or description)
+aiogram.utils.exceptions.TerminatedByOtherGetUpdates: Terminated by other getupdates request; make sure that only one bot instance is running
+28.07.22 01:34:04 - Scheduler started
+28.07.22 01:34:04 - Bot: Wimp [@gks56_bot]
+28.07.22 01:34:05 - Updates were skipped successfully.
+28.07.22 01:34:05 - Added job "send_morning_hello" to job store "default"
+28.07.22 01:34:05 - Added job "send_morning_wish" to job store "default"
+28.07.22 01:34:05 - Added job "send_apk_2_remainder" to job store "default"
+28.07.22 01:34:05 - Added job "send_tu_theme" to job store "default"
+28.07.22 01:34:05 - Start polling.
+28.07.22 01:34:10 - Cause exception while getting updates.
+Traceback (most recent call last):
+  File "C:\Dev\gks_56_bot\venv\lib\site-packages\aiogram\dispatcher\dispatcher.py", line 381, in start_polling
+    updates = await self.bot.get_updates(
+  File "C:\Dev\gks_56_bot\venv\lib\site-packages\aiogram\bot\bot.py", line 110, in get_updates
+    result = await self.request(api.Methods.GET_UPDATES, payload)
+  File "C:\Dev\gks_56_bot\venv\lib\site-packages\aiogram\bot\base.py", line 231, in request
+    return await api.make_request(await self.get_session(), self.server, self.__token, method, data, files,
+  File "C:\Dev\gks_56_bot\venv\lib\site-packages\aiogram\bot\api.py", line 140, in make_request
+    return check_result(method, response.content_type, response.status, await response.text())
+  File "C:\Dev\gks_56_bot\venv\lib\site-packages\aiogram\bot\api.py", line 119, in check_result
+    exceptions.ConflictError.detect(description)
+  File "C:\Dev\gks_56_bot\venv\lib\site-packages\aiogram\utils\exceptions.py", line 140, in detect
+    raise err(cls.text or description)
+aiogram.utils.exceptions.TerminatedByOtherGetUpdates: Terminated by other getupdates request; make sure that only one bot instance is running
+28.07.22 01:34:15 - Running job "send_tu_theme (trigger: interval[0:00:10], next run at: 2022-07-27 23:34:25 MSK)" (scheduled at 2022-07-27 23:34:15.250648+03:00)
+28.07.22 01:34:15 - Job "send_tu_theme (trigger: interval[0:00:10], next run at: 2022-07-27 23:34:25 MSK)" executed successfully
+28.07.22 01:34:21 - Cause exception while getting updates.
+Traceback (most recent call last):
+  File "C:\Dev\gks_56_bot\venv\lib\site-packages\aiogram\dispatcher\dispatcher.py", line 381, in start_polling
+    updates = await self.bot.get_updates(
+  File "C:\Dev\gks_56_bot\venv\lib\site-packages\aiogram\bot\bot.py", line 110, in get_updates
+    result = await self.request(api.Methods.GET_UPDATES, payload)
+  File "C:\Dev\gks_56_bot\venv\lib\site-packages\aiogram\bot\base.py", line 231, in request
+    return await api.make_request(await self.get_session(), self.server, self.__token, method, data, files,
+  File "C:\Dev\gks_56_bot\venv\lib\site-packages\aiogram\bot\api.py", line 140, in make_request
+    return check_result(method, response.content_type, response.status, await response.text())
+  File "C:\Dev\gks_56_bot\venv\lib\site-packages\aiogram\bot\api.py", line 119, in check_result
+    exceptions.ConflictError.detect(description)
+  File "C:\Dev\gks_56_bot\venv\lib\site-packages\aiogram\utils\exceptions.py", line 140, in detect
+    raise err(cls.text or description)
+aiogram.utils.exceptions.TerminatedByOtherGetUpdates: Terminated by other getupdates request; make sure that only one bot instance is running
+28.07.22 01:34:25 - Running job "send_tu_theme (trigger: interval[0:00:10], next run at: 2022-07-27 23:34:35 MSK)" (scheduled at 2022-07-27 23:34:25.250648+03:00)
+28.07.22 01:34:25 - Job "send_tu_theme (trigger: interval[0:00:10], next run at: 2022-07-27 23:34:35 MSK)" executed successfully
+28.07.22 01:34:31 - Cause exception while getting updates.
+Traceback (most recent call last):
+  File "C:\Dev\gks_56_bot\venv\lib\site-packages\aiogram\dispatcher\dispatcher.py", line 381, in start_polling
+    updates = await self.bot.get_updates(
+  File "C:\Dev\gks_56_bot\venv\lib\site-packages\aiogram\bot\bot.py", line 110, in get_updates
+    result = await self.request(api.Methods.GET_UPDATES, payload)
+  File "C:\Dev\gks_56_bot\venv\lib\site-packages\aiogram\bot\base.py", line 231, in request
+    return await api.make_request(await self.get_session(), self.server, self.__token, method, data, files,
+  File "C:\Dev\gks_56_bot\venv\lib\site-packages\aiogram\bot\api.py", line 140, in make_request
+    return check_result(method, response.content_type, response.status, await response.text())
+  File "C:\Dev\gks_56_bot\venv\lib\site-packages\aiogram\bot\api.py", line 119, in check_result
+    exceptions.ConflictError.detect(description)
+  File "C:\Dev\gks_56_bot\venv\lib\site-packages\aiogram\utils\exceptions.py", line 140, in detect
+    raise err(cls.text or description)
+aiogram.utils.exceptions.TerminatedByOtherGetUpdates: Terminated by other getupdates request; make sure that only one bot instance is running
+28.07.22 01:34:35 - Running job "send_tu_theme (trigger: interval[0:00:10], next run at: 2022-07-27 23:34:45 MSK)" (scheduled at 2022-07-27 23:34:35.250648+03:00)
+28.07.22 01:34:35 - Job "send_tu_theme (trigger: interval[0:00:10], next run at: 2022-07-27 23:34:45 MSK)" executed successfully
+28.07.22 01:34:42 - Cause exception while getting updates.
+Traceback (most recent call last):
+  File "C:\Dev\gks_56_bot\venv\lib\site-packages\aiogram\dispatcher\dispatcher.py", line 381, in start_polling
+    updates = await self.bot.get_updates(
+  File "C:\Dev\gks_56_bot\venv\lib\site-packages\aiogram\bot\bot.py", line 110, in get_updates
+    result = await self.request(api.Methods.GET_UPDATES, payload)
+  File "C:\Dev\gks_56_bot\venv\lib\site-packages\aiogram\bot\base.py", line 231, in request
+    return await api.make_request(await self.get_session(), self.server, self.__token, method, data, files,
+  File "C:\Dev\gks_56_bot\venv\lib\site-packages\aiogram\bot\api.py", line 140, in make_request
+    return check_result(method, response.content_type, response.status, await response.text())
+  File "C:\Dev\gks_56_bot\venv\lib\site-packages\aiogram\bot\api.py", line 119, in check_result
+    exceptions.ConflictError.detect(description)
+  File "C:\Dev\gks_56_bot\venv\lib\site-packages\aiogram\utils\exceptions.py", line 140, in detect
+    raise err(cls.text or description)
+aiogram.utils.exceptions.TerminatedByOtherGetUpdates: Terminated by other getupdates request; make sure that only one bot instance is running
