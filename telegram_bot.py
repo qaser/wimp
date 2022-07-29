@@ -2,7 +2,7 @@
 
 import logging
 import os
-from xml.dom.expatbuilder import TEXT_NODE
+import datetime as dt
 
 from aiogram import Bot, Dispatcher, executor, types
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
@@ -28,7 +28,7 @@ CHAT_ID = os.getenv('CHAT_ID')  # чат КС-5,6
 
 
 logging.basicConfig(
-    filename='bot.log',
+    filename='gks56_bot.log',
     level=logging.INFO,
     filemode='a',
     format='%(asctime)s - %(message)s',
@@ -45,11 +45,17 @@ async def send_morning_hello():
     message = '{}\n{}'.format(
         text_morning_hello,
         text_weather
-        )
+    )
     await bot.send_message(chat_id=CHAT_ID, text=message)
 
+
 async def send_morning_wish():
-    message = wish_generator()
+    now_day = dt.datetime.today().day
+    if now_day == 1:
+        text_month_plan = month_plan_generator()
+    else:
+        text_month_plan = ''
+    message = '{}\n\n{}'.format(wish_generator(), text_month_plan)
     await bot.send_message(chat_id=CHAT_ID, text=message)
 
 
@@ -69,20 +75,15 @@ async def send_apk_2_remainder():
         await bot.send_message(chat_id=CHAT_ID, text=message)
 
 
-# async def send_month_plan():
-
-#     text_month_plan = month_plan_generator()
-#     await bot.send_message(chat_id=CHAT_ID, text=text_month_plan)
-
-
 async def send_tu_theme():
     check = plan_tu_check().get('check')
+    print(check)
     if check:
         list_tu = plan_tu_check().get('data')
         text = ''
         for theme in list_tu:
             text = '{}\n{}\n'.format(text, theme)
-        message = f'Сегодня по плану должна быть техучёба. Темы:\n{text}'
+        message = f'Сегодня по плану должна быть техучёба.\nТемы занятий:\n{text}'
         await bot.send_message(chat_id=CHAT_ID, text=message)
 
 
@@ -96,7 +97,7 @@ def scheduler_jobs():
     #     minute=0,
     #     timezone=const.TIME_ZONE
     # )
-    # по будням в 06:45 отправляет утреннее приветствие
+    # по будням в 07:00 отправляет утреннее приветствие
     # scheduler.add_job(
     #     send_morning_hello,
     #     'cron',
@@ -105,14 +106,14 @@ def scheduler_jobs():
     #     minute=0,
     #     timezone=const.TIME_ZONE
     # )
-    # scheduler.add_job(
-    #     send_morning_wish,
-    #     'cron',
-    #     day_of_week='mon-sun',
-    #     hour=8,
-    #     minute=0,
-    #     timezone=const.TIME_ZONE
-    # )
+    scheduler.add_job(
+        send_morning_wish,
+        'cron',
+        day_of_week='mon-sun',
+        hour=8,
+        minute=0,
+        timezone=const.TIME_ZONE
+    )
     # по будням проверяет дату и отправляет напоминание о 2-ом уровне АПК
     scheduler.add_job(
         send_apk_2_remainder,

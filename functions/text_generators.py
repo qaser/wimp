@@ -38,14 +38,18 @@ def weather_text_generator(temperature, condition):
 
 def month_plan_generator():
     pat_check = plan_pat_check()
-    tu_check = plan_tu_check()
+    text_tu = 'У меня отстутствует информация об учёбе'
     if pat_check.get('check'):
         text_pat = pat_check.get('data')
-    text_pat = 'Ничего'
-    if tu_check.get('check'):
-        text_tu = tu_check.get('data')
-
-    text_tu = 'Ничего'
+    else:
+        text_pat = 'У меня отстутствует информация о ПАТ'
+    date_month = str(dt.datetime.today().month)
+    if date_month in TU:
+        tu_dict = TU.get(date_month)
+        text_tu = ''
+        for day in tu_dict.keys():
+            text_tu = text_tu + day + '\n'
     rand_num = random_list_elem(MONTH_TEXT)
     text_prefix = MONTH_TEXT[rand_num]
-    full_text = '{}\nПротивоаварийная тренировка:\n{}\nТехническая учёба:\n{}'.format(text_prefix, text_pat, text_tu)
+    full_text = '{}\n\nПротивоаварийная тренировка в этом месяце:\n{}\n\nДаты технической учёбы:\n{}'.format(text_prefix, text_pat, text_tu)
+    return full_text
