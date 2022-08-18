@@ -26,9 +26,9 @@ def wish_generator():
 def weather_text_generator(temperature, condition):
     check_rain = condition.find('rain')
     prefix = ''
-    if temperature >= 28:
+    if temperature >= 25:
         prefix = WEATHER_HOT_PREFIX[random_list_elem(WEATHER_HOT_PREFIX)]
-    if temperature <= -29:
+    if temperature <= -25:
         prefix = WEATHER_COLD_PREFIX[random_list_elem(WEATHER_COLD_PREFIX)]
     if check_rain != -1:
         prefix = WEATHER_RAIN_PREFIX[random_list_elem(WEATHER_RAIN_PREFIX)]

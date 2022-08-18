@@ -60,7 +60,7 @@ async def send_morning_wish():
 
 
 async def send_history_day():
-    text_history_day = scrap_history_day
+    text_history_day = scrap_history_day()
     await bot.send_message(chat_id=CHAT_ID, text=text_history_day, parse_mode=types.ParseMode.HTML)
 
 
@@ -97,15 +97,15 @@ def scheduler_jobs():
     #     minute=0,
     #     timezone=const.TIME_ZONE
     # )
-    # по будням в 07:00 отправляет утреннее приветствие
-    # scheduler.add_job(
-    #     send_morning_hello,
-    #     'cron',
-    #     day_of_week='mon-fri',
-    #     hour=7,
-    #     minute=0,
-    #     timezone=const.TIME_ZONE
-    # )
+    # по будням в 07:05 отправляет утреннее приветствие
+    scheduler.add_job(
+        send_morning_hello,
+        'cron',
+        day_of_week='mon-fri',
+        hour=7,
+        minute=5,
+        timezone=const.TIME_ZONE
+    )
     scheduler.add_job(
         send_morning_wish,
         'cron',
@@ -131,7 +131,7 @@ def scheduler_jobs():
         minute=0,
         timezone=const.TIME_ZONE
     )
-    # scheduler.add_job(send_tu_theme, 'interval', seconds=10, timezone=const.TIME_ZONE)
+    # scheduler.add_job(send_morning_hello, 'interval', seconds=5, timezone=const.TIME_ZONE)
 
 
 async def on_startup(_):

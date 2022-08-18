@@ -15,10 +15,11 @@ def request_weather():
     url = f'{const.URL_WEATHER}lat={const.LAT_LYHMA}&lon={const.LON_LYHMA}&[lang={const.LANG_CODE}]'
     resp = requests.get(url=url, headers=headers).json()
     fact_temp = resp['fact']['temp']
+    now_condition = resp['fact']['condition']
     fact_cond = const.CONDITIONS_WEATHER[resp['fact']['condition']]
     parts = resp['forecast']['parts']
     forecast_text = ''
-    text_prefix = weather_text_generator(fact_temp, fact_cond)
+    text_prefix = weather_text_generator(fact_temp, now_condition)
     for part in parts:
         day_part = const.DAY_PARTS[part['part_name']]
         temperature = part['temp_avg']
