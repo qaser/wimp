@@ -1,4 +1,5 @@
 import datetime as dt
+from texts.evening import EVENING_HELLO
 
 from texts.mornings import MORNING_HELLO, MORNING_WISHES
 from texts.weather import (WEATHER_COLD_PREFIX, WEATHER_HOT_PREFIX,
@@ -12,6 +13,11 @@ def hello_generator():
     rand_num = random_list_elem(MORNING_HELLO)
     morning_text = MORNING_HELLO[rand_num]
     return morning_text
+
+def evening_hello_generator():
+    rand_num = random_list_elem(EVENING_HELLO)
+    evening_text = EVENING_HELLO[rand_num]
+    return evening_text
 
 
 def wish_generator():

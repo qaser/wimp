@@ -8,7 +8,7 @@ from aiogram import Bot, Dispatcher, executor, types
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
 from dotenv import load_dotenv
 
-from functions.text_generators import hello_generator, wish_generator, month_plan_generator
+from functions.text_generators import evening_hello_generator, hello_generator, wish_generator, month_plan_generator
 from functions.request_weather import request_weather
 from functions.scrap_history_day import scrap_history_day
 from functions.second_level_apk_check import second_level_apk_check
@@ -23,8 +23,8 @@ load_dotenv()
 scheduler = AsyncIOScheduler()
 
 TELEGRAM_TOKEN = os.getenv('TELEGRAM_TOKEN')
-CHAT_ID = os.getenv('CHAT_ID')  # чат КС-5,6
-# CHAT_ID = '-1001412759045'  # тестовый чат
+# CHAT_ID = os.getenv('CHAT_ID')  # чат КС-5,6
+CHAT_ID = '-1001412759045'  # тестовый чат
 
 
 logging.basicConfig(
@@ -44,6 +44,15 @@ async def send_morning_hello():
     text_weather = request_weather()
     message = '{}\n{}'.format(
         text_morning_hello,
+        text_weather
+    )
+    await bot.send_message(chat_id=CHAT_ID, text=message)
+
+async def send_evening_hello():
+    text_evening_hello = evening_hello_generator()
+    text_weather = request_weather()
+    message = '{}\n{}'.format(
+        text_evening_hello,
         text_weather
     )
     await bot.send_message(chat_id=CHAT_ID, text=message)
@@ -103,7 +112,15 @@ def scheduler_jobs():
         'cron',
         day_of_week='mon-fri',
         hour=7,
-        minute=5,
+        minute=20,
+        timezone=const.TIME_ZONE
+    )
+    scheduler.add_job(
+        send_evening_hello,
+        'cron',
+        day_of_week='mon-fri',
+        hour=19,
+        minute=20,
         timezone=const.TIME_ZONE
     )
     scheduler.add_job(
@@ -131,7 +148,7 @@ def scheduler_jobs():
         minute=0,
         timezone=const.TIME_ZONE
     )
-    # scheduler.add_job(send_morning_hello, 'interval', seconds=5, timezone=const.TIME_ZONE)
+    # scheduler.add_job(send_evening_hello, 'interval', seconds=5, timezone=const.TIME_ZONE)
 
 
 async def on_startup(_):
