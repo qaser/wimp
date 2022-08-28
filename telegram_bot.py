@@ -34,8 +34,8 @@ quiz = db['quiz']
 scheduler = AsyncIOScheduler()
 
 TELEGRAM_TOKEN = os.getenv('TELEGRAM_TOKEN')
-# CHAT_ID = os.getenv('CHAT_ID')  # чат КС-5,6
-CHAT_ID = '-1001412759045'  # тестовый чат
+CHAT_ID = os.getenv('CHAT_ID')  # чат КС-5,6
+# CHAT_ID = '-1001412759045'  # тестовый чат
 
 
 logging.basicConfig(
@@ -63,18 +63,24 @@ async def help_handler(message:types.Message):
 
 @dp.message_handler(commands=['pravila'])
 async def pravila_handler(message:types.Message):
-    photos = fs.find({'unit': 'kpb'})
-    for photo in photos:
-        await bot.send_photo(message.chat.id, photo=photo)
+    for root, dirs, files in os.walk('static/kpb_lite/'):
+        for filename in files:
+            file = f'static/kpb_lite/{filename}'
+            with open(file, 'rb') as f:
+                contents = f.read()
+                await bot.send_photo(message.chat.id, photo=contents)
     await bot.send_message(message.chat.id, text=KPB_TEXT)
     await bot.send_message(message.chat.id, text=FINAL_TEXT)
 
 
 @dp.message_handler(commands=['vnimanie'])
 async def vnimanie_handler(message:types.Message):
-    photos = fs.find({'unit': 'ns'})
-    for photo in photos:
-        await bot.send_photo(message.chat.id, photo=photo)
+    for root, dirs, files in os.walk('static/kpb_lite/'):
+        for filename in files:
+            file = f'static/ns/{filename}'
+            with open(file, 'rb') as f:
+                contents = f.read()
+                await bot.send_photo(message.chat.id, photo=contents)
     await bot.send_message(message.chat.id, text=NS_TEXT)
     await bot.send_message(message.chat.id, text=FINAL_TEXT)
 
@@ -160,17 +166,17 @@ def scheduler_jobs():
     scheduler.add_job(
         send_morning_hello,
         'cron',
-        day_of_week='mon-fri',
+        day_of_week='mon-sun',
         hour=7,
-        minute=20,
+        minute=00,
         timezone=const.TIME_ZONE
     )
     scheduler.add_job(
         send_evening_hello,
         'cron',
-        day_of_week='mon-fri',
+        day_of_week='mon-sun',
         hour=19,
-        minute=20,
+        minute=00,
         timezone=const.TIME_ZONE
     )
     scheduler.add_job(
