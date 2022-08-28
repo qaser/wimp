@@ -86,12 +86,12 @@ async def vnimanie_handler(message:types.Message):
 
 
 @dp.message_handler(commands=['service'])
-async def service_handler():
+async def service_handler(message:types.Message):
     await bot.send_message(chat_id=CHAT_ID, text='Я отключусь пока, получаю обновление. Если к утру меня не будет, то вы знаете кто виноват.')
 
 
 @dp.message_handler(commands=['hello'])
-async def hello_handler():
+async def hello_handler(message:types.Message):
     await bot.send_message(chat_id=CHAT_ID, text='Я снова с вами! Такое чувство, будто что-то поменялось.')
 
 
