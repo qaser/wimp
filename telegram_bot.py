@@ -3,6 +3,8 @@
 import logging
 import os
 import datetime as dt
+import pymongo
+import gridfs
 
 from aiogram import Bot, Dispatcher, executor, types
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
@@ -15,10 +17,19 @@ from functions.second_level_apk_check import second_level_apk_check
 from functions.plan_check import plan_pat_check, plan_tu_check
 import utils.constants as const
 from texts.apk import APK_2_REMAINDER
+from texts.initial import INITIAL_TEXT, FINAL_TEXT, HELP_TEXT, KPB_TEXT, NS_TEXT
 
 
 load_dotenv()
 
+# Create the client
+client = pymongo.MongoClient('localhost', 27017)
+# Connect to our database
+db = client['gks_bot_db']
+fs = gridfs.GridFS(db)
+# Fetch our series collection
+key_rules = db['key_rules']
+quiz = db['quiz']
 
 scheduler = AsyncIOScheduler()
 
@@ -37,6 +48,45 @@ logging.basicConfig(
 
 bot = Bot(token=TELEGRAM_TOKEN)
 dp = Dispatcher(bot)
+
+
+@dp.message_handler(commands=['start'])
+async def start_handler(message:types.Message):
+    await bot.send_message(message.chat.id, text=INITIAL_TEXT)
+
+
+@dp.message_handler(commands=['help'])
+async def help_handler(message:types.Message):
+    await bot.send_message(message.chat.id, text=f'{message.from_user.full_name}{HELP_TEXT}')
+    await bot.send_message(message.chat.id, text=FINAL_TEXT)
+
+
+@dp.message_handler(commands=['pravila'])
+async def pravila_handler(message:types.Message):
+    photos = fs.find({'unit': 'kpb'})
+    for photo in photos:
+        await bot.send_photo(message.chat.id, photo=photo)
+    await bot.send_message(message.chat.id, text=KPB_TEXT)
+    await bot.send_message(message.chat.id, text=FINAL_TEXT)
+
+
+@dp.message_handler(commands=['vnimanie'])
+async def vnimanie_handler(message:types.Message):
+    photos = fs.find({'unit': 'ns'})
+    for photo in photos:
+        await bot.send_photo(message.chat.id, photo=photo)
+    await bot.send_message(message.chat.id, text=NS_TEXT)
+    await bot.send_message(message.chat.id, text=FINAL_TEXT)
+
+
+@dp.message_handler(commands=['service'])
+async def service_handler():
+    await bot.send_message(chat_id=CHAT_ID, text='Я отключусь пока, получаю обновление. Если к утру меня не будет, то вы знаете кто виноват.')
+
+
+@dp.message_handler(commands=['hello'])
+async def hello_handler():
+    await bot.send_message(chat_id=CHAT_ID, text='Я снова с вами! Такое чувство, будто что-то поменялось.')
 
 
 async def send_morning_hello():
@@ -97,7 +147,7 @@ async def send_tu_theme():
 
 
 def scheduler_jobs():
-    # по буням в 15:00 отправляет заметку о сегодняшнем дне
+    # по будням в 15:00 отправляет заметку о сегодняшнем дне
     # scheduler.add_job(
     #     send_history_day,
     #     'cron',
@@ -148,7 +198,7 @@ def scheduler_jobs():
         minute=0,
         timezone=const.TIME_ZONE
     )
-    # scheduler.add_job(send_evening_hello, 'interval', seconds=5, timezone=const.TIME_ZONE)
+    # scheduler.add_job(cmd_random, 'interval', seconds=5, timezone=const.TIME_ZONE)
 
 
 async def on_startup(_):
