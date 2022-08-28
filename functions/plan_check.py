@@ -5,17 +5,19 @@ from texts.pat import PAT, TU
 
 def plan_tu_check():
     today_month = dt.datetime.today().month
+    month_plan = TU.get(str(today_month))
     if str(today_month) in TU.keys():
         today_date = dt.datetime.today().strftime('%d.%m.%Y')
-        month_plan = TU.get(str(today_month))
         if today_date in month_plan.keys(): # на каждый месяц идёт словарь с датами
             return {
                 'check': True,
-                'data': month_plan.get(today_date)
+                'data': month_plan.get(today_date),
+                'plan': month_plan,
             }
     return {
         'check': False,
-        'data': ''
+        'data': '',
+        'plan': month_plan,
     }
 
 def plan_pat_check():

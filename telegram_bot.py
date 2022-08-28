@@ -1,24 +1,26 @@
 # TODO сделать отправку стикеров
 
+import datetime as dt
 import logging
 import os
-import datetime as dt
-import pymongo
-import gridfs
 
+import gridfs
+import pymongo
 from aiogram import Bot, Dispatcher, executor, types
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
 from dotenv import load_dotenv
 
-from functions.text_generators import evening_hello_generator, hello_generator, wish_generator, month_plan_generator
+import utils.constants as const
+from functions.plan_check import plan_tu_check, plan_pat_check
 from functions.request_weather import request_weather
 from functions.scrap_history_day import scrap_history_day
 from functions.second_level_apk_check import second_level_apk_check
-from functions.plan_check import plan_pat_check, plan_tu_check
-import utils.constants as const
+from functions.text_generators import (evening_hello_generator,
+                                       hello_generator, month_plan_generator,
+                                       wish_generator)
 from texts.apk import APK_2_REMAINDER
-from texts.initial import INITIAL_TEXT, FINAL_TEXT, HELP_TEXT, KPB_TEXT, NS_TEXT
-
+from texts.initial import (FINAL_TEXT, HELP_TEXT, INITIAL_TEXT, KPB_TEXT,
+                           NS_TEXT, SERVICE_END_TEXT, SERVICE_TEXT)
 
 load_dotenv()
 
@@ -87,12 +89,34 @@ async def vnimanie_handler(message:types.Message):
 
 @dp.message_handler(commands=['service'])
 async def service_handler(message:types.Message):
-    await bot.send_message(chat_id=CHAT_ID, text='Я отключусь пока, получаю обновление. Если к утру меня не будет, то вы знаете кто виноват.')
+    await bot.send_message(chat_id=CHAT_ID, text=SERVICE_TEXT)
 
 
-@dp.message_handler(commands=['hello'])
-async def hello_handler(message:types.Message):
-    await bot.send_message(chat_id=CHAT_ID, text='Я снова с вами! Такое чувство, будто что-то поменялось.')
+@dp.message_handler(commands=['service-end'])
+async def service_end_handler(message:types.Message):
+    await bot.send_message(chat_id=CHAT_ID, text=SERVICE_END_TEXT)
+
+
+@dp.message_handler(commands=['pat'])
+async def pat_handler(message:types.Message):
+    text = plan_pat_check().get('data')
+    full_text = f'Противоаварийная тренировка на КЦ-5,6 в этом месяце:\n\n{text}'
+    await bot.send_message(message.chat.id, text=full_text)
+    await bot.send_message(message.chat.id, text=FINAL_TEXT)
+
+
+@dp.message_handler(commands=['tu'])
+async def pat_handler(message:types.Message):
+    data = plan_tu_check().get('plan')
+    text = ''
+    for date, theme in data.items():
+        theme_text = ''
+        for item in theme:
+            theme_text = theme_text + f'{item}\n'
+        text = text + f'{date}:\n{theme_text}\n\n'
+    full_text = f'Техническая учёба на КЦ-5,6 в этом месяце:\n\n{text}'
+    await bot.send_message(message.chat.id, text=full_text)
+    await bot.send_message(message.chat.id, text=FINAL_TEXT)
 
 
 async def send_morning_hello():
@@ -103,6 +127,7 @@ async def send_morning_hello():
         text_weather
     )
     await bot.send_message(chat_id=CHAT_ID, text=message)
+
 
 async def send_evening_hello():
     text_evening_hello = evening_hello_generator()
