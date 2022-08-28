@@ -27,11 +27,6 @@ db.sqlite3
 
 =
 
-static/
-.static
-.static/
-posts/static/
-
 
 migrations/
 .migrations
