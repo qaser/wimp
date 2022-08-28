@@ -151,7 +151,9 @@ async def send_morning_wish():
 
 async def send_history_day():
     text_history_day = scrap_history_day()
-    await bot.send_message(chat_id=CHAT_ID, text=text_history_day, parse_mode=types.ParseMode.HTML)
+    prefix = 'Доставайте чай, наливайте печенюшки'
+    full_text = '{}\n\n{}'.format(prefix, text_history_day)
+    await bot.send_message(chat_id=CHAT_ID, text=full_text, parse_mode=types.ParseMode.HTML)
 
 
 async def send_apk_2_remainder():
@@ -167,7 +169,6 @@ async def send_apk_2_remainder():
 
 async def send_tu_theme():
     check = plan_tu_check().get('check')
-    print(check)
     if check:
         list_tu = plan_tu_check().get('data')
         text = ''
@@ -179,14 +180,14 @@ async def send_tu_theme():
 
 def scheduler_jobs():
     # по будням в 15:00 отправляет заметку о сегодняшнем дне
-    # scheduler.add_job(
-    #     send_history_day,
-    #     'cron',
-    #     day_of_week='mon-fri',
-    #     hour=15,
-    #     minute=0,
-    #     timezone=const.TIME_ZONE
-    # )
+    scheduler.add_job(
+        send_history_day,
+        'cron',
+        day_of_week='mon-sun',
+        hour=15,
+        minute=0,
+        timezone=const.TIME_ZONE
+    )
     # по будням в 07:05 отправляет утреннее приветствие
     scheduler.add_job(
         send_morning_hello,
@@ -229,7 +230,7 @@ def scheduler_jobs():
         minute=0,
         timezone=const.TIME_ZONE
     )
-    # scheduler.add_job(cmd_random, 'interval', seconds=5, timezone=const.TIME_ZONE)
+    # scheduler.add_job(send_history_day, 'interval', seconds=5, timezone=const.TIME_ZONE)
 
 
 async def on_startup(_):
