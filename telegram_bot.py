@@ -118,11 +118,16 @@ async def pat_handler(message:types.Message):
     await bot.send_message(message.chat.id, text=FINAL_TEXT)
 
 
-@dp.message_handler(commands=['qwerty'])
-async def send_quiz(message:types.Message):
+def get_poll():
     count = quiz.count_documents({})
     rand_num = random.randint(0, count)
     poll = quiz.find({'num': rand_num}).next()
+    return poll
+
+
+@dp.message_handler(commands=['vopros'])
+async def send_quiz(message:types.Message):
+    poll = get_poll()
     await bot.send_poll(
         chat_id=message.chat.id,
         question=poll['question'],
@@ -133,6 +138,22 @@ async def send_quiz(message:types.Message):
         explanation=poll['answers'][poll['correct_answer'] - 1],
         protect_content=True,
     )
+    await bot.send_message(message.chat.id, text=FINAL_TEXT)
+
+
+async def send_quiz_shedule():
+    poll = get_poll()
+    await bot.send_poll(
+        chat_id=CHAT_ID,
+        question=poll['question'],
+        options=poll['answers'],
+        is_anonymous=True,
+        type='quiz',
+        correct_option_id=poll['correct_answer'] - 1,
+        explanation=poll['answers'][poll['correct_answer'] - 1],
+        protect_content=True,
+    )
+
 
 async def send_morning_hello():
     text_morning_hello = hello_generator()
@@ -225,6 +246,14 @@ def scheduler_jobs():
         'cron',
         day_of_week='mon-sun',
         hour=8,
+        minute=0,
+        timezone=const.TIME_ZONE
+    )
+    scheduler.add_job(
+        send_quiz_shedule,
+        'cron',
+        day_of_week='mon-sun',
+        hour=10,
         minute=0,
         timezone=const.TIME_ZONE
     )
