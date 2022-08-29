@@ -3,6 +3,7 @@
 import datetime as dt
 import logging
 import os
+import random
 
 import gridfs
 import pymongo
@@ -29,8 +30,6 @@ client = pymongo.MongoClient('localhost', 27017)
 # Connect to our database
 db = client['gks_bot_db']
 fs = gridfs.GridFS(db)
-# Fetch our series collection
-key_rules = db['key_rules']
 quiz = db['quiz']
 
 scheduler = AsyncIOScheduler()
@@ -118,6 +117,22 @@ async def pat_handler(message:types.Message):
     await bot.send_message(message.chat.id, text=full_text)
     await bot.send_message(message.chat.id, text=FINAL_TEXT)
 
+
+@dp.message_handler(commands=['qwerty'])
+async def send_quiz(message:types.Message):
+    count = quiz.count_documents({})
+    rand_num = random.randint(0, count)
+    poll = quiz.find({'num': rand_num}).next()
+    await bot.send_poll(
+        chat_id=message.chat.id,
+        question=poll['question'],
+        options=poll['answers'],
+        is_anonymous=True,
+        type='quiz',
+        correct_option_id=poll['correct_answer'] - 1,
+        explanation=poll['answers'][poll['correct_answer'] - 1],
+        protect_content=True,
+    )
 
 async def send_morning_hello():
     text_morning_hello = hello_generator()
