@@ -2,6 +2,7 @@
 
 import datetime as dt
 import logging
+import math
 import os
 import random
 
@@ -21,7 +22,7 @@ from functions.text_generators import (evening_hello_generator,
                                        wish_generator)
 from texts.apk import APK_2_REMAINDER
 from texts.initial import (FINAL_TEXT, HELP_TEXT, INITIAL_TEXT, KPB_TEXT,
-                           NS_TEXT, SERVICE_END_TEXT, SERVICE_TEXT)
+                           NS_TEXT, QUIZ_TEXT, SERVICE_END_TEXT, SERVICE_TEXT)
 
 load_dotenv()
 
@@ -91,7 +92,7 @@ async def service_handler(message:types.Message):
     await bot.send_message(chat_id=CHAT_ID, text=SERVICE_TEXT)
 
 
-@dp.message_handler(commands=['service-end'])
+@dp.message_handler(commands=['endservice'])
 async def service_end_handler(message:types.Message):
     await bot.send_message(chat_id=CHAT_ID, text=SERVICE_END_TEXT)
 
@@ -125,42 +126,59 @@ def get_poll():
     return poll
 
 
+@dp.message_handler(commands=['menu'])
+async def all_commands(message:types.Message):
+    await bot.send_message(message.chat.id, text=FINAL_TEXT)
+
 @dp.message_handler(commands=['vopros'])
 async def send_quiz(message:types.Message):
     poll = get_poll()
+    correct_option_id = poll['correct_answer'] - 1
+    explanation = poll['answers'][poll['correct_answer'] - 1]
     await bot.send_poll(
         chat_id=message.chat.id,
         question=poll['question'],
         options=poll['answers'],
         is_anonymous=True,
         type='quiz',
-        correct_option_id=poll['correct_answer'] - 1,
-        explanation=poll['answers'][poll['correct_answer'] - 1],
+        correct_option_id=correct_option_id,
+        explanation=f'Правильный ответ: {explanation}',
         protect_content=True,
     )
-    await bot.send_message(message.chat.id, text=FINAL_TEXT)
+    await bot.send_message(message.chat.id, text=QUIZ_TEXT)
 
 
 async def send_quiz_shedule():
     poll = get_poll()
+    correct_option_id = poll['correct_answer'] - 1
+    explanation = poll['answers'][poll['correct_answer'] - 1]
     await bot.send_poll(
         chat_id=CHAT_ID,
         question=poll['question'],
         options=poll['answers'],
         is_anonymous=True,
         type='quiz',
-        correct_option_id=poll['correct_answer'] - 1,
-        explanation=poll['answers'][poll['correct_answer'] - 1],
+        correct_option_id=correct_option_id,
+        explanation=f'Правильный ответ: {explanation}',
         protect_content=True,
     )
 
 
 async def send_morning_hello():
+    month = str(dt.datetime.today().month)
+    day = dt.datetime.today().day
+    if day == 31:
+        day_trinity = '10'
+    else:
+        day_trinity = str(math.ceil(day/3))
+    avo_temp = const.RECOMMEND_TEMP[month][day_trinity]
+    text_avo_temp = f'Рекомендуемая температура газа после АВО:\n{avo_temp} град. Цельсия'
     text_morning_hello = hello_generator()
     text_weather = request_weather()
-    message = '{}\n{}'.format(
+    message = '{}\n{}\n{}'.format(
         text_morning_hello,
-        text_weather
+        text_weather,
+        text_avo_temp,
     )
     await bot.send_message(chat_id=CHAT_ID, text=message)
 
@@ -274,7 +292,7 @@ def scheduler_jobs():
         minute=0,
         timezone=const.TIME_ZONE
     )
-    # scheduler.add_job(send_history_day, 'interval', seconds=5, timezone=const.TIME_ZONE)
+    # scheduler.add_job(send_morning_hello, 'interval', seconds=10, timezone=const.TIME_ZONE)
 
 
 async def on_startup(_):

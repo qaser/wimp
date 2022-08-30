@@ -25,9 +25,9 @@ def request_weather():
             day_part = const.DAY_PARTS[part['part_name']]
             temperature = part['temp_avg']
             condition = const.CONDITIONS_WEATHER[part['condition']]
-            forecast_text = forecast_text + f'{day_part}: {temperature}\u2103 , {condition} \n'
+            forecast_text = forecast_text + f'{day_part}: {temperature}\u2103 , {condition}. \n'
         now_text = (f'{text_prefix}'
-                f' температура воздуха {fact_temp}\u2103 , {fact_cond}')
+                f' температура воздуха {fact_temp}\u2103 , {fact_cond}.')
         return '{}\n{}'.format(now_text, forecast_text)
     except:
         return ('С погодой какие-то непонятки. Кто-то не поделился данными. Поэтому советую никуда не ходить.\n\n'
