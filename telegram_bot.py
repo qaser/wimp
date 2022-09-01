@@ -5,6 +5,7 @@ import logging
 import math
 import os
 import random
+import time
 
 import gridfs
 import pymongo
@@ -37,7 +38,7 @@ scheduler = AsyncIOScheduler()
 
 TELEGRAM_TOKEN = os.getenv('TELEGRAM_TOKEN')
 CHAT_ID = os.getenv('CHAT_ID')  # чат КС-5,6
-# CHAT_ID = '-1001412759045'  # тестовый чат
+# CHAT_ID = '-1001555422626'  # тестовый чат
 
 
 logging.basicConfig(
@@ -50,6 +51,34 @@ logging.basicConfig(
 
 bot = Bot(token=TELEGRAM_TOKEN)
 dp = Dispatcher(bot)
+
+
+@dp.message_handler(commands=['test'])
+async def send_poll(message:types.Message):
+    global this_poll
+    this_poll = await poll()
+
+
+@dp.poll_answer_handler()
+async def handle_poll_answer(quiz_answer: types.PollAnswer):
+    print(quiz_answer)
+    print(this_poll.poll.id)
+    # if this_quiz.poll.correct_option_id == quiz_answer:
+    #     print('Правильно!')
+    # else:
+    #     print('Неправильно!')
+
+
+async def poll():
+    poll = await bot.send_poll(
+        chat_id=CHAT_ID,
+        question='Выберите технику',
+        options=const.VEHICLES,
+        type='regular',
+        allows_multiple_answers=True,
+        is_anonymous=False,
+    )
+    return poll
 
 
 @dp.message_handler(commands=['start'])
@@ -107,14 +136,26 @@ async def pat_handler(message:types.Message):
 
 @dp.message_handler(commands=['tu'])
 async def pat_handler(message:types.Message):
-    data = plan_tu_check().get('plan')
-    text = ''
-    for date, theme in data.items():
+    plan_now = plan_tu_check().get('plan')
+    plan_past = plan_tu_check().get('past_plan')
+    text_now = ''
+    text_past = ''
+    for date, theme in plan_now.items():
         theme_text = ''
         for item in theme:
             theme_text = theme_text + f'{item}\n'
-        text = text + f'{date}:\n{theme_text}\n\n'
-    full_text = f'Техническая учёба на КЦ-5,6 в этом месяце:\n\n{text}'
+        text_now = text_now + f'{date}:\n{theme_text}\n'
+    if len(plan_past) == 0:
+        text_past = 'Данные отсутствуют'
+    else:
+        for date, theme in plan_past.items():
+            theme_text = ''
+            for item in theme:
+                theme_text = theme_text + f'{item}\n'
+            text_past = text_past + f'{date}:\n{theme_text}\n'
+    full_text_now = f'Техническая учёба на КЦ-5,6 в этом месяце:\n\n{text_now}'
+    full_text_past = f'В предыдущем месяце:\n\n{text_past}'
+    full_text = '{}\n{}'.format(full_text_now, full_text_past)
     await bot.send_message(message.chat.id, text=full_text)
     await bot.send_message(message.chat.id, text=FINAL_TEXT)
 
