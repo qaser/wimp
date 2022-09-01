@@ -39,6 +39,7 @@ scheduler = AsyncIOScheduler()
 TELEGRAM_TOKEN = os.getenv('TELEGRAM_TOKEN')
 CHAT_ID = os.getenv('CHAT_ID')  # чат КС-5,6
 # CHAT_ID = '-1001555422626'  # тестовый чат
+CHAT_ID_TEST = '-1001555422626'  # тестовый чат
 
 
 logging.basicConfig(
@@ -71,7 +72,7 @@ async def handle_poll_answer(quiz_answer: types.PollAnswer):
 
 async def poll():
     poll = await bot.send_poll(
-        chat_id=CHAT_ID,
+        chat_id=CHAT_ID_TEST,
         question='Выберите технику',
         options=const.VEHICLES,
         type='regular',
