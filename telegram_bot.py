@@ -55,7 +55,7 @@ bot = Bot(token=TELEGRAM_TOKEN)
 dp = Dispatcher(bot)
 
 
-def insert_user_db(user):
+async def insert_user_db(user):
     # user = message.from_user
     print(user)
     # print(users)
@@ -68,6 +68,10 @@ def insert_user_db(user):
             'username': user.username,
             'place_of_work': '',
         })
+        await bot.send_message(
+            chat_id=CHAT_ID_TEST,
+            text=f'Добавлен новый пользователь: {user.first_name}, {user.username}'
+        )
 
 
 @dp.message_handler(commands=['test'])
