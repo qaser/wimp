@@ -55,11 +55,12 @@ bot = Bot(token=TELEGRAM_TOKEN)
 dp = Dispatcher(bot)
 
 
-async def insert_user_db(user):
+def insert_user_db(user):
     # user = message.from_user
     print(user)
     # print(users)
     check_user = users.find_one({'id': user.id})
+    print(check_user)
     if check_user is None:
         users.insert_one({
             'id': user.id,
@@ -68,15 +69,21 @@ async def insert_user_db(user):
             'username': user.username,
             'place_of_work': '',
         })
-        await bot.send_message(
-            chat_id=CHAT_ID_TEST,
-            text=f'Добавлен новый пользователь: {user.first_name}, {user.username}'
-        )
+        # send_new_user_note()
+
+
+
+async def send_new_user_note(message:types.Message):
+    await bot.send_message(
+        chat_id=CHAT_ID_TEST,
+        text=f'Добавлен новый пользователь.'
+    )
 
 
 @dp.message_handler(commands=['test'])
 async def send_poll(message:types.Message):
-    insert_user_db(message.from_user)
+    user = message.from_user
+    insert_user_db(user)
     global this_poll
     this_poll = await poll()
 
