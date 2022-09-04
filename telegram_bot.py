@@ -12,6 +12,14 @@ import pymongo
 from aiogram import Bot, Dispatcher, executor, types
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
 from dotenv import load_dotenv
+from aiogram.types import BotCommand
+
+from aiogram.contrib.fsm_storage.memory import MemoryStorage
+from aiogram.dispatcher import FSMContext
+from aiogram.dispatcher.filters import Text
+from aiogram.dispatcher.filters.state import State, StatesGroup
+from aiogram.types import ParseMode
+from aiogram.utils import executor
 
 import utils.constants as const
 from functions.plan_check import plan_tu_check, plan_pat_check
@@ -35,6 +43,13 @@ fs = gridfs.GridFS(db)
 quiz = db['quiz']
 users = db['users']
 
+available_drinks_names = const.VEHICLES_1
+available_drinks_sizes = const.PERIODS
+
+class OrderDrinks(StatesGroup):
+    waiting_for_drink_name = State()
+    waiting_for_drink_size = State()
+
 scheduler = AsyncIOScheduler()
 
 TELEGRAM_TOKEN = os.getenv('TELEGRAM_TOKEN')
@@ -51,7 +66,16 @@ logging.basicConfig(
 )
 
 bot = Bot(token=TELEGRAM_TOKEN)
-dp = Dispatcher(bot)
+dp = Dispatcher(bot, storage=MemoryStorage())
+
+
+async def set_commands(bot: Bot):
+    commands = [
+        BotCommand(command="/drinks", description="Заказать напитки"),
+        BotCommand(command="/food", description="Заказать блюда"),
+        BotCommand(command="/cancel", description="Отменить текущее действие")
+    ]
+    await bot.set_my_commands(commands)
 
 
 def insert_user_db(user):
@@ -71,44 +95,55 @@ async def send_count_users(message:types.Message):
     users_count = users.count_documents({})
     await bot.send_message(
         chat_id=message.chat.id,
-        text=f'Количество польователей в БД: {users_count}'
+        text=f'Количество пользователей в БД: {users_count}'
+    )
+
+
+async def cmd_start(message: types.Message, state: FSMContext):
+    await state.finish()
+    await message.answer(
+        "Выберите, что хотите заказать: напитки (/drinks) или блюда (/food).",
+        reply_markup=types.ReplyKeyboardRemove()
     )
 
 
 @dp.message_handler(commands=['test'])
-async def send_poll(message:types.Message):
-    global this_poll
-    this_poll = await poll()
+async def drinks_start(message: types.Message):
+    keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True)
+    for name in available_drinks_names:
+        keyboard.add(name)
+    await message.answer('Привет, выбери технику', reply_markup=keyboard)
+    await OrderDrinks.waiting_for_drink_name.set()
 
 
-# @dp.poll_answer_handler()
-# async def handle_poll_answer(quiz_answer: types.PollAnswer):
-#     print(quiz_answer)
-#     print(this_poll.poll.id)
-#     await bot.send_poll(
-#         chat_id=quiz_answer.user.id,
-#         question=f'Выберите время для {const.VEHICLES_1[quiz_answer.option_ids[0]]}',
-#         options=const.VEHICLES_1,
-#         type='regular',
-#         allows_multiple_answers=True,
-#         is_anonymous=False,
-#     )
-    # if this_quiz.poll.correct_option_id == quiz_answer:
-    #     print('Правильно!')
-    # else:
-    #     print('Неправильно!')
+async def drinks_chosen(message: types.Message, state: FSMContext):
+    if message.text not in available_drinks_names:
+        await message.answer("Пожалуйста, выбери технику, используя клавиатуру ниже.")
+        return
+    await state.update_data(chosen_food=message.text.lower())
+
+    keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True)
+    for size in available_drinks_sizes:
+        keyboard.add(size)
+    # для простых шагов можно не указывать название состояния, обходясь next()
+    await OrderDrinks.next()
+    await message.answer("Теперь выбери необходимый период времени", reply_markup=keyboard)
 
 
-async def poll():
-    poll_1 = await bot.send_poll(
-        chat_id=TEST_CHAT_ID,
-        question='Выберите технику',
-        options=const.VEHICLES_1,
-        type='regular',
-        allows_multiple_answers=True,
-        is_anonymous=False,
-    )
-    return poll_1
+async def drinks_size_chosen(message: types.Message, state: FSMContext):
+    if message.text not in available_drinks_sizes:
+        await message.answer("Пожалуйста, выбери период, используя клавиатуру ниже.")
+        return
+    user_data = await state.get_data()
+    await message.answer(f"Вы выбрали {user_data['chosen_food']} на следующий период: {message.text.lower()}.\n",
+                         reply_markup=types.ReplyKeyboardRemove())
+    await state.finish()
+
+
+def register_handlers_drinks(dp: Dispatcher):
+    dp.register_message_handler(drinks_start, commands="drinks", state="*")
+    dp.register_message_handler(drinks_chosen, state=OrderDrinks.waiting_for_drink_name)
+    dp.register_message_handler(drinks_size_chosen, state=OrderDrinks.waiting_for_drink_size)
 
 
 @dp.message_handler(commands=['start'])
@@ -382,4 +417,5 @@ async def on_startup(_):
 
 if __name__ == '__main__':
     scheduler.start()
+    register_handlers_drinks(dp)
     executor.start_polling(dp, skip_updates=True, on_startup=on_startup)
