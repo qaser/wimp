@@ -77,18 +77,18 @@ async def send_poll(message:types.Message):
     this_poll = await poll()
 
 
-@dp.poll_answer_handler()
-async def handle_poll_answer(quiz_answer: types.PollAnswer):
-    print(quiz_answer)
-    print(this_poll.poll.id)
-    await bot.send_poll(
-        chat_id=quiz_answer.user.id,
-        question=f'Выберите время для {const.VEHICLES_1[quiz_answer.option_ids[0]]}',
-        options=const.VEHICLES_1,
-        type='regular',
-        allows_multiple_answers=True,
-        is_anonymous=False,
-    )
+# @dp.poll_answer_handler()
+# async def handle_poll_answer(quiz_answer: types.PollAnswer):
+#     print(quiz_answer)
+#     print(this_poll.poll.id)
+#     await bot.send_poll(
+#         chat_id=quiz_answer.user.id,
+#         question=f'Выберите время для {const.VEHICLES_1[quiz_answer.option_ids[0]]}',
+#         options=const.VEHICLES_1,
+#         type='regular',
+#         allows_multiple_answers=True,
+#         is_anonymous=False,
+#     )
     # if this_quiz.poll.correct_option_id == quiz_answer:
     #     print('Правильно!')
     # else:
@@ -97,7 +97,7 @@ async def handle_poll_answer(quiz_answer: types.PollAnswer):
 
 async def poll():
     poll_1 = await bot.send_poll(
-        chat_id=CHAT_ID,
+        chat_id=CHAT_ID_TEST,
         question='Выберите технику',
         options=const.VEHICLES_1,
         type='regular',
