@@ -38,9 +38,9 @@ users = db['users']
 scheduler = AsyncIOScheduler()
 
 TELEGRAM_TOKEN = os.getenv('TELEGRAM_TOKEN')
-# CHAT_ID = os.getenv('CHAT_ID')  # чат КС-5,6
-CHAT_ID = '-1001555422626'  # тестовый чат
-# CHAT_ID_TEST = '-1001555422626'  # тестовый чат
+CHAT_ID = os.getenv('CHAT_ID')  # чат КС-5,6
+# CHAT_ID = '-1001555422626'  # тестовый чат
+CHAT_ID_TEST = '-1001555422626'  # тестовый чат
 
 
 logging.basicConfig(
