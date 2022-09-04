@@ -109,17 +109,20 @@ async def poll():
 
 @dp.message_handler(commands=['start'])
 async def start_handler(message:types.Message):
+    insert_user_db(message.from_user)
     await bot.send_message(message.chat.id, text=INITIAL_TEXT)
 
 
 @dp.message_handler(commands=['help'])
 async def help_handler(message:types.Message):
+    insert_user_db(message.from_user)
     await bot.send_message(message.chat.id, text=f'{message.from_user.full_name}{HELP_TEXT}')
     await bot.send_message(message.chat.id, text=FINAL_TEXT)
 
 
 @dp.message_handler(commands=['pravila'])
 async def pravila_handler(message:types.Message):
+    insert_user_db(message.from_user)
     for root, dirs, files in os.walk('static/kpb_lite/'):
         for filename in files:
             file = f'static/kpb_lite/{filename}'
@@ -132,6 +135,7 @@ async def pravila_handler(message:types.Message):
 
 @dp.message_handler(commands=['vnimanie'])
 async def vnimanie_handler(message:types.Message):
+    insert_user_db(message.from_user)
     for root, dirs, files in os.walk('static/kpb_lite/'):
         for filename in files:
             file = f'static/ns/{filename}'
@@ -144,16 +148,19 @@ async def vnimanie_handler(message:types.Message):
 
 @dp.message_handler(commands=['service'])
 async def service_handler(message:types.Message):
+    insert_user_db(message.from_user)
     await bot.send_message(chat_id=CHAT_ID, text=SERVICE_TEXT)
 
 
 @dp.message_handler(commands=['endservice'])
 async def service_end_handler(message:types.Message):
+    insert_user_db(message.from_user)
     await bot.send_message(chat_id=CHAT_ID, text=SERVICE_END_TEXT)
 
 
 @dp.message_handler(commands=['pat'])
 async def pat_handler(message:types.Message):
+    insert_user_db(message.from_user)
     text = plan_pat_check().get('data')
     full_text = f'Противоаварийная тренировка на КЦ-5,6 в этом месяце:\n\n{text}'
     await bot.send_message(message.chat.id, text=full_text)
@@ -162,6 +169,7 @@ async def pat_handler(message:types.Message):
 
 @dp.message_handler(commands=['tu'])
 async def pat_handler(message:types.Message):
+    insert_user_db(message.from_user)
     plan_now = plan_tu_check().get('plan')
     plan_past = plan_tu_check().get('past_plan')
     text_now = ''
@@ -195,10 +203,12 @@ def get_poll():
 
 @dp.message_handler(commands=['menu'])
 async def all_commands(message:types.Message):
+    insert_user_db(message.from_user)
     await bot.send_message(message.chat.id, text=FINAL_TEXT)
 
 @dp.message_handler(commands=['vopros'])
 async def send_quiz(message:types.Message):
+    insert_user_db(message.from_user)
     poll = get_poll()
     correct_option_id = poll['correct_answer'] - 1
     explanation = poll['answers'][poll['correct_answer'] - 1]
