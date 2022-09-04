@@ -33,13 +33,14 @@ client = pymongo.MongoClient('localhost', 27017)
 db = client['gks_bot_db']
 fs = gridfs.GridFS(db)
 quiz = db['quiz']
+users = db['users']
 
 scheduler = AsyncIOScheduler()
 
 TELEGRAM_TOKEN = os.getenv('TELEGRAM_TOKEN')
-CHAT_ID = os.getenv('CHAT_ID')  # чат КС-5,6
-# CHAT_ID = '-1001555422626'  # тестовый чат
-CHAT_ID_TEST = '-1001555422626'  # тестовый чат
+# CHAT_ID = os.getenv('CHAT_ID')  # чат КС-5,6
+CHAT_ID = '-1001555422626'  # тестовый чат
+# CHAT_ID_TEST = '-1001555422626'  # тестовый чат
 
 
 logging.basicConfig(
@@ -54,8 +55,24 @@ bot = Bot(token=TELEGRAM_TOKEN)
 dp = Dispatcher(bot)
 
 
+def insert_user_db(user):
+    # user = message.from_user
+    print(user)
+    # print(users)
+    check_user = users.find_one({'id': user.id})
+    if check_user is None:
+        users.insert_one({
+            'id': user.id,
+            'first_name': user.first_name,
+            'last_name': user.last_name,
+            'username': user.username,
+            'place_of_work': '',
+        })
+
+
 @dp.message_handler(commands=['test'])
 async def send_poll(message:types.Message):
+    insert_user_db(message.from_user)
     global this_poll
     this_poll = await poll()
 
@@ -64,6 +81,14 @@ async def send_poll(message:types.Message):
 async def handle_poll_answer(quiz_answer: types.PollAnswer):
     print(quiz_answer)
     print(this_poll.poll.id)
+    await bot.send_poll(
+        chat_id=quiz_answer.user.id,
+        question=f'Выберите время для {const.VEHICLES_1[quiz_answer.option_ids[0]]}',
+        options=const.VEHICLES_1,
+        type='regular',
+        allows_multiple_answers=True,
+        is_anonymous=False,
+    )
     # if this_quiz.poll.correct_option_id == quiz_answer:
     #     print('Правильно!')
     # else:
@@ -71,15 +96,15 @@ async def handle_poll_answer(quiz_answer: types.PollAnswer):
 
 
 async def poll():
-    poll = await bot.send_poll(
-        chat_id=CHAT_ID_TEST,
+    poll_1 = await bot.send_poll(
+        chat_id=CHAT_ID,
         question='Выберите технику',
-        options=const.VEHICLES,
+        options=const.VEHICLES_1,
         type='regular',
         allows_multiple_answers=True,
         is_anonymous=False,
     )
-    return poll
+    return poll_1
 
 
 @dp.message_handler(commands=['start'])
