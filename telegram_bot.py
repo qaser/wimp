@@ -38,9 +38,8 @@ users = db['users']
 scheduler = AsyncIOScheduler()
 
 TELEGRAM_TOKEN = os.getenv('TELEGRAM_TOKEN')
-CHAT_ID = os.getenv('CHAT_ID')  # чат КС-5,6
-# CHAT_ID = '-1001555422626'  # тестовый чат
-CHAT_ID_TEST = '-1001555422626'  # тестовый чат
+CHAT_ID = os.getenv('CHAT_ID')  # тестовый чат
+TEST_CHAT_ID = '-1001555422626'  # тестовый чат
 
 
 logging.basicConfig(
@@ -56,11 +55,7 @@ dp = Dispatcher(bot)
 
 
 def insert_user_db(user):
-    # user = message.from_user
-    print(user)
-    # print(users)
     check_user = users.find_one({'id': user.id})
-    print(check_user)
     if check_user is None:
         users.insert_one({
             'id': user.id,
@@ -69,21 +64,19 @@ def insert_user_db(user):
             'username': user.username,
             'place_of_work': '',
         })
-        # send_new_user_note()
 
 
-
-async def send_new_user_note(message:types.Message):
+@dp.message_handler(commands=['count'])
+async def send_count_users(message:types.Message):
+    users_count = users.count_documents({})
     await bot.send_message(
-        chat_id=CHAT_ID_TEST,
-        text=f'Добавлен новый пользователь.'
+        chat_id=message.chat.id,
+        text=f'Количество польователей в БД: {users_count}'
     )
 
 
 @dp.message_handler(commands=['test'])
 async def send_poll(message:types.Message):
-    user = message.from_user
-    insert_user_db(user)
     global this_poll
     this_poll = await poll()
 
@@ -108,7 +101,7 @@ async def send_poll(message:types.Message):
 
 async def poll():
     poll_1 = await bot.send_poll(
-        chat_id=CHAT_ID_TEST,
+        chat_id=TEST_CHAT_ID,
         question='Выберите технику',
         options=const.VEHICLES_1,
         type='regular',
