@@ -109,6 +109,7 @@ async def cmd_start(message: types.Message, state: FSMContext):
 
 @dp.message_handler(commands=['test'])
 async def drinks_start(message: types.Message):
+    insert_user_db(message.from_user)
     keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True)
     for name in available_drinks_names:
         keyboard.add(name)
