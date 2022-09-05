@@ -90,13 +90,24 @@ def insert_user_db(user):
         })
 
 
-@dp.message_handler(commands=['count'])
+@dp.message_handler(commands=['num'])
 async def send_count_users(message:types.Message):
     users_count = users.count_documents({})
     await bot.send_message(
         chat_id=message.chat.id,
         text=f'Количество пользователей в БД: {users_count}'
     )
+
+
+@dp.message_handler(commands=['exam'])
+async def send_count_users(message:types.Message):
+    insert_user_db(message.from_user)
+    for root, dirs, files in os.walk('static/exam/'):
+        for filename in files:
+            file = f'static/exam/{filename}'
+            with open(file, 'rb') as f:
+                contents = f.read()
+                await bot.send_photo(message.chat.id, photo=contents)
 
 
 async def cmd_start(message: types.Message, state: FSMContext):
