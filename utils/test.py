@@ -9,7 +9,7 @@ from dotenv import load_dotenv
 from aiogram import Bot, Dispatcher, executor
 from aiogram.types import BotCommand
 from aiogram.contrib.fsm_storage.memory import MemoryStorage
-from constants import VEHICLES_1, PERIODS
+from constants import VEHICLES, PERIODS
 
 # from app.config_reader import load_config
 # from app.handlers.drinks import register_handlers_drinks
@@ -48,7 +48,7 @@ bot = Bot(token=TELEGRAM_TOKEN)
 dp = Dispatcher(bot, storage=MemoryStorage())
 
 
-available_drinks_names = VEHICLES_1
+available_drinks_names = VEHICLES
 available_drinks_sizes = PERIODS
 
 
