@@ -5,24 +5,20 @@ import logging
 import math
 import os
 import random
-import time
 
 import gridfs
 import pymongo
 from aiogram import Bot, Dispatcher, executor, types
-from apscheduler.schedulers.asyncio import AsyncIOScheduler
-from dotenv import load_dotenv
-from aiogram.types import BotCommand
-
 from aiogram.contrib.fsm_storage.memory import MemoryStorage
 from aiogram.dispatcher import FSMContext
-from aiogram.dispatcher.filters import Text
 from aiogram.dispatcher.filters.state import State, StatesGroup
-from aiogram.types import ParseMode
+from aiogram.types import BotCommand
 from aiogram.utils import executor
+from apscheduler.schedulers.asyncio import AsyncIOScheduler
+from dotenv import load_dotenv
 
 import utils.constants as const
-from functions.plan_check import plan_tu_check, plan_pat_check
+from functions.plan_check import plan_pat_check, plan_tu_check
 from functions.request_weather import request_weather
 from functions.scrap_history_day import scrap_history_day
 from functions.second_level_apk_check import second_level_apk_check
@@ -46,11 +42,14 @@ users = db['users']
 available_drinks_names = const.VEHICLES_1
 available_drinks_sizes = const.PERIODS
 
+
 class OrderDrinks(StatesGroup):
     waiting_for_drink_name = State()
     waiting_for_drink_size = State()
 
+
 scheduler = AsyncIOScheduler()
+
 
 TELEGRAM_TOKEN = os.getenv('TELEGRAM_TOKEN')
 CHAT_ID = os.getenv('CHAT_ID')  # тестовый чат
@@ -69,15 +68,19 @@ bot = Bot(token=TELEGRAM_TOKEN)
 dp = Dispatcher(bot, storage=MemoryStorage())
 
 
-async def set_commands(bot: Bot):
-    commands = [
-        BotCommand(command="/drinks", description="Заказать напитки"),
-        BotCommand(command="/food", description="Заказать блюда"),
-        BotCommand(command="/cancel", description="Отменить текущее действие")
-    ]
-    await bot.set_my_commands(commands)
+# async def set_commands(bot: Bot):
+#     commands = [
+#         BotCommand(command='/drinks', description='Заказать напитки'),
+#         BotCommand(command='/food', description='Заказать блюда'),
+#         BotCommand(
+#             command='/cancel',
+#             description='Отменить текущее действие'
+#         )
+#     ]
+#     await bot.set_my_commands(commands)
 
 
+# проверка наличия юзера в БД и добавление его в БД при отсутствии
 def insert_user_db(user):
     check_user = users.find_one({'id': user.id})
     if check_user is None:
@@ -91,7 +94,7 @@ def insert_user_db(user):
 
 
 @dp.message_handler(commands=['num'])
-async def send_count_users(message:types.Message):
+async def send_count_users(message: types.Message):
     users_count = users.count_documents({})
     await bot.send_message(
         chat_id=message.chat.id,
@@ -100,7 +103,7 @@ async def send_count_users(message:types.Message):
 
 
 @dp.message_handler(commands=['exam'])
-async def send_count_users(message:types.Message):
+async def send_exam_answers(message: types.Message):
     insert_user_db(message.from_user)
     for root, dirs, files in os.walk('static/exam/'):
         for filename in files:
@@ -113,7 +116,7 @@ async def send_count_users(message:types.Message):
 async def cmd_start(message: types.Message, state: FSMContext):
     await state.finish()
     await message.answer(
-        "Выберите, что хотите заказать: напитки (/drinks) или блюда (/food).",
+        'Выберите, что хотите заказать: напитки (/drinks) или блюда (/food).',
         reply_markup=types.ReplyKeyboardRemove()
     )
 
@@ -130,7 +133,9 @@ async def drinks_start(message: types.Message):
 
 async def drinks_chosen(message: types.Message, state: FSMContext):
     if message.text not in available_drinks_names:
-        await message.answer("Пожалуйста, выбери технику, используя клавиатуру ниже.")
+        await message.answer(
+            'Пожалуйста, выбери технику, используя клавиатуру ниже.'
+        )
         return
     await state.update_data(chosen_food=message.text.lower())
 
@@ -139,40 +144,51 @@ async def drinks_chosen(message: types.Message, state: FSMContext):
         keyboard.add(size)
     # для простых шагов можно не указывать название состояния, обходясь next()
     await OrderDrinks.next()
-    await message.answer("Теперь выбери необходимый период времени", reply_markup=keyboard)
+    await message.answer(
+        'Теперь выбери необходимый период времени',
+        reply_markup=keyboard
+    )
 
 
 async def drinks_size_chosen(message: types.Message, state: FSMContext):
     if message.text not in available_drinks_sizes:
-        await message.answer("Пожалуйста, выбери период, используя клавиатуру ниже.")
+        await message.answer(
+            'Пожалуйста, выбери период, используя клавиатуру ниже.'
+        )
         return
     user_data = await state.get_data()
-    await message.answer(f"Вы выбрали {user_data['chosen_food']} на следующий период: {message.text.lower()}.\n",
-                         reply_markup=types.ReplyKeyboardRemove())
+    vehicle = user_data['chosen_vehicle']
+    await message.answer(
+        f'Вы выбрали {vehicle} на следующий период: {message.text}.\n',
+        reply_markup=types.ReplyKeyboardRemove()
+    )
     await state.finish()
 
 
 def register_handlers_drinks(dp: Dispatcher):
-    dp.register_message_handler(drinks_start, commands="drinks", state="*")
+    dp.register_message_handler(drinks_start, commands='drinks', state='*')
     dp.register_message_handler(drinks_chosen, state=OrderDrinks.waiting_for_drink_name)
     dp.register_message_handler(drinks_size_chosen, state=OrderDrinks.waiting_for_drink_size)
 
 
 @dp.message_handler(commands=['start'])
-async def start_handler(message:types.Message):
+async def start_handler(message: types.Message):
     insert_user_db(message.from_user)
     await bot.send_message(message.chat.id, text=INITIAL_TEXT)
 
 
 @dp.message_handler(commands=['help'])
-async def help_handler(message:types.Message):
+async def help_handler(message: types.Message):
     insert_user_db(message.from_user)
-    await bot.send_message(message.chat.id, text=f'{message.from_user.full_name}{HELP_TEXT}')
+    await bot.send_message(
+        message.chat.id,
+        text=f'{message.from_user.full_name}{HELP_TEXT}'
+    )
     await bot.send_message(message.chat.id, text=FINAL_TEXT)
 
 
 @dp.message_handler(commands=['pravila'])
-async def pravila_handler(message:types.Message):
+async def pravila_handler(message: types.Message):
     insert_user_db(message.from_user)
     for root, dirs, files in os.walk('static/kpb_lite/'):
         for filename in files:
@@ -185,7 +201,7 @@ async def pravila_handler(message:types.Message):
 
 
 @dp.message_handler(commands=['vnimanie'])
-async def vnimanie_handler(message:types.Message):
+async def vnimanie_handler(message: types.Message):
     insert_user_db(message.from_user)
     for root, dirs, files in os.walk('static/kpb_lite/'):
         for filename in files:
@@ -198,19 +214,19 @@ async def vnimanie_handler(message:types.Message):
 
 
 @dp.message_handler(commands=['service'])
-async def service_handler(message:types.Message):
+async def service_handler(message: types.Message):
     insert_user_db(message.from_user)
     await bot.send_message(chat_id=CHAT_ID, text=SERVICE_TEXT)
 
 
 @dp.message_handler(commands=['endservice'])
-async def service_end_handler(message:types.Message):
+async def service_end_handler(message: types.Message):
     insert_user_db(message.from_user)
     await bot.send_message(chat_id=CHAT_ID, text=SERVICE_END_TEXT)
 
 
 @dp.message_handler(commands=['pat'])
-async def pat_handler(message:types.Message):
+async def pat_handler(message: types.Message):
     insert_user_db(message.from_user)
     text = plan_pat_check().get('data')
     full_text = f'Противоаварийная тренировка на КЦ-5,6 в этом месяце:\n\n{text}'
@@ -219,7 +235,7 @@ async def pat_handler(message:types.Message):
 
 
 @dp.message_handler(commands=['tu'])
-async def pat_handler(message:types.Message):
+async def tu_handler(message: types.Message):
     insert_user_db(message.from_user)
     plan_now = plan_tu_check().get('plan')
     plan_past = plan_tu_check().get('past_plan')
@@ -253,12 +269,12 @@ def get_poll():
 
 
 @dp.message_handler(commands=['menu'])
-async def all_commands(message:types.Message):
+async def all_commands(message: types.Message):
     insert_user_db(message.from_user)
     await bot.send_message(message.chat.id, text=FINAL_TEXT)
 
 @dp.message_handler(commands=['vopros'])
-async def send_quiz(message:types.Message):
+async def send_quiz(message: types.Message):
     insert_user_db(message.from_user)
     poll = get_poll()
     correct_option_id = poll['correct_answer'] - 1
@@ -335,7 +351,11 @@ async def send_history_day():
     text_history_day = scrap_history_day()
     prefix = 'Доставайте чай, наливайте печенюшки'
     full_text = '{}\n\n{}'.format(prefix, text_history_day)
-    await bot.send_message(chat_id=CHAT_ID, text=full_text, parse_mode=types.ParseMode.HTML)
+    await bot.send_message(
+        chat_id=CHAT_ID,
+        text=full_text,
+        parse_mode=types.ParseMode.HTML
+    )
 
 
 async def send_apk_2_remainder():
@@ -420,7 +440,12 @@ def scheduler_jobs():
         minute=0,
         timezone=const.TIME_ZONE
     )
-    # scheduler.add_job(send_morning_hello, 'interval', seconds=10, timezone=const.TIME_ZONE)
+    # scheduler.add_job(
+    #   send_morning_hello,
+    #   'interval',
+    #   seconds=10,
+    #   timezone=const.TIME_ZONE
+    # )
 
 
 async def on_startup(_):
