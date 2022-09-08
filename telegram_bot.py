@@ -43,8 +43,6 @@ fs = gridfs.GridFS(db)
 quiz = db['quiz']
 users = db['users']
 
-available_drinks_names = const.VEHICLES_1
-available_drinks_sizes = const.PERIODS
 
 class OrderDrinks(StatesGroup):
     waiting_for_drink_name = State()
@@ -110,32 +108,24 @@ async def send_count_users(message:types.Message):
                 await bot.send_photo(message.chat.id, photo=contents)
 
 
-async def cmd_start(message: types.Message, state: FSMContext):
-    await state.finish()
-    await message.answer(
-        "Выберите, что хотите заказать: напитки (/drinks) или блюда (/food).",
-        reply_markup=types.ReplyKeyboardRemove()
-    )
-
-
 @dp.message_handler(commands=['test'])
 async def drinks_start(message: types.Message):
     insert_user_db(message.from_user)
     keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True)
-    for name in available_drinks_names:
+    for name in const.VEHICLES:
         keyboard.add(name)
     await message.answer('Привет, выбери технику', reply_markup=keyboard)
     await OrderDrinks.waiting_for_drink_name.set()
 
 
 async def drinks_chosen(message: types.Message, state: FSMContext):
-    if message.text not in available_drinks_names:
+    if message.text not in const.VEHICLES:
         await message.answer("Пожалуйста, выбери технику, используя клавиатуру ниже.")
         return
-    await state.update_data(chosen_food=message.text.lower())
+    await state.update_data(chosen_food=message.text)
 
     keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True)
-    for size in available_drinks_sizes:
+    for size in const.PERIODS:
         keyboard.add(size)
     # для простых шагов можно не указывать название состояния, обходясь next()
     await OrderDrinks.next()
@@ -143,7 +133,7 @@ async def drinks_chosen(message: types.Message, state: FSMContext):
 
 
 async def drinks_size_chosen(message: types.Message, state: FSMContext):
-    if message.text not in available_drinks_sizes:
+    if message.text not in const.PERIODS:
         await message.answer("Пожалуйста, выбери период, используя клавиатуру ниже.")
         return
     user_data = await state.get_data()
