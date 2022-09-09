@@ -6,6 +6,7 @@ import math
 import os
 import random
 import datetime as dt
+from telnetlib import STATUS
 
 import gridfs
 import pymongo
@@ -359,7 +360,7 @@ async def send_quiz_shedule():
         chat_id=CHAT_ID,
         question=poll['question'],
         options=poll['answers'],
-        is_anonymous=True,
+        is_anonymous=True,git STATUS
         type='quiz',
         correct_option_id=correct_option_id,
         explanation=f'Правильный ответ: {explanation}',
