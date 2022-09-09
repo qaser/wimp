@@ -132,7 +132,8 @@ async def vehicle_start(message: types.Message):
 
 async def vehicle_chosen(message: types.Message, state: FSMContext):
     if message.text not in const.VEHICLES:
-        await message.answer('Пожалуйста, выбери технику, используя список ниже.')
+        await message.answer('Пожалуйста, выбери технику, используя список ниже.'
+                             'Я не работаю с другой техникой кроме той, что в списке.')
         return
     await state.update_data(chosen_vehicle=message.text)
     keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True)
@@ -157,7 +158,7 @@ async def vehicle_time_chosen(message: types.Message, state: FSMContext):
     await ChooseVehicle.next()
     await message.answer(
         (f'Отлично! Я конечно помню {message.from_user.full_name} '
-          'с какого ты цеха, но всё же попрошу выбрать.'),
+          'где ты работаешь, но всё же попрошу выбрать.'),
         reply_markup=keyboard
     )
 
@@ -167,13 +168,13 @@ async def user_location_chosen(message: types.Message, state: FSMContext):
         return
     await state.update_data(chosen_location=message.text)
     keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True)
-    keyboard.add('Да')
-    keyboard.add('Нет')
+    keyboard.add('Нет', 'Да')
+    # keyboard.add('Нет')
     user_data = await state.get_data()
     vehicle = user_data['chosen_vehicle']
     time = user_data['chosen_vehicle_time']
     await message.answer(
-        f'Вы выбрали {vehicle} на следующий период: {time.lower()}.\nВсё верно?',
+        f'Ты выбрал {vehicle} {time.lower()}.\nВсё верно?',
         reply_markup=keyboard,
     )
     await ChooseVehicle.next()
@@ -192,13 +193,15 @@ async def confirmation(message: types.Message, state: FSMContext):
     vehicles.insert_one(
         {
             'date': date,
+            'user': message.from_user.id,
             'location': user_data['chosen_location'],
             'vehicle': user_data['chosen_vehicle'],
             'time': user_data['chosen_vehicle_time'],
         }
     )
     await message.answer(
-        'Данные успешно сохранены.\nВыбрать ещё технику /test',
+        ('Отлично! Данные успешно сохранены.\n'
+        'Если необходимо выбрать ещё технику жми /test'),
         reply_markup=types.ReplyKeyboardRemove()
     )
     await state.finish()
@@ -206,10 +209,22 @@ async def confirmation(message: types.Message, state: FSMContext):
 
 def register_handlers_vehicle(dp: Dispatcher):
     # dp.register_message_handler(vehicle_start, state='*')
-    dp.register_message_handler(vehicle_chosen, state=ChooseVehicle.waiting_for_vehicle_type)
-    dp.register_message_handler(vehicle_time_chosen, state=ChooseVehicle.waiting_for_vehicle_time)
-    dp.register_message_handler(user_location_chosen, state=ChooseVehicle.waiting_for_location)
-    dp.register_message_handler(confirmation, state=ChooseVehicle.waiting_confirm)
+    dp.register_message_handler(
+        vehicle_chosen,
+        state=ChooseVehicle.waiting_for_vehicle_type,
+    )
+    dp.register_message_handler(
+        vehicle_time_chosen,
+        state=ChooseVehicle.waiting_for_vehicle_time
+    )
+    dp.register_message_handler(
+        user_location_chosen,
+        state=ChooseVehicle.waiting_for_location
+    )
+    dp.register_message_handler(
+        confirmation,
+        state=ChooseVehicle.waiting_confirm
+    )
 
 
 @dp.message_handler(commands=['start'])
