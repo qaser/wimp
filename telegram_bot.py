@@ -174,6 +174,7 @@ async def user_location_chosen(message: types.Message, state: FSMContext):
     time = user_data['chosen_vehicle_time']
     await message.answer(
         f'Вы выбрали {vehicle} на следующий период: {time}.\nВсё верно?',
+        reply_markup=keyboard,
     )
     await ChooseVehicle.next()
 
@@ -196,11 +197,11 @@ async def confirmation(message: types.Message, state: FSMContext):
             'time': user_data['chosen_vehicle_time'],
         }
     )
-    await state.finish()
     await message.answer(
-        text='Данные успешно сохранены.\nВыбрать ещё технику /test',
+        'Данные успешно сохранены.\nВыбрать ещё технику /test',
         reply_markup=types.ReplyKeyboardRemove()
     )
+    await state.finish()
 
 
 def register_handlers_vehicle(dp: Dispatcher):
