@@ -119,12 +119,12 @@ async def send_exam_answers(message: types.Message):
 async def vehicle_start(message: types.Message):
     insert_user_db(message.from_user)
     keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True)
-    user=message.from_user
+    user = message.from_user
     for name in const.VEHICLES:
         keyboard.add(name)
     await bot.send_message(
         chat_id=user.id,
-        text=f'Привет {user.full_name}, выбери технику из списка ниже',
+        text=f'Добрый день {user.full_name}, выберите технику из списка ниже',
         reply_markup=keyboard
     )
     await ChooseVehicle.waiting_for_vehicle_type.set()
@@ -132,7 +132,7 @@ async def vehicle_start(message: types.Message):
 
 async def vehicle_chosen(message: types.Message, state: FSMContext):
     if message.text not in const.VEHICLES:
-        await message.answer('Пожалуйста, выбери технику, используя список ниже.'
+        await message.answer('Пожалуйста, выберите технику, используя список ниже.'
                              'Я не работаю с другой техникой кроме той, что в списке.')
         return
     await state.update_data(chosen_vehicle=message.text)
@@ -142,14 +142,14 @@ async def vehicle_chosen(message: types.Message, state: FSMContext):
     # для простых шагов можно не указывать название состояния, обходясь next()
     await ChooseVehicle.next()
     await message.answer(
-        'Теперь выбери необходимый период времени',
+        'Теперь выберите необходимый период времени',
         reply_markup=keyboard
     )
 
 
 async def vehicle_time_chosen(message: types.Message, state: FSMContext):
     if message.text not in const.PERIODS:
-        await message.answer('Пожалуйста, выбери период, используя клавиатуру ниже.')
+        await message.answer('Пожалуйста, выберите период, используя клавиатуру ниже.')
         return
     await state.update_data(chosen_vehicle_time=message.text)
     keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True)
@@ -157,14 +157,14 @@ async def vehicle_time_chosen(message: types.Message, state: FSMContext):
         keyboard.add(location)
     await ChooseVehicle.next()
     await message.answer(
-        (f'Отлично! Я конечно помню {message.from_user.full_name} '
-          'где ты работаешь, но всё же попрошу выбрать.'),
+        (f'Отлично! Я конечно знаю {message.from_user.full_name} '
+          'где Вы работаете, но всё же попрошу выбрать место где будет работать техника.'),
         reply_markup=keyboard
     )
 
 async def user_location_chosen(message: types.Message, state: FSMContext):
     if message.text not in const.LOCATIONS:
-        await message.answer('Пожалуйста, выбери цех, используя клавиатуру ниже.')
+        await message.answer('Пожалуйста, выбери место работы, используя клавиатуру ниже.')
         return
     await state.update_data(chosen_location=message.text)
     keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True)
@@ -185,9 +185,12 @@ async def confirmation(message: types.Message, state: FSMContext):
         await message.answer('Пожалуйста, выбери ответ, используя клавиатуру ниже.')
         return
     if message.text.lower() == 'нет':
-        await ChooseVehicle.waiting_for_vehicle_type.set()
-        # await vehicle_start('j,')
-        # return
+        await message.answer(
+            ('Хорошо. Данные не сохранены.\n'
+             'Если необходимо выбрать технику снова - нажмите /test'),
+            reply_markup=types.ReplyKeyboardRemove()
+        )
+        await state.reset_state()
     user_data = await state.get_data()
     date = dt.datetime.today().strftime('%d.%m.%Y')
     vehicles.insert_one(
@@ -201,7 +204,7 @@ async def confirmation(message: types.Message, state: FSMContext):
     )
     await message.answer(
         ('Отлично! Данные успешно сохранены.\n'
-        'Если необходимо выбрать ещё технику жми /test'),
+         'Если необходимо выбрать ещё технику жми /test'),
         reply_markup=types.ReplyKeyboardRemove()
     )
     await state.finish()
