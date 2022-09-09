@@ -174,7 +174,6 @@ async def user_location_chosen(message: types.Message, state: FSMContext):
     time = user_data['chosen_vehicle_time']
     await message.answer(
         f'Вы выбрали {vehicle} на следующий период: {time}.\nВсё верно?',
-        reply_markup=types.ReplyKeyboardRemove()
     )
     await ChooseVehicle.next()
 
@@ -187,21 +186,20 @@ async def confirmation(message: types.Message, state: FSMContext):
         await ChooseVehicle.waiting_for_vehicle_type.set()
         # await vehicle_start('j,')
         # return
-    if message.text.lower() == 'да':
-        user_data = await state.get_data()
-        date = dt.datetime.today().strftime('%d.%m.%Y')
-        vehicles.insert_one(
-            {
-                'date': date,
-                'location': user_data['chosen_location'],
-                'vehicle': user_data['chosen_vehicle'],
-                'time': user_data['chosen_vehicle_time'],
-            }
-        )
+    user_data = await state.get_data()
+    date = dt.datetime.today().strftime('%d.%m.%Y')
+    vehicles.insert_one(
+        {
+            'date': date,
+            'location': user_data['chosen_location'],
+            'vehicle': user_data['chosen_vehicle'],
+            'time': user_data['chosen_vehicle_time'],
+        }
+    )
     await state.finish()
-    await bot.send_message(
-        chat_id=message.from_user.id,
-        text='Данные успешно сохранены.\nВыбрать ещё технику /test'
+    await message.answer(
+        text='Данные успешно сохранены.\nВыбрать ещё технику /test',
+        reply_markup=types.ReplyKeyboardRemove()
     )
 
 
