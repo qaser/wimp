@@ -173,7 +173,7 @@ async def user_location_chosen(message: types.Message, state: FSMContext):
     vehicle = user_data['chosen_vehicle']
     time = user_data['chosen_vehicle_time']
     await message.answer(
-        f'Вы выбрали {vehicle} на следующий период: {time}.\nВсё верно?',
+        f'Вы выбрали {vehicle} на следующий период: {time.lower()}.\nВсё верно?',
         reply_markup=keyboard,
     )
     await ChooseVehicle.next()
