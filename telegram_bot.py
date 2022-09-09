@@ -170,7 +170,6 @@ async def user_location_chosen(message: types.Message, state: FSMContext):
     await state.update_data(chosen_location=message.text)
     keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True)
     keyboard.add('Нет', 'Да')
-    # keyboard.add('Нет')
     user_data = await state.get_data()
     vehicle = user_data['chosen_vehicle']
     time = user_data['chosen_vehicle_time']
@@ -183,7 +182,7 @@ async def user_location_chosen(message: types.Message, state: FSMContext):
 
 async def confirmation(message: types.Message, state: FSMContext):
     if message.text.lower() not in ['нет', 'да']:
-        await message.answer('Пожалуйста, выбери ответ, используя клавиатуру ниже.')
+        await message.answer('Пожалуйста, выберите ответ, используя клавиатуру ниже.')
         return
     if message.text.lower() == 'нет':
         await message.answer(
@@ -205,7 +204,7 @@ async def confirmation(message: types.Message, state: FSMContext):
     )
     await message.answer(
         ('Отлично! Данные успешно сохранены.\n'
-         'Если необходимо выбрать ещё технику жми /test'),
+         'Если необходимо выбрать ещё технику нажмите /test'),
         reply_markup=types.ReplyKeyboardRemove()
     )
     await state.finish()
@@ -360,7 +359,7 @@ async def send_quiz_shedule():
         chat_id=CHAT_ID,
         question=poll['question'],
         options=poll['answers'],
-        is_anonymous=True,git STATUS
+        is_anonymous=True,
         type='quiz',
         correct_option_id=correct_option_id,
         explanation=f'Правильный ответ: {explanation}',
