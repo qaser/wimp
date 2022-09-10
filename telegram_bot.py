@@ -4,6 +4,7 @@ import datetime as dt
 import logging
 import math
 import os
+import pprint
 import random
 import datetime as dt
 from telnetlib import STATUS
@@ -57,6 +58,7 @@ scheduler = AsyncIOScheduler()
 TELEGRAM_TOKEN = os.getenv('TELEGRAM_TOKEN')
 CHAT_ID = os.getenv('CHAT_ID')  # тестовый чат
 TEST_CHAT_ID = '-1001555422626'  # тестовый чат
+CHAT_ID_GKS = os.getenv('CHAT_ID_GKS')
 
 
 logging.basicConfig(
@@ -116,7 +118,43 @@ async def send_exam_answers(message: types.Message):
                 await bot.send_photo(message.chat.id, photo=contents)
 
 
-@dp.message_handler(commands=['test'])
+async def send_vehicle_start_message():
+    message = ('Уважаемые начальники цехов, время делать заявки на спец. технику.\n'
+               'Для подачи заявки перейдите по ссылке:\n\n'
+               '/zayavka\n\n'
+               'Заявки принимаются до 16:45.')
+    await bot.send_message(chat_id=CHAT_ID_GKS, text=message)
+
+
+@dp.message_handler(commands=['zayavka'])
+async def redirect_vehicle(message: types.Message):
+    await bot.send_message(
+        chat_id=message.from_user.id,
+        text=f'Добрый день {message.from_user.full_name}, для начала нажмите\n\n/tehnika'
+    )
+
+
+async def send_vehicle_stop_message():
+    date = dt.datetime.today().strftime('%d.%m.%Y')
+    queryset = vehicles.find({'date': date})
+    result = {}
+    for i in queryset:
+        if result.get(i.get('vehicle')) is None:
+            result[i.get('vehicle')] = {}
+        result[i.get('vehicle')][i.get('location')] = i.get('time')
+    message = ''
+    for vehicle, loc_time in result.items():
+        part_message = ''
+        for location, time in loc_time.items():
+            text = '    {} - {}\n'.format(location, time.lower())
+            part_message = '{}{}'.format(part_message, text)
+        part_text = '{}:\n{}'.format(vehicle, part_message)
+        message = '{}{}\n'.format(message, part_text)
+    final_message = '{}\n\n{}'.format('Приём заявок завершён.', message)
+    await bot.send_message(chat_id=CHAT_ID_GKS, text=final_message)
+
+
+@dp.message_handler(commands=['tehnika'])
 async def vehicle_start(message: types.Message):
     insert_user_db(message.from_user)
     keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True)
@@ -125,7 +163,7 @@ async def vehicle_start(message: types.Message):
         keyboard.add(name)
     await bot.send_message(
         chat_id=user.id,
-        text=f'Добрый день {user.full_name}, выберите технику из списка ниже',
+        text=f'Выберите спец.технику из списка ниже',
         reply_markup=keyboard
     )
     await ChooseVehicle.waiting_for_vehicle_type.set()
@@ -142,8 +180,13 @@ async def vehicle_chosen(message: types.Message, state: FSMContext):
         keyboard.add(size)
     # для простых шагов можно не указывать название состояния, обходясь next()
     await ChooseVehicle.next()
-    await message.answer(
-        'Теперь выберите необходимый период времени',
+    # await message.answer(
+    #     'Теперь выберите необходимый период времени',
+    #     reply_markup=keyboard
+    # )
+    await bot.send_message(
+        chat_id=message.from_user.id,
+        text='Теперь выберите необходимый период времени',
         reply_markup=keyboard
     )
 
@@ -157,15 +200,15 @@ async def vehicle_time_chosen(message: types.Message, state: FSMContext):
     for location in const.LOCATIONS:
         keyboard.add(location)
     await ChooseVehicle.next()
-    await message.answer(
-        (f'Отлично! Я конечно знаю {message.from_user.full_name} '
-          'где Вы работаете, но всё же попрошу выбрать место где будет работать техника.'),
+    await bot.send_message(
+        chat_id=message.from_user.id,
+        text= 'Отлично! Выберите место где будет работать техника.',
         reply_markup=keyboard
     )
 
 async def user_location_chosen(message: types.Message, state: FSMContext):
     if message.text not in const.LOCATIONS:
-        await message.answer('Пожалуйста, выбери место работы, используя клавиатуру ниже.')
+        await message.answer('Пожалуйста, выберите место работы, используя клавиатуру ниже.')
         return
     await state.update_data(chosen_location=message.text)
     keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True)
@@ -173,8 +216,9 @@ async def user_location_chosen(message: types.Message, state: FSMContext):
     user_data = await state.get_data()
     vehicle = user_data['chosen_vehicle']
     time = user_data['chosen_vehicle_time']
-    await message.answer(
-        f'Ты выбрал {vehicle} {time.lower()}.\nВсё верно?',
+    await bot.send_message(
+        chat_id=message.from_user.id,
+        text=f'Вы выбрали "{vehicle}" {time.lower()}.\nВсё верно?',
         reply_markup=keyboard,
     )
     await ChooseVehicle.next()
@@ -187,7 +231,7 @@ async def confirmation(message: types.Message, state: FSMContext):
     if message.text.lower() == 'нет':
         await message.answer(
             ('Хорошо. Данные не сохранены.\n'
-             'Если необходимо выбрать технику снова - нажмите /test'),
+             'Если необходимо выбрать технику снова - нажмите /tehnika'),
             reply_markup=types.ReplyKeyboardRemove()
         )
         await state.reset_state()
@@ -204,14 +248,13 @@ async def confirmation(message: types.Message, state: FSMContext):
     )
     await message.answer(
         ('Отлично! Данные успешно сохранены.\n'
-         'Если необходимо выбрать ещё технику нажмите /test'),
+         'Если необходимо выбрать ещё технику нажмите /tehnika'),
         reply_markup=types.ReplyKeyboardRemove()
     )
     await state.finish()
 
 
 def register_handlers_vehicle(dp: Dispatcher):
-    # dp.register_message_handler(vehicle_start, state='*')
     dp.register_message_handler(
         vehicle_chosen,
         state=ChooseVehicle.waiting_for_vehicle_type,
@@ -323,7 +366,7 @@ async def tu_handler(message: types.Message):
 def get_poll():
     count = quiz.count_documents({})
     rand_num = random.randint(0, count)
-    poll = quiz.find({'num': rand_num}).next()
+    poll = quiz.find_one({'num': rand_num})
     return poll
 
 
@@ -331,6 +374,7 @@ def get_poll():
 async def all_commands(message: types.Message):
     insert_user_db(message.from_user)
     await bot.send_message(message.chat.id, text=FINAL_TEXT)
+
 
 @dp.message_handler(commands=['vopros'])
 async def send_quiz(message: types.Message):
@@ -497,6 +541,22 @@ def scheduler_jobs():
         day_of_week='mon-sun',
         hour=8,
         minute=0,
+        timezone=const.TIME_ZONE
+    )
+    scheduler.add_job(
+        send_vehicle_start_message,
+        'cron',
+        day_of_week='sat',
+        hour=8,
+        minute=0,
+        timezone=const.TIME_ZONE
+    )
+    scheduler.add_job(
+        send_vehicle_stop_message,
+        'cron',
+        day_of_week='sat',
+        hour=8,
+        minute=2,
         timezone=const.TIME_ZONE
     )
     # scheduler.add_job(
