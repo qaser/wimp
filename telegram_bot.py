@@ -69,18 +69,6 @@ bot = Bot(token=TELEGRAM_TOKEN)
 dp = Dispatcher(bot, storage=MemoryStorage())
 
 
-async def set_commands(bot: Bot):
-    commands = [
-        BotCommand(command='/drinks', description='Заказать напитки'),
-        BotCommand(command='/food', description='Заказать блюда'),
-        BotCommand(
-            command='/cancel',
-            description='Отменить текущее действие'
-        )
-    ]
-    await bot.set_my_commands(commands)
-
-
 # проверка наличия юзера в БД и добавление его в БД при отсутствии
 def insert_user_db(user):
     check_user = users.find_one({'id': user.id})

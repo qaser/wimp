@@ -1,20 +1,39 @@
-import pymongo
+import requests
+import time
+from dotenv import load_dotenv
+import os
 
-client = pymongo.MongoClient('localhost', 27017)
-# Connect to our database
-db = client['gks_bot_db']
-quiz = db['quiz']
-quiz_count = quiz.count_documents({})
-answer_num = quiz_count
+load_dotenv()
 
-file = 'quiz_raw.csv'
-quiz_dict = {}
-with open(file, 'r', encoding='UTF-8') as f:
-    contents = f.readlines()
-    for id, row in enumerate(contents):
-        row_list = row.rstrip('\n').split(';')
-        theme, question, correct_answer, num_answers, *answers = row_list
-        for ind, ans in enumerate(answers):
-            str_len = len(ans)
-            if str_len > 100:
-                print(id, question, ind, str_len)
+TOKEN = os.getenv('TELEGRAM_TOKEN')
+URL = 'https://api.telegram.org/bot'
+
+def get_updates(offset=0):
+    result = requests.get(f'{URL}{TOKEN}/getUpdates?offset={offset}').json()
+    return result['result']
+
+def send_message(chat_id, text):
+    requests.get(f'{URL}{TOKEN}/sendMessage?chat_id={chat_id}&text={text}')
+
+def check_message(chat_id, message):
+    for mes in message.lower().replace(',', '').split():
+        if mes in ['привет', 'ку']:
+            send_message(chat_id, 'Привет :)')
+        if mes in ['дела?', 'успехи?']:
+            send_message(chat_id, 'Спасибо, хорошо!')
+
+def run():
+    update_id = get_updates()[-1]['update_id'] # Присваиваем ID последнего отправленного сообщения боту
+    print(update_id)
+    while True:
+        time.sleep(2)
+        messages = get_updates(update_id) # Получаем обновления
+        for message in messages:
+            # Если в обновлении есть ID больше чем ID последнего сообщения, значит пришло новое сообщение
+            if update_id < message['update_id']:
+                update_id = message['update_id'] # Присваиваем ID последнего отправленного сообщения боту
+                # Отвечаем тому кто прислал сообщение боту
+                check_message(message['message']['chat']['id'], message['message']['text'])
+
+if __name__ == '__main__':
+    run()
