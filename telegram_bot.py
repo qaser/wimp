@@ -4,14 +4,11 @@ import datetime as dt
 import logging
 import math
 import os
-import pprint
 import random
-import datetime as dt
-from telnetlib import STATUS
 
 import gridfs
 import pymongo
-from aiogram import Bot, Dispatcher, executor, types
+from aiogram import Bot, Dispatcher, types
 from aiogram.contrib.fsm_storage.memory import MemoryStorage
 from aiogram.dispatcher import FSMContext
 from aiogram.dispatcher.filters.state import State, StatesGroup
@@ -42,7 +39,6 @@ fs = gridfs.GridFS(db)
 quiz = db['quiz']
 users = db['users']
 vehicles = db['vehicles']
-
 
 
 class ChooseVehicle(StatesGroup):
@@ -119,7 +115,8 @@ async def send_exam_answers(message: types.Message):
 
 
 async def send_vehicle_start_message():
-    message = ('Уважаемые начальники цехов, время делать заявки на спец. технику.\n'
+    message = ('Уважаемые начальники цехов, '
+               'время делать заявки на спец. технику.\n'
                'Для подачи заявки перейдите по ссылке:\n\n'
                '/zayavka\n\n'
                'Заявки принимаются до 16:45.')
@@ -130,7 +127,10 @@ async def send_vehicle_start_message():
 async def redirect_vehicle(message: types.Message):
     await bot.send_message(
         chat_id=message.from_user.id,
-        text=f'Добрый день {message.from_user.full_name}, для начала нажмите\n\n/tehnika'
+        text=(
+            f'Добрый день {message.from_user.full_name}, '
+            'для начала нажмите\n\n/tehnika'
+        )
     )
 
 
@@ -163,7 +163,7 @@ async def vehicle_start(message: types.Message):
         keyboard.add(name)
     await bot.send_message(
         chat_id=user.id,
-        text=f'Выберите спец.технику из списка ниже',
+        text='Выберите спец.технику из списка ниже',
         reply_markup=keyboard
     )
     await ChooseVehicle.waiting_for_vehicle_type.set()
@@ -171,8 +171,10 @@ async def vehicle_start(message: types.Message):
 
 async def vehicle_chosen(message: types.Message, state: FSMContext):
     if message.text not in const.VEHICLES:
-        await message.answer('Пожалуйста, выберите технику, используя список ниже.'
-                             'Я не работаю с другой техникой кроме той, что в списке.')
+        await message.answer(
+            'Пожалуйста, выберите технику, используя список ниже.'
+            'Я не работаю с другой техникой кроме той, что в списке.'
+        )
         return
     await state.update_data(chosen_vehicle=message.text)
     keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True)
@@ -193,7 +195,9 @@ async def vehicle_chosen(message: types.Message, state: FSMContext):
 
 async def vehicle_time_chosen(message: types.Message, state: FSMContext):
     if message.text not in const.PERIODS:
-        await message.answer('Пожалуйста, выберите период, используя клавиатуру ниже.')
+        await message.answer(
+            'Пожалуйста, выберите период, используя клавиатуру ниже.'
+        )
         return
     await state.update_data(chosen_vehicle_time=message.text)
     keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True)
@@ -202,13 +206,16 @@ async def vehicle_time_chosen(message: types.Message, state: FSMContext):
     await ChooseVehicle.next()
     await bot.send_message(
         chat_id=message.from_user.id,
-        text= 'Отлично! Выберите место где будет работать техника.',
+        text='Отлично! Выберите место где будет работать техника.',
         reply_markup=keyboard
     )
 
+
 async def user_location_chosen(message: types.Message, state: FSMContext):
     if message.text not in const.LOCATIONS:
-        await message.answer('Пожалуйста, выберите место работы, используя клавиатуру ниже.')
+        await message.answer(
+            'Пожалуйста, выберите место работы, используя клавиатуру ниже.'
+        )
         return
     await state.update_data(chosen_location=message.text)
     keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True)
@@ -226,7 +233,9 @@ async def user_location_chosen(message: types.Message, state: FSMContext):
 
 async def confirmation(message: types.Message, state: FSMContext):
     if message.text.lower() not in ['нет', 'да']:
-        await message.answer('Пожалуйста, выберите ответ, используя клавиатуру ниже.')
+        await message.answer(
+            'Пожалуйста, выберите ответ, используя клавиатуру ниже.'
+        )
         return
     if message.text.lower() == 'нет':
         await message.answer(
@@ -331,7 +340,9 @@ async def service_end_handler(message: types.Message):
 async def pat_handler(message: types.Message):
     insert_user_db(message.from_user)
     text = plan_pat_check().get('data')
-    full_text = f'Противоаварийная тренировка на КЦ-5,6 в этом месяце:\n\n{text}'
+    full_text = (
+        f'Противоаварийная тренировка на КЦ-5,6 в этом месяце:\n\n{text}'
+    )
     await bot.send_message(message.chat.id, text=full_text)
     await bot.send_message(message.chat.id, text=FINAL_TEXT)
 
@@ -419,7 +430,9 @@ async def send_morning_hello():
     else:
         day_trinity = str(math.ceil(day/3))
     avo_temp = const.RECOMMEND_TEMP[month][day_trinity]
-    text_avo_temp = f'Рекомендуемая температура газа после АВО:\n{avo_temp} град. Цельсия'
+    text_avo_temp = (
+        f'Рекомендуемая температура газа после АВО:\n{avo_temp} град. Цельсия'
+    )
     text_morning_hello = hello_generator()
     text_weather = request_weather()
     message = '{}\n{}\n{}'.format(
@@ -479,7 +492,9 @@ async def send_tu_theme():
         text = ''
         for theme in list_tu:
             text = '{}\n{}\n'.format(text, theme)
-        message = f'Сегодня по плану должна быть техучёба.\nТемы занятий:\n{text}'
+        message = (
+            f'Сегодня по плану должна быть техучёба.\nТемы занятий:\n{text}'
+        )
         await bot.send_message(chat_id=CHAT_ID, text=message)
 
 

@@ -1,7 +1,7 @@
 import os
-import pymongo
-import gridfs
 
+import gridfs
+import pymongo
 
 client = pymongo.MongoClient('localhost', 27017)
 # Connect to our database

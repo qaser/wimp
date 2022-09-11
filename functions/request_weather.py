@@ -1,10 +1,10 @@
-import requests
 import os
-import utils.constants as const
+
+import requests
 from dotenv import load_dotenv
 
+import utils.constants as const
 from functions.text_generators import weather_text_generator
-
 
 load_dotenv()
 

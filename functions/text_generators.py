@@ -1,13 +1,13 @@
 import datetime as dt
-from texts.evening import EVENING_HELLO
 
+from functions.plan_check import plan_pat_check, plan_tu_check
+from texts.evening import EVENING_HELLO
 from texts.mornings import MORNING_HELLO, MORNING_WISHES
+from texts.pat import MONTH_TEXT, PAT, TU
 from texts.weather import (WEATHER_COLD_PREFIX, WEATHER_HOT_PREFIX,
                            WEATHER_MAIN, WEATHER_RAIN_PREFIX)
-from texts.pat import PAT, TU, MONTH_TEXT
-from utils.random_list_elem import random_list_elem
-from functions.plan_check import plan_pat_check, plan_tu_check
 from utils.constants import RECOMMEND_TEMP
+from utils.random_list_elem import random_list_elem
 
 
 def hello_generator():

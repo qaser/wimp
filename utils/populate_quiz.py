@@ -1,6 +1,5 @@
 import pymongo
 
-
 client = pymongo.MongoClient('localhost', 27017)
 # Connect to our database
 db = client['gks_bot_db']

@@ -1,8 +1,9 @@
 import random
-import utils.constants as const
+from urllib.request import urlopen
 
 from bs4 import BeautifulSoup
-from urllib.request import urlopen
+
+import utils.constants as const
 
 
 def scrap_history_day():

@@ -1,7 +1,8 @@
-from datetime import datetime
 import datetime as dt
+from datetime import datetime
 
 from texts.pat import PAT, TU
+
 
 def plan_tu_check():
     today_month = dt.datetime.today().month
