@@ -558,8 +558,8 @@ def scheduler_jobs():
         send_vehicle_start_message,
         'cron',
         day_of_week='mon-thu',
-        hour=16,
-        minute=0,
+        hour=15,
+        minute=30,
         timezone=const.TIME_ZONE
     )
     scheduler.add_job(
@@ -574,8 +574,8 @@ def scheduler_jobs():
         send_vehicle_start_message,
         'cron',
         day_of_week='fri',
-        hour=14,
-        minute=0,
+        hour=13,
+        minute=30,
         timezone=const.TIME_ZONE
     )
     scheduler.add_job(
