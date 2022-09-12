@@ -69,6 +69,11 @@ bot = Bot(token=TELEGRAM_TOKEN)
 dp = Dispatcher(bot, storage=MemoryStorage())
 
 
+# async def bot_get_update():
+#     upd = await bot.get_updates(offset=0)
+#     print(upd)
+
+
 # проверка наличия юзера в БД и добавление его в БД при отсутствии
 def insert_user_db(user):
     check_user = users.find_one({'id': user.id})
@@ -107,7 +112,7 @@ async def send_vehicle_start_message():
                'время делать заявки на спец. технику.\n'
                'Для подачи заявки перейдите по ссылке:\n\n'
                '/zayavka\n\n'
-               'Заявки принимаются до 16:45.')
+               'Заявки принимаются до 16:30.')
     await bot.send_message(chat_id=CHAT_ID_GKS, text=message)
 
 
@@ -550,16 +555,16 @@ def scheduler_jobs():
         send_vehicle_start_message,
         'cron',
         day_of_week='mon-thu',
-        hour=16,
-        minute=0,
+        hour=12,
+        minute=36,
         timezone=const.TIME_ZONE
     )
     scheduler.add_job(
         send_vehicle_stop_message,
         'cron',
         day_of_week='mon-thu',
-        hour=16,
-        minute=30,
+        hour=12,
+        minute=38,
         timezone=const.TIME_ZONE
     )
     scheduler.add_job(
@@ -579,7 +584,7 @@ def scheduler_jobs():
         timezone=const.TIME_ZONE
     )
     # scheduler.add_job(
-    #   send_morning_hello,
+    #   bot_get_update,
     #   'interval',
     #   seconds=10,
     #   timezone=const.TIME_ZONE
