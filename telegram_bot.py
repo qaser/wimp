@@ -45,6 +45,7 @@ class ChooseVehicle(StatesGroup):
     waiting_for_vehicle_type = State()
     waiting_for_vehicle_time = State()
     waiting_for_location = State()
+    waiting_comment = State()
     waiting_confirm = State()
 
 
@@ -67,11 +68,6 @@ logging.basicConfig(
 
 bot = Bot(token=TELEGRAM_TOKEN)
 dp = Dispatcher(bot, storage=MemoryStorage())
-
-
-# async def bot_get_update():
-#     upd = await bot.get_updates(offset=0)
-#     print(upd)
 
 
 # проверка наличия юзера в БД и добавление его в БД при отсутствии
@@ -112,7 +108,7 @@ async def send_vehicle_start_message():
                'время делать заявки на спец. технику.\n'
                'Для подачи заявки перейдите по ссылке:\n\n'
                '/zayavka\n\n'
-               'Заявки принимаются до 16:30.')
+               'Заявки принимаются в течение часа.')
     await bot.send_message(chat_id=CHAT_ID_GKS, text=message)
 
 
@@ -134,20 +130,34 @@ async def send_vehicle_stop_message():
     for i in queryset:
         if result.get(i.get('vehicle')) is None:
             result[i.get('vehicle')] = {}
-        result[i.get('vehicle')][i.get('location')] = i.get('time')
+        result[i.get('vehicle')][i.get('location')] = [
+            i.get('time'),
+            i.get('comment'),
+            i.get('user'),
+        ]
     message = ''
-    for vehicle, loc_time in result.items():
+    for vehicle, loc_list in result.items():
         part_message = ''
-        for location, time in loc_time.items():
-            text = '    {} - {}\n'.format(location, time.lower())
+        for location, data_list in loc_list.items():
+            time, comment, user = data_list
+            text = '    <b>{}</b> - {}. "{}" <i>({})</i>\n'.format(
+                location,
+                time.lower(),
+                comment,
+                user,
+            )
             part_message = '{}{}'.format(part_message, text)
-        part_text = '{}:\n{}'.format(vehicle, part_message)
-        message = '{}{}\n'.format(message, part_text)
+        vehicle_part_text = '<u>{}</u>:\n{}'.format(vehicle, part_message)
+        message = '{}{}\n'.format(message, vehicle_part_text)
     final_message = '{}\n\n{}'.format(
         'Приём заявок на технику завершён.',
-        message
+        message,
     )
-    await bot.send_message(chat_id=CHAT_ID_GKS, text=final_message)
+    await bot.send_message(
+        chat_id=CHAT_ID_GKS,
+        text=final_message,
+        parse_mode=types.ParseMode.HTML,
+    )
 
 
 @dp.message_handler(commands=['tehnika'])
@@ -178,10 +188,6 @@ async def vehicle_chosen(message: types.Message, state: FSMContext):
         keyboard.add(size)
     # для простых шагов можно не указывать название состояния, обходясь next()
     await ChooseVehicle.next()
-    # await message.answer(
-    #     'Теперь выберите необходимый период времени',
-    #     reply_markup=keyboard
-    # )
     await bot.send_message(
         chat_id=message.from_user.id,
         text='Теперь выберите необходимый период времени',
@@ -213,7 +219,20 @@ async def user_location_chosen(message: types.Message, state: FSMContext):
             'Пожалуйста, выберите место работы, используя клавиатуру ниже.'
         )
         return
+    keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True)
+    keyboard.add('Без комментария')
     await state.update_data(chosen_location=message.text)
+    await bot.send_message(
+        chat_id=message.from_user.id,
+        text=('Если необходимо - можете добавить комментарий. '
+              'Или нажать на кнопку "Без комментария"'),
+        reply_markup=keyboard,
+    )
+    await ChooseVehicle.next()
+
+
+async def add_comment(message: types.Message, state: FSMContext):
+    await state.update_data(comment=message.text)
     keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True)
     keyboard.add('Нет', 'Да')
     user_data = await state.get_data()
@@ -225,6 +244,7 @@ async def user_location_chosen(message: types.Message, state: FSMContext):
         reply_markup=keyboard,
     )
     await ChooseVehicle.next()
+
 
 
 async def confirmation(message: types.Message, state: FSMContext):
@@ -245,10 +265,11 @@ async def confirmation(message: types.Message, state: FSMContext):
     vehicles.insert_one(
         {
             'date': date,
-            'user': message.from_user.id,
+            'user': message.from_user.full_name,
             'location': user_data['chosen_location'],
             'vehicle': user_data['chosen_vehicle'],
             'time': user_data['chosen_vehicle_time'],
+            'comment': user_data['comment']
         }
     )
     await message.answer(
@@ -273,9 +294,36 @@ def register_handlers_vehicle(dp: Dispatcher):
         state=ChooseVehicle.waiting_for_location
     )
     dp.register_message_handler(
+        add_comment,
+        state=ChooseVehicle.waiting_comment
+    )
+    dp.register_message_handler(
         confirmation,
         state=ChooseVehicle.waiting_confirm
     )
+
+
+@dp.message_handler(commands=['resume'])
+async def start_confirm_vehicle_orders(message: types.Message):
+    date = dt.datetime.today().strftime('%d.%m.%Y')
+    keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True)
+    vehicle_orders = vehicles.find({'date': date}).sort(
+        'vehicle',pymongo.ASCENDING
+    )
+    # добавляем названия кнопок на основе данных из  БД
+    for order in vehicle_orders:
+        vehicle = order.get('vehicle')
+        location = order.get('location')
+        time = order.get('time').lower()
+        key = f'{vehicle}: {location} - {time}'
+        keyboard.add(key)
+    keyboard.add('На этом всё')
+    await bot.send_message(
+        chat_id=CHAT_ID_GKS,
+        text='Привет',
+        reply_markup=keyboard,
+    )
+
 
 
 @dp.message_handler(commands=['start'])
@@ -558,8 +606,8 @@ def scheduler_jobs():
         send_vehicle_start_message,
         'cron',
         day_of_week='mon-thu',
-        hour=16,
-        minute=0,
+        hour=15,
+        minute=30,
         timezone=const.TIME_ZONE
     )
     scheduler.add_job(
@@ -574,8 +622,8 @@ def scheduler_jobs():
         send_vehicle_start_message,
         'cron',
         day_of_week='fri',
-        hour=14,
-        minute=0,
+        hour=13,
+        minute=30,
         timezone=const.TIME_ZONE
     )
     scheduler.add_job(
@@ -587,7 +635,7 @@ def scheduler_jobs():
         timezone=const.TIME_ZONE
     )
     # scheduler.add_job(
-    #   bot_get_update,
+    #   send_vehicle_stop_message,
     #   'interval',
     #   seconds=10,
     #   timezone=const.TIME_ZONE
