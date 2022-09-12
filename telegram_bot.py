@@ -1,5 +1,7 @@
 # TODO сделать отправку стикеров
 
+import asyncio
+from contextlib import suppress
 import datetime as dt
 import logging
 import math
@@ -303,27 +305,33 @@ def register_handlers_vehicle(dp: Dispatcher):
     )
 
 
-@dp.message_handler(commands=['resume'])
-async def start_confirm_vehicle_orders(message: types.Message):
-    date = dt.datetime.today().strftime('%d.%m.%Y')
-    keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True)
-    vehicle_orders = vehicles.find({'date': date}).sort(
-        'vehicle',pymongo.ASCENDING
-    )
-    # добавляем названия кнопок на основе данных из  БД
-    for order in vehicle_orders:
-        vehicle = order.get('vehicle')
-        location = order.get('location')
-        time = order.get('time').lower()
-        key = f'{vehicle}: {location} - {time}'
-        keyboard.add(key)
-    keyboard.add('На этом всё')
-    await bot.send_message(
-        chat_id=CHAT_ID_GKS,
-        text='Привет',
-        reply_markup=keyboard,
-    )
+# @dp.message_handler(commands=['resume'])
+# async def start_confirm_vehicle_orders(message: types.Message):
+#     date = dt.datetime.today().strftime('%d.%m.%Y')
+#     keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True)
+#     vehicle_orders = vehicles.find({'date': date}).sort(
+#         'vehicle',pymongo.ASCENDING
+#     )
+#     # добавляем названия кнопок на основе данных из  БД
+#     for order in vehicle_orders:
+#         vehicle = order.get('vehicle')
+#         location = order.get('location')
+#         time = order.get('time').lower()
+#         key = f'{vehicle}: {location} - {time}'
+#         keyboard.add(key)
+#     keyboard.add('На этом всё')
+#     await bot.send_message(
+        # chat_id=CHAT_ID_GKS,
+#         text='Привет',
+#         reply_markup=keyboard,
+#     )
 
+from aiogram.utils.exceptions import (MessageToEditNotFound, MessageCantBeEdited, MessageCantBeDeleted,
+                                      MessageToDeleteNotFound)
+async def delete_message(message: types.Message, sleep_time: int = 0):
+    await asyncio.sleep(sleep_time)
+    with suppress(MessageCantBeDeleted, MessageToDeleteNotFound):
+        await message.delete()
 
 
 @dp.message_handler(commands=['start'])
