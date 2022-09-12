@@ -143,7 +143,10 @@ async def send_vehicle_stop_message():
             part_message = '{}{}'.format(part_message, text)
         part_text = '{}:\n{}'.format(vehicle, part_message)
         message = '{}{}\n'.format(message, part_text)
-    final_message = '{}\n\n{}'.format('Приём заявок завершён.', message)
+    final_message = '{}\n\n{}'.format(
+        'Приём заявок на технику завершён.',
+        message
+    )
     await bot.send_message(chat_id=CHAT_ID_GKS, text=final_message)
 
 
@@ -555,16 +558,16 @@ def scheduler_jobs():
         send_vehicle_start_message,
         'cron',
         day_of_week='mon-thu',
-        hour=12,
-        minute=36,
+        hour=16,
+        minute=0,
         timezone=const.TIME_ZONE
     )
     scheduler.add_job(
         send_vehicle_stop_message,
         'cron',
         day_of_week='mon-thu',
-        hour=12,
-        minute=38,
+        hour=16,
+        minute=30,
         timezone=const.TIME_ZONE
     )
     scheduler.add_job(
