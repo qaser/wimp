@@ -120,7 +120,7 @@ async def redirect_vehicle(message: types.Message):
         chat_id=message.from_user.id,
         text=(
             f'Добрый день {message.from_user.full_name}, '
-            'для начала нажмите\n\n/tehnika'
+            'для начала нажмите\n\n/tehnica'
         )
     )
 
@@ -162,7 +162,7 @@ async def send_vehicle_stop_message():
     )
 
 
-@dp.message_handler(commands=['tehnika'])
+@dp.message_handler(commands=['tehnica'])
 async def vehicle_start(message: types.Message):
     insert_user_db(message.from_user)
     keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True)
@@ -170,7 +170,7 @@ async def vehicle_start(message: types.Message):
     for name in const.VEHICLES:
         keyboard.add(name)
     await bot.send_message(
-        chat_id=CHAT_ID_GKS,
+        chat_id=user.id,
         text='Выберите спец.технику из списка ниже',
         reply_markup=keyboard
     )
@@ -191,7 +191,7 @@ async def vehicle_chosen(message: types.Message, state: FSMContext):
     # для простых шагов можно не указывать название состояния, обходясь next()
     await ChooseVehicle.next()
     await bot.send_message(
-        chat_id=CHAT_ID_GKS,
+        chat_id=message.from_user.id,
         text='Теперь выберите необходимый период времени',
         reply_markup=keyboard
     )
@@ -209,7 +209,7 @@ async def vehicle_time_chosen(message: types.Message, state: FSMContext):
         keyboard.add(location)
     await ChooseVehicle.next()
     await bot.send_message(
-        chat_id=CHAT_ID_GKS,
+        chat_id=message.from_user.id,
         text='Отлично! Выберите место где будет работать техника.',
         reply_markup=keyboard
     )
@@ -225,7 +225,7 @@ async def user_location_chosen(message: types.Message, state: FSMContext):
     keyboard.add('Без комментария')
     await state.update_data(chosen_location=message.text)
     await bot.send_message(
-        chat_id=CHAT_ID_GKS,
+        chat_id=message.from_user.id,
         text=('Если необходимо - можете добавить комментарий. '
               'Или нажать на кнопку "Без комментария"'),
         reply_markup=keyboard,
@@ -241,7 +241,7 @@ async def add_comment(message: types.Message, state: FSMContext):
     vehicle = user_data['chosen_vehicle']
     time = user_data['chosen_vehicle_time']
     await bot.send_message(
-        chat_id=CHAT_ID_GKS,
+        chat_id=message.from_user.id,
         text=f'Вы выбрали "{vehicle}" {time.lower()}.\nВсё верно?',
         reply_markup=keyboard,
     )
@@ -258,7 +258,7 @@ async def confirmation(message: types.Message, state: FSMContext):
     if message.text.lower() == 'нет':
         await message.answer(
             ('Хорошо. Данные не сохранены.\n'
-             'Если необходимо выбрать технику снова - нажмите /tehnika'),
+             'Если необходимо выбрать технику снова - нажмите /tehnica'),
             reply_markup=types.ReplyKeyboardRemove()
         )
         await state.reset_state()
@@ -274,10 +274,9 @@ async def confirmation(message: types.Message, state: FSMContext):
             'comment': user_data['comment']
         }
     )
-    await bot.send_message(
-        chat_id=CHAT_ID_GKS,
-        text=('Отлично! Данные успешно сохранены.\n'
-              'Если необходимо выбрать ещё технику нажмите /tehnika'),
+    await message.answer(
+        ('Отлично! Данные успешно сохранены.\n'
+         'Если необходимо выбрать ещё технику нажмите /tehnica'),
         reply_markup=types.ReplyKeyboardRemove()
     )
     await state.finish()
@@ -326,13 +325,6 @@ def register_handlers_vehicle(dp: Dispatcher):
 #         text='Привет',
 #         reply_markup=keyboard,
 #     )
-
-from aiogram.utils.exceptions import (MessageToEditNotFound, MessageCantBeEdited, MessageCantBeDeleted,
-                                      MessageToDeleteNotFound)
-async def delete_message(message: types.Message, sleep_time: int = 0):
-    await asyncio.sleep(sleep_time)
-    with suppress(MessageCantBeDeleted, MessageToDeleteNotFound):
-        await message.delete()
 
 
 @dp.message_handler(commands=['start'])
