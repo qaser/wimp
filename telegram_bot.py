@@ -51,6 +51,12 @@ class ChooseVehicle(StatesGroup):
     waiting_confirm = State()
 
 
+class ConfirmVehicleOrder(StatesGroup):
+    waiting_for_vehicle_order = State()
+    waiting_for_order_comment = State()
+    waiting_for_order_confirm = State()
+
+
 scheduler = AsyncIOScheduler()
 
 
@@ -157,6 +163,31 @@ async def send_vehicle_stop_message():
     )
     await bot.send_message(
         chat_id=CHAT_ID_GKS,
+        text=final_message,
+        parse_mode=types.ParseMode.HTML,
+    )
+
+@dp.message_handler(commands=['resume'])
+async def send_vehicle_confirm_resume(message: types.Message):
+    date = dt.datetime.today().strftime('%d.%m.%Y')
+    queryset = vehicles.find({'date': date, 'confirm': True})
+    result = ''
+    for i in queryset:
+        vehicle = i.get('vehicle')
+        location = i.get('location')
+        comment = i.get('confirm_comment')
+        text = '<u>{}</u>: <b>{}</b> <i>({})</i>\n'.format(
+            vehicle,
+            location,
+            comment,
+        )
+        result = '{}{}\n'.format(result, text)
+    final_message = '{}\n\n{}'.format(
+        'Список согласованной техники:',
+        result,
+    )
+    await bot.send_message(
+        chat_id=message.from_user.id,
         text=final_message,
         parse_mode=types.ParseMode.HTML,
     )
@@ -271,7 +302,9 @@ async def confirmation(message: types.Message, state: FSMContext):
             'location': user_data['chosen_location'],
             'vehicle': user_data['chosen_vehicle'],
             'time': user_data['chosen_vehicle_time'],
-            'comment': user_data['comment']
+            'comment': user_data['comment'],
+            'confirm': False,
+            'confirm_comment': '',
         }
     )
     await message.answer(
@@ -305,32 +338,127 @@ def register_handlers_vehicle(dp: Dispatcher):
     )
 
 
-# @dp.message_handler(commands=['resume'])
-# async def start_confirm_vehicle_orders(message: types.Message):
-#     date = dt.datetime.today().strftime('%d.%m.%Y')
-#     keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True)
-#     vehicle_orders = vehicles.find({'date': date}).sort(
-#         'vehicle',pymongo.ASCENDING
-#     )
-#     # добавляем названия кнопок на основе данных из  БД
-#     for order in vehicle_orders:
-#         vehicle = order.get('vehicle')
-#         location = order.get('location')
-#         time = order.get('time').lower()
-#         key = f'{vehicle}: {location} - {time}'
-#         keyboard.add(key)
-#     keyboard.add('На этом всё')
-#     await bot.send_message(
-        # chat_id=CHAT_ID_GKS,
-#         text='Привет',
-#         reply_markup=keyboard,
-#     )
+@dp.message_handler(commands=['confirm'])
+async def start_confirm_vehicle_orders(message: types.Message):
+    date = dt.datetime.today().strftime('%d.%m.%Y')
+    keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True)
+    vehicle_orders = vehicles.find({'date': date, 'confirm': False}).sort(
+        'vehicle',pymongo.ASCENDING
+    )
+    # добавляем названия кнопок на основе данных из БД
+    if len(list(vehicle_orders)) == 0:
+        await message.answer(
+            ('Список техники пуст.\n'
+             'Для формирования отчёта нажмите /resume'),
+            reply_markup=types.ReplyKeyboardRemove()
+        )
+    else:
+        for order in vehicle_orders:
+            vehicle = order.get('vehicle')
+            location = order.get('location')
+            time = order.get('time')
+            key = f'{vehicle} | {location} | {time}'
+            keyboard.add(key)
+        await bot.send_message(
+            chat_id=message.from_user.id,
+            text='Выберите технику для подтверждения',
+            reply_markup=keyboard,
+        )
+        await ConfirmVehicleOrder.waiting_for_vehicle_order.set()
+
+
+async def order_chosen(message: types.Message, state: FSMContext):
+    # TODO добавить проверку на корректный ввод названия заказа
+    await state.update_data(chosen_order=message.text)
+    keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True)
+    keyboard.add('Без комментария')
+    await bot.send_message(
+        chat_id=message.from_user.id,
+        text=('Если необходимо - можете добавить комментарий. '
+              'Или нажать на кнопку "Без комментария"'),
+        reply_markup=keyboard,
+    )
+    await ConfirmVehicleOrder.next()
+
+
+async def confirm_comment(message: types.Message, state: FSMContext):
+    await state.update_data(confirm_comment=message.text)
+    keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True)
+    keyboard.add('Нет', 'Да')
+    buffer_data = await state.get_data()
+    order = buffer_data['chosen_order']
+    await bot.send_message(
+        chat_id=message.from_user.id,
+        text=f'Вы подтверждаете заявку: "{order}".\nВсё верно?',
+        reply_markup=keyboard,
+    )
+    await ConfirmVehicleOrder.next()
+
+
+async def confirm_order(message: types.Message, state: FSMContext):
+    if message.text.lower() not in ['нет', 'да']:
+        await message.answer(
+            'Пожалуйста, выберите ответ, используя клавиатуру ниже.'
+        )
+        return
+    if message.text.lower() == 'нет':
+        await message.answer(
+            ('Хорошо. Данные не сохранены.\n'
+             'Если необходимо продолжить - нажмите /confirm'),
+            reply_markup=types.ReplyKeyboardRemove()
+        )
+        await state.reset_state()
+    buffer_data = await state.get_data()
+    comment = buffer_data['confirm_comment']
+    order = buffer_data['chosen_order']
+    vehicle, location, _ = order.split(' | ')
+    vehicles.update_one({
+            'vehicle': vehicle,
+            'location': location,
+        },{
+            '$set': {
+                'confirm_comment': comment,
+                'confirm': True
+            }
+        }, upsert=False
+    )
+    await message.answer(
+        ('Отлично! Данные успешно сохранены.\n'
+         'Если необходимо продолжить работу с заявками нажмите /confirm\n\n'
+         'Если необходим отчёт по заявкам - нажмите /resume'),
+        reply_markup=types.ReplyKeyboardRemove()
+    )
+    await state.finish()
+
+
+def register_handlers_confirm(dp: Dispatcher):
+    dp.register_message_handler(
+        order_chosen,
+        state=ConfirmVehicleOrder.waiting_for_vehicle_order,
+    )
+    dp.register_message_handler(
+        confirm_comment,
+        state=ConfirmVehicleOrder.waiting_for_order_comment
+    )
+    dp.register_message_handler(
+        confirm_order,
+        state=ConfirmVehicleOrder.waiting_for_order_confirm
+    )
 
 
 @dp.message_handler(commands=['start'])
 async def start_handler(message: types.Message):
     insert_user_db(message.from_user)
     await bot.send_message(message.chat.id, text=INITIAL_TEXT)
+
+
+@dp.message_handler(commands=['reset'])
+async def start_handler(message: types.Message):
+    await bot.send_message(
+        message.chat.id,
+        text='Сброс моих настроек выполнен',
+        reply_markup=types.ReplyKeyboardRemove(),
+    )
 
 
 @dp.message_handler(commands=['help'])
@@ -650,4 +778,5 @@ async def on_startup(_):
 if __name__ == '__main__':
     scheduler.start()
     register_handlers_vehicle(dp)
+    register_handlers_confirm(dp)
     executor.start_polling(dp, skip_updates=True, on_startup=on_startup)
