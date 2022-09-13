@@ -170,7 +170,7 @@ async def vehicle_start(message: types.Message):
     for name in const.VEHICLES:
         keyboard.add(name)
     await bot.send_message(
-        chat_id=user.id,
+        chat_id=CHAT_ID_GKS,
         text='Выберите спец.технику из списка ниже',
         reply_markup=keyboard
     )
