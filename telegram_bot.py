@@ -172,7 +172,7 @@ async def vehicle_start(message: types.Message):
     await bot.send_message(
         chat_id=CHAT_ID_GKS,
         text='Выберите спец.технику из списка ниже',
-        reply_markup=types.ReplyKeyboardRemove()
+        reply_markup=keyboard
     )
     await ChooseVehicle.waiting_for_vehicle_type.set()
 
@@ -274,9 +274,10 @@ async def confirmation(message: types.Message, state: FSMContext):
             'comment': user_data['comment']
         }
     )
-    await message.answer(
-        ('Отлично! Данные успешно сохранены.\n'
-         'Если необходимо выбрать ещё технику нажмите /tehnika'),
+    await bot.send_message(
+        chat_id=CHAT_ID_GKS,
+        text=('Отлично! Данные успешно сохранены.\n'
+              'Если необходимо выбрать ещё технику нажмите /tehnika'),
         reply_markup=types.ReplyKeyboardRemove()
     )
     await state.finish()
