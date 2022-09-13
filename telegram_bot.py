@@ -172,7 +172,7 @@ async def vehicle_start(message: types.Message):
     await bot.send_message(
         chat_id=CHAT_ID_GKS,
         text='Выберите спец.технику из списка ниже',
-        reply_markup=keyboard
+        reply_markup=types.ReplyKeyboardRemove()
     )
     await ChooseVehicle.waiting_for_vehicle_type.set()
 
@@ -191,7 +191,7 @@ async def vehicle_chosen(message: types.Message, state: FSMContext):
     # для простых шагов можно не указывать название состояния, обходясь next()
     await ChooseVehicle.next()
     await bot.send_message(
-        chat_id=message.from_user.id,
+        chat_id=CHAT_ID_GKS,
         text='Теперь выберите необходимый период времени',
         reply_markup=keyboard
     )
@@ -209,7 +209,7 @@ async def vehicle_time_chosen(message: types.Message, state: FSMContext):
         keyboard.add(location)
     await ChooseVehicle.next()
     await bot.send_message(
-        chat_id=message.from_user.id,
+        chat_id=CHAT_ID_GKS,
         text='Отлично! Выберите место где будет работать техника.',
         reply_markup=keyboard
     )
@@ -225,7 +225,7 @@ async def user_location_chosen(message: types.Message, state: FSMContext):
     keyboard.add('Без комментария')
     await state.update_data(chosen_location=message.text)
     await bot.send_message(
-        chat_id=message.from_user.id,
+        chat_id=CHAT_ID_GKS,
         text=('Если необходимо - можете добавить комментарий. '
               'Или нажать на кнопку "Без комментария"'),
         reply_markup=keyboard,
@@ -241,7 +241,7 @@ async def add_comment(message: types.Message, state: FSMContext):
     vehicle = user_data['chosen_vehicle']
     time = user_data['chosen_vehicle_time']
     await bot.send_message(
-        chat_id=message.from_user.id,
+        chat_id=CHAT_ID_GKS,
         text=f'Вы выбрали "{vehicle}" {time.lower()}.\nВсё верно?',
         reply_markup=keyboard,
     )
