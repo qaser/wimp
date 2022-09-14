@@ -342,9 +342,10 @@ def register_handlers_vehicle(dp: Dispatcher):
 async def start_confirm_vehicle_orders(message: types.Message):
     date = dt.datetime.today().strftime('%d.%m.%Y')
     keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True)
-    vehicle_orders = vehicles.find({'date': date, 'confirm': False}).sort(
-        'vehicle',pymongo.ASCENDING
-    )
+    vehicle_orders = list(vehicles.find({'date': date, 'confirm': False}).sort(
+        'vehicle',
+        pymongo.ASCENDING
+    ))
     # добавляем названия кнопок на основе данных из БД
     if len(list(vehicle_orders)) == 0:
         await message.answer(
@@ -358,6 +359,7 @@ async def start_confirm_vehicle_orders(message: types.Message):
             location = order.get('location')
             time = order.get('time')
             key = f'{vehicle} | {location} | {time}'
+            print(key)
             keyboard.add(key)
         await bot.send_message(
             chat_id=message.from_user.id,
@@ -751,7 +753,7 @@ def scheduler_jobs():
         send_vehicle_start_message,
         'cron',
         day_of_week='fri',
-        hour=13,
+        hour=09,
         minute=30,
         timezone=const.TIME_ZONE
     )
@@ -759,8 +761,8 @@ def scheduler_jobs():
         send_vehicle_stop_message,
         'cron',
         day_of_week='fri',
-        hour=14,
-        minute=30,
+        hour=10,
+        minute=0,
         timezone=const.TIME_ZONE
     )
     # scheduler.add_job(
