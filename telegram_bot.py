@@ -753,7 +753,7 @@ def scheduler_jobs():
         send_vehicle_start_message,
         'cron',
         day_of_week='fri',
-        hour=09,
+        hour=9,
         minute=30,
         timezone=const.TIME_ZONE
     )
