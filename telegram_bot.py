@@ -114,10 +114,12 @@ async def send_exam_answers(message: types.Message):
 
 async def send_vehicle_start_message():
     message = ('Уважаемые начальники цехов, '
-               'время делать заявки на спец. технику.\n'
+               'теперь делать заявки на спец. технику '
+               'можно с начала рабочего дня.\n'
                'Для подачи заявки перейдите по ссылке:\n\n'
                '/zayavka\n\n'
-               'Заявки принимаются в течение часа.')
+               'Для просмотра заявленной техники нажмите (или введите) /otchet\n'
+               'Эта команда доступна как в общей группе так и в личных сообщениях боту.')
     await bot.send_message(chat_id=CHAT_ID_GKS, text=message)
 
 
@@ -132,38 +134,43 @@ async def redirect_vehicle(message: types.Message):
     )
 
 
-async def send_vehicle_stop_message():
+@dp.message_handler(commands=['otchet'])
+async def send_vehicle_stop_message(message: types.Message):
     date = dt.datetime.today().strftime('%d.%m.%Y')
+    date_time = dt.datetime.today().strftime('%H:%M')
     queryset = list(vehicles.find({'date': date}))
-    result = {}
-    for i in queryset:
-        if result.get(i.get('vehicle')) is None:
-            result[i.get('vehicle')] = {}
-        result[i.get('vehicle')][i.get('location')] = [
-            i.get('time'),
-            i.get('comment'),
-            i.get('user'),
-        ]
-    message = ''
-    for vehicle, loc_list in result.items():
-        part_message = ''
-        for location, data_list in loc_list.items():
-            time, comment, user = data_list
-            text = '    <b>{}</b> - {}. "{}" <i>({})</i>\n'.format(
-                location,
-                time.lower(),
-                comment,
-                user,
-            )
-            part_message = '{}{}'.format(part_message, text)
-        vehicle_part_text = '<u>{}</u>:\n{}'.format(vehicle, part_message)
-        message = '{}{}\n'.format(message, vehicle_part_text)
-    final_message = '{}\n\n{}'.format(
-        'Приём заявок на технику завершён.',
-        message,
-    )
+    if len(queryset) == 0:
+        final_message = 'Заявки на технику пока отсутствуют'
+    else:
+        result = {}
+        for i in queryset:
+            if result.get(i.get('vehicle')) is None:
+                result[i.get('vehicle')] = {}
+            result[i.get('vehicle')][i.get('location')] = [
+                i.get('time'),
+                i.get('comment'),
+                i.get('user'),
+            ]
+        mess = ''
+        for vehicle, loc_list in result.items():
+            part_message = ''
+            for location, data_list in loc_list.items():
+                time, comment, user = data_list
+                text = '    <b>{}</b> - {}. "{}" <i>({})</i>\n'.format(
+                    location,
+                    time.lower(),
+                    comment,
+                    user,
+                )
+                part_message = '{}{}'.format(part_message, text)
+            vehicle_part_text = '<u>{}</u>:\n{}'.format(vehicle, part_message)
+            mess = '{}{}\n'.format(mess, vehicle_part_text)
+        final_message = '{}\n\n{}'.format(
+            f'Заявки на технику {date} по состоянию на {date_time}:',
+            mess,
+        )
     await bot.send_message(
-        chat_id=CHAT_ID_GKS,
+        chat_id=message.chat.id,
         text=final_message,
         parse_mode=types.ParseMode.HTML,
     )
@@ -188,7 +195,7 @@ async def send_vehicle_confirm_resume(message: types.Message):
         result,
     )
     await bot.send_message(
-        chat_id=message.from_user.id,
+        chat_id=message.chat.id,
         text=final_message,
         parse_mode=types.ParseMode.HTML,
     )
@@ -340,7 +347,7 @@ def register_handlers_vehicle(dp: Dispatcher):
 
 
 @dp.message_handler(commands=['confirm'])
-async def start_confirm_vehicle_orders(message: types.Message):
+async def start_confirm_vehicle_orders(message: types.Message,  state: FSMContext):
     date = dt.datetime.today().strftime('%d.%m.%Y')
     keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True)
     vehicle_orders = list(vehicles.find({'date': date, 'confirm': False}).sort(
@@ -350,7 +357,7 @@ async def start_confirm_vehicle_orders(message: types.Message):
     # добавляем названия кнопок на основе данных из БД
     if len(list(vehicle_orders)) == 0:
         await message.answer(
-            ('Список техники пуст.\n'
+            ('Список техники для подтверждения пуст.\n'
              'Для формирования отчёта нажмите /resume'),
             reply_markup=types.ReplyKeyboardRemove()
         )
@@ -360,7 +367,6 @@ async def start_confirm_vehicle_orders(message: types.Message):
             location = order.get('location')
             time = order.get('time')
             key = f'{vehicle} | {location} | {time}'
-            print(key)
             keyboard.add(key)
         await bot.send_message(
             chat_id=message.from_user.id,
@@ -412,12 +418,16 @@ async def confirm_order(message: types.Message, state: FSMContext):
         )
         await state.reset_state()
     buffer_data = await state.get_data()
-    comment = buffer_data['confirm_comment']
+    try:
+        comment = buffer_data['confirm_comment']
+    except KeyError:
+        comment = 'Без комментария'
     order = buffer_data['chosen_order']
-    vehicle, location, _ = order.split(' | ')
+    vehicle, location, time = order.split(' | ')
     vehicles.update_one({
             'vehicle': vehicle,
             'location': location,
+            'time': time,
         },{
             '$set': {
                 'confirm_comment': comment,
@@ -737,37 +747,13 @@ def scheduler_jobs():
     scheduler.add_job(
         send_vehicle_start_message,
         'cron',
-        day_of_week='mon-thu',
-        hour=15,
-        minute=30,
-        timezone=const.TIME_ZONE
-    )
-    scheduler.add_job(
-        send_vehicle_stop_message,
-        'cron',
-        day_of_week='mon-thu',
-        hour=16,
-        minute=30,
-        timezone=const.TIME_ZONE
-    )
-    scheduler.add_job(
-        send_vehicle_start_message,
-        'cron',
-        day_of_week='fri',
+        day_of_week='mon-fri',
         hour=9,
-        minute=30,
-        timezone=const.TIME_ZONE
-    )
-    scheduler.add_job(
-        send_vehicle_stop_message,
-        'cron',
-        day_of_week='fri',
-        hour=10,
         minute=0,
         timezone=const.TIME_ZONE
     )
     # scheduler.add_job(
-    #   send_vehicle_stop_message,
+    #   send_vehicle_start_message,
     #   'interval',
     #   seconds=10,
     #   timezone=const.TIME_ZONE
