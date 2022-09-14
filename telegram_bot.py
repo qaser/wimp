@@ -170,7 +170,7 @@ async def send_vehicle_stop_message():
 @dp.message_handler(commands=['resume'])
 async def send_vehicle_confirm_resume(message: types.Message):
     date = dt.datetime.today().strftime('%d.%m.%Y')
-    queryset = vehicles.find({'date': date, 'confirm': True})
+    queryset = list(vehicles.find({'date': date, 'confirm': True}))
     result = ''
     for i in queryset:
         vehicle = i.get('vehicle')
