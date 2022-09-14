@@ -133,7 +133,7 @@ async def redirect_vehicle(message: types.Message):
 
 async def send_vehicle_stop_message():
     date = dt.datetime.today().strftime('%d.%m.%Y')
-    queryset = vehicles.find({'date': date})
+    queryset = list(vehicles.find({'date': date}))
     result = {}
     for i in queryset:
         if result.get(i.get('vehicle')) is None:
