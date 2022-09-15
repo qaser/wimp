@@ -112,15 +112,15 @@ async def send_exam_answers(message: types.Message):
                 await bot.send_photo(message.chat.id, photo=contents)
 
 
-async def send_vehicle_start_message():
-    message = ('Уважаемые начальники цехов, '
-               'теперь делать заявки на спец. технику '
-               'можно с начала рабочего дня.\n'
-               'Для подачи заявки перейдите по ссылке:\n\n'
-               '/zayavka\n\n'
-               'Для просмотра заявленной техники нажмите (или введите) /otchet\n'
-               'Эта команда доступна как в общей группе так и в личных сообщениях боту.')
-    await bot.send_message(chat_id=CHAT_ID_GKS, text=message)
+# async def send_vehicle_start_message():
+#     message = ('Уважаемые начальники цехов, '
+#                'теперь делать заявки на спец. технику '
+#                'можно с начала рабочего дня.\n'
+#                'Для подачи заявки перейдите по ссылке:\n\n'
+#                '/zayavka\n\n'
+#                'Для просмотра заявленной техники нажмите (или введите) /otchet\n'
+#                'Эта команда доступна как в общей группе так и в личных сообщениях боту.')
+#     await bot.send_message(chat_id=CHAT_ID_GKS, text=message)
 
 
 @dp.message_handler(commands=['zayavka'])
@@ -744,16 +744,16 @@ def scheduler_jobs():
         minute=0,
         timezone=const.TIME_ZONE
     )
-    scheduler.add_job(
-        send_vehicle_start_message,
-        'cron',
-        day_of_week='mon-fri',
-        hour=9,
-        minute=0,
-        timezone=const.TIME_ZONE
-    )
     # scheduler.add_job(
-    #   send_vehicle_start_message,
+    #     send_vehicle_start_message,
+    #     'cron',
+    #     day_of_week='mon-fri',
+    #     hour=9,
+    #     minute=0,
+    #     timezone=const.TIME_ZONE
+    # )
+    # scheduler.add_job(
+    #   send_vehi_message,
     #   'interval',
     #   seconds=10,
     #   timezone=const.TIME_ZONE
