@@ -347,7 +347,7 @@ def register_handlers_vehicle(dp: Dispatcher):
 
 
 @dp.message_handler(commands=['confirm'])
-async def start_confirm_vehicle_orders(message: types.Message,  state: FSMContext):
+async def start_confirm_vehicle_orders(message: types.Message):
     date = dt.datetime.today().strftime('%d.%m.%Y')
     keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True)
     vehicle_orders = list(vehicles.find({'date': date, 'confirm': False}).sort(
@@ -394,8 +394,9 @@ async def confirm_comment(message: types.Message, state: FSMContext):
     await state.update_data(confirm_comment=message.text)
     keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True)
     keyboard.add('Нет', 'Да')
-    buffer_data = await state.get_data()
-    order = buffer_data['chosen_order']
+    data = await state.get_data()
+    print(data)
+    order = data['chosen_order']
     await bot.send_message(
         chat_id=message.from_user.id,
         text=f'Вы подтверждаете заявку: "{order}".\nВсё верно?',
@@ -418,10 +419,7 @@ async def confirm_order(message: types.Message, state: FSMContext):
         )
         await state.reset_state()
     buffer_data = await state.get_data()
-    try:
-        comment = buffer_data['confirm_comment']
-    except KeyError:
-        comment = 'Без комментария'
+    comment = buffer_data['confirm_comment']
     order = buffer_data['chosen_order']
     vehicle, location, time = order.split(' | ')
     vehicles.update_one({
