@@ -419,22 +419,21 @@ async def confirm_order(message: types.Message, state: FSMContext):
         )
         await state.reset_state()
     buffer_data = await state.get_data()
-    print(buffer_data)
     comment = buffer_data['confirm_comment']
     order = buffer_data['chosen_order']
-    print(comment)
-    print(order)
     vehicle, location, time = order.split(' | ')
-    vehicles.update_one({
+    vehicles.update_one(
+        {
             'vehicle': vehicle,
             'location': location,
             'time': time,
-        },{
+        },
+        {
             '$set': {
                 'confirm_comment': comment,
                 'confirm': True
             }
-        }, upsert=False
+        }
     )
     await message.answer(
         ('Отлично! Данные успешно сохранены.\n'
