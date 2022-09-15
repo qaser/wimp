@@ -289,7 +289,6 @@ async def add_comment(message: types.Message, state: FSMContext):
 
 
 async def confirmation(message: types.Message, state: FSMContext):
-    user_data = await state.get_data()
     if message.text.lower() not in ['нет', 'да']:
         await message.answer(
             'Пожалуйста, выберите ответ, используя клавиатуру ниже.'
@@ -302,6 +301,7 @@ async def confirmation(message: types.Message, state: FSMContext):
             reply_markup=types.ReplyKeyboardRemove()
         )
         await state.reset_state()
+    user_data = await state.get_data()
     date = dt.datetime.today().strftime('%d.%m.%Y')
     vehicles.insert_one(
         {
@@ -406,7 +406,6 @@ async def confirm_comment(message: types.Message, state: FSMContext):
 
 
 async def confirm_order(message: types.Message, state: FSMContext):
-    buffer_data = await state.get_data()
     if message.text.lower() not in ['нет', 'да']:
         await message.answer(
             'Пожалуйста, выберите ответ, используя клавиатуру ниже.'
@@ -419,8 +418,12 @@ async def confirm_order(message: types.Message, state: FSMContext):
             reply_markup=types.ReplyKeyboardRemove()
         )
         await state.reset_state()
+    buffer_data = await state.get_data()
+    print(buffer_data)
     comment = buffer_data['confirm_comment']
     order = buffer_data['chosen_order']
+    print(comment)
+    print(order)
     vehicle, location, time = order.split(' | ')
     vehicles.update_one({
             'vehicle': vehicle,
