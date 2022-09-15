@@ -419,6 +419,7 @@ async def confirm_order(message: types.Message, state: FSMContext):
         )
         await state.reset_state()
     buffer_data = await state.get_data()
+    print(buffer_data)
     comment = buffer_data['confirm_comment']
     order = buffer_data['chosen_order']
     vehicle, location, time = order.split(' | ')
