@@ -166,7 +166,7 @@ async def send_vehicle_stop_message(message: types.Message):
             vehicle_part_text = '<u>{}</u>:\n{}'.format(vehicle, part_message)
             mess = '{}{}\n'.format(mess, vehicle_part_text)
         final_message = '{}\n\n{}'.format(
-            f'Заявки на технику {date} по состоянию на {date_time}:',
+            f'Заявки на технику {date} по состоянию на {date_time}(мск):',
             mess,
         )
     await bot.send_message(
@@ -419,9 +419,9 @@ async def confirm_order(message: types.Message, state: FSMContext):
         )
         await state.reset_state()
     buffer_data = await state.get_data()
-    # comment = buffer_data['confirm_comment']
-    # order = buffer_data['chosen_order']
-    vehicle, location, time = buffer_data['chosen_order'].split(' | ')
+    comment = buffer_data['confirm_comment']
+    order = buffer_data['chosen_order']
+    vehicle, location, time = order.split(' | ')
     vehicles.update_one(
         {
             'vehicle': vehicle,
@@ -430,7 +430,7 @@ async def confirm_order(message: types.Message, state: FSMContext):
         },
         {
             '$set': {
-                'confirm_comment': buffer_data['confirm_comment'],
+                'confirm_comment': comment,
                 'confirm': True
             }
         }
