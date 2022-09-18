@@ -112,17 +112,6 @@ async def send_exam_answers(message: types.Message):
                 await bot.send_photo(message.chat.id, photo=contents)
 
 
-# async def send_vehicle_start_message():
-#     message = ('Уважаемые начальники цехов, '
-#                'теперь делать заявки на спец. технику '
-#                'можно с начала рабочего дня.\n'
-#                'Для подачи заявки перейдите по ссылке:\n\n'
-#                '/zayavka\n\n'
-#                'Для просмотра заявленной техники нажмите (или введите) /otchet\n'
-#                'Эта команда доступна как в общей группе так и в личных сообщениях боту.')
-#     await bot.send_message(chat_id=CHAT_ID_GKS, text=message)
-
-
 @dp.message_handler(commands=['zayavka'])
 async def redirect_vehicle(message: types.Message):
     await bot.send_message(
@@ -392,10 +381,9 @@ async def order_chosen(message: types.Message, state: FSMContext):
 
 async def confirm_comment(message: types.Message, state: FSMContext):
     await state.update_data(confirm_comment=message.text)
+    data = await state.get_data()
     keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True)
     keyboard.add('Нет', 'Да')
-    data = await state.get_data()
-    print(data)
     order = data['chosen_order']
     await bot.send_message(
         chat_id=message.from_user.id,
@@ -422,8 +410,10 @@ async def confirm_order(message: types.Message, state: FSMContext):
     comment = buffer_data['confirm_comment']
     order = buffer_data['chosen_order']
     vehicle, location, time = order.split(' | ')
+    date = dt.datetime.today().strftime('%d.%m.%Y')
     vehicles.update_one(
         {
+            'date': date,
             'vehicle': vehicle,
             'location': location,
             'time': time,
