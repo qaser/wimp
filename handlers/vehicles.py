@@ -24,19 +24,25 @@ class ConfirmVehicleOrder(StatesGroup):
     waiting_for_order_confirm = State()
 
 
+async def help_vehicle_message(message: types.Message):
+    await message.answer(
+        ('Для создания заявки на технику нажмите /tehnika\n'
+         'Для просмотра списка заявок нажмите /report')
+    )
+
+
 @dp.message_handler(commands=['zayavka'])
 async def redirect_vehicle(message: types.Message):
     await bot.send_message(
         chat_id=message.from_user.id,
         text=(
             f'Добрый день {message.from_user.full_name}, '
-            'для начала нажмите\n\n/tehnica'
+            'для начала нажмите\n\n/tehnika'
         )
     )
 
-
-@dp.message_handler(commands=['otchet'])
-async def send_vehicle_stop_message(message: types.Message):
+# команда /report - отчёт о заявках техники
+async def send_vehicle_report(message: types.Message):
     date = dt.datetime.today().strftime('%d.%m.%Y')
     date_time = dt.datetime.today().strftime('%H:%M')
     queryset = list(vehicles.find({'date': date}))
@@ -76,7 +82,7 @@ async def send_vehicle_stop_message(message: types.Message):
     )
 
 
-@dp.message_handler(commands=['resume'])
+# команда /resume - результаты согласования техники
 async def send_vehicle_confirm_resume(message: types.Message):
     date = dt.datetime.today().strftime('%d.%m.%Y')
     queryset = list(vehicles.find({'date': date, 'confirm': True}))
@@ -101,13 +107,14 @@ async def send_vehicle_confirm_resume(message: types.Message):
     )
 
 
-@dp.message_handler(commands=['tehnica'])
+# команда /tehnika - входная точка для заявок техники
 async def vehicle_start(message: types.Message):
     keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True)
     for name in const.VEHICLES:
         keyboard.add(name)
     await message.answer(
-        text='Выберите спец.технику из списка ниже',
+        text=(f'Добрый день {message.from_user.full_name}.\n'
+               'Выберите спец.технику из списка ниже'),
         reply_markup=keyboard
     )
     await ChooseVehicle.waiting_for_vehicle_type.set()
@@ -189,7 +196,7 @@ async def confirmation(message: types.Message, state: FSMContext):
     if message.text.lower() == 'нет':
         await message.answer(
             ('Хорошо. Данные не сохранены.\n'
-             'Если необходимо выбрать технику снова - нажмите /tehnica'),
+             'Если необходимо выбрать технику снова - нажмите /tehnika'),
             reply_markup=types.ReplyKeyboardRemove()
         )
         await state.reset_state()
@@ -209,36 +216,12 @@ async def confirmation(message: types.Message, state: FSMContext):
     )
     await message.answer(
         ('Отлично! Данные успешно сохранены.\n'
-         'Если необходимо выбрать ещё технику нажмите /tehnica'),
+         'Если необходимо выбрать ещё технику нажмите /tehnika'),
         reply_markup=types.ReplyKeyboardRemove()
     )
     await state.finish()
 
 
-def register_handlers_vehicle(dp: Dispatcher):
-    dp.register_message_handler(
-        vehicle_chosen,
-        state=ChooseVehicle.waiting_for_vehicle_type,
-    )
-    dp.register_message_handler(
-        vehicle_time_chosen,
-        state=ChooseVehicle.waiting_for_vehicle_time
-    )
-    dp.register_message_handler(
-        user_location_chosen,
-        state=ChooseVehicle.waiting_for_location
-    )
-    dp.register_message_handler(
-        add_comment,
-        state=ChooseVehicle.waiting_comment
-    )
-    dp.register_message_handler(
-        confirmation,
-        state=ChooseVehicle.waiting_confirm
-    )
-
-
-@dp.message_handler(commands=['confirm'])
 async def start_confirm_vehicle_orders(message: types.Message):
     date = dt.datetime.today().strftime('%d.%m.%Y')
     keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True)
@@ -334,7 +317,15 @@ async def confirm_order(message: types.Message, state: FSMContext):
     await state.finish()
 
 
-def register_handlers_confirm(dp: Dispatcher):
+def register_handlers_vehicle(dp: Dispatcher):
+    dp.register_message_handler(help_vehicle_message, commands='help_gks')
+    dp.register_message_handler(vehicle_start, commands='tehnika')
+    dp.register_message_handler(send_vehicle_report, commands='report')
+    dp.register_message_handler(send_vehicle_confirm_resume, commands='resume')
+    dp.register_message_handler(
+        start_confirm_vehicle_orders,
+        commands='confirm'
+    )
     dp.register_message_handler(
         order_chosen,
         state=ConfirmVehicleOrder.waiting_for_vehicle_order,
@@ -346,4 +337,24 @@ def register_handlers_confirm(dp: Dispatcher):
     dp.register_message_handler(
         confirm_order,
         state=ConfirmVehicleOrder.waiting_for_order_confirm
+    )
+    dp.register_message_handler(
+        vehicle_chosen,
+        state=ChooseVehicle.waiting_for_vehicle_type,
+    )
+    dp.register_message_handler(
+        vehicle_time_chosen,
+        state=ChooseVehicle.waiting_for_vehicle_time
+    )
+    dp.register_message_handler(
+        user_location_chosen,
+        state=ChooseVehicle.waiting_for_location
+    )
+    dp.register_message_handler(
+        add_comment,
+        state=ChooseVehicle.waiting_comment
+    )
+    dp.register_message_handler(
+        confirmation,
+        state=ChooseVehicle.waiting_confirm
     )

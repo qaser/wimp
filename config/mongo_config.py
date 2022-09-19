@@ -8,3 +8,4 @@ fs = gridfs.GridFS(db)
 quiz = db['quiz']
 users = db['users']
 vehicles = db['vehicles']
+offers = db['offers']
