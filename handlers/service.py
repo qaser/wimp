@@ -63,7 +63,7 @@ async def add_offer(message: types.Message, state: FSMContext):
     keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True)
     keyboard.add('Нет', 'Да')
     await message.answer(
-        text='Вы хотите отправить отзыв о работе бота?',
+        text='Вы точно хотите отправить отзыв о работе бота?',
         reply_markup=keyboard,
     )
     await BotOffer.waiting_for_offer_confirm.set()
@@ -94,7 +94,7 @@ async def confirm_offer(message: types.Message, state: FSMContext):
         }
     )
     await message.answer(
-        ('Отлично! Данные успешно сохранены.\n'
+        ('Отлично! Сообщение отправлено.\n'
          'Спасибо за отзыв!'),
         reply_markup=types.ReplyKeyboardRemove()
     )
