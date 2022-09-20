@@ -1,12 +1,11 @@
 import datetime as dt
 
-from functions.plan_check import plan_pat_check, plan_tu_check
+from functions.plan_check import plan_pat_check
 from texts.evening import EVENING_HELLO
 from texts.mornings import MORNING_HELLO, MORNING_WISHES
-from texts.pat import MONTH_TEXT, PAT, TU
+from texts.pat import MONTH_TEXT, TU
 from texts.weather import (WEATHER_COLD_PREFIX, WEATHER_HOT_PREFIX,
                            WEATHER_MAIN, WEATHER_RAIN_PREFIX)
-from utils.constants import RECOMMEND_TEMP
 from utils.random_list_elem import random_list_elem
 
 
@@ -14,6 +13,7 @@ def hello_generator():
     rand_num = random_list_elem(MORNING_HELLO)
     morning_text = MORNING_HELLO[rand_num]
     return morning_text
+
 
 def evening_hello_generator():
     rand_num = random_list_elem(EVENING_HELLO)
@@ -42,6 +42,7 @@ def weather_text_generator(temperature, condition):
     forecast_text = WEATHER_MAIN[random_list_elem(WEATHER_MAIN)]
     full_text = '{}\n{}'.format(prefix, forecast_text)
     return full_text
+
 
 def month_plan_generator():
     pat_check = plan_pat_check()

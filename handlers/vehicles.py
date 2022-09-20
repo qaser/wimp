@@ -6,7 +6,7 @@ from aiogram.dispatcher import FSMContext
 from aiogram.dispatcher.filters.state import State, StatesGroup
 
 import utils.constants as const
-from config.bot_config import bot, dp
+from config.bot_config import bot
 from config.mongo_config import vehicles
 
 
@@ -24,22 +24,25 @@ class ConfirmVehicleOrder(StatesGroup):
     waiting_for_order_confirm = State()
 
 
+# команда /help_gks
 async def help_vehicle_message(message: types.Message):
     await message.answer(
-        ('Для создания заявки на технику нажмите /tehnika\n'
-         'Для просмотра списка заявок нажмите /report')
+        text=(
+            'Для создания заявки на технику нажмите /tehnika\n'
+            'Для просмотра списка заявок нажмите /report\n'
+            'Для сброса настроек клавиатуры нажмите /reset\n'
+            'Для отправки отзыва о работе бота или пожеланий нажмите /offer'
+        )
     )
 
 
-@dp.message_handler(commands=['zayavka'])
+# команда /zayavka - перенаправит юзера к боту для заказа техники
 async def redirect_vehicle(message: types.Message):
     await bot.send_message(
         chat_id=message.from_user.id,
-        text=(
-            f'Добрый день {message.from_user.full_name}, '
-            'для начала нажмите\n\n/tehnika'
-        )
+        text='Для начала нажмите\n\n/tehnika'
     )
+
 
 # команда /report - отчёт о заявках техники
 async def send_vehicle_report(message: types.Message):
@@ -113,8 +116,10 @@ async def vehicle_start(message: types.Message):
     for name in const.VEHICLES:
         keyboard.add(name)
     await message.answer(
-        text=(f'Добрый день {message.from_user.full_name}.\n'
-               'Выберите спец.технику из списка ниже'),
+        text=(
+            f'Добрый день {message.from_user.full_name}.\n'
+            'Выберите спец.технику из списка ниже'
+        ),
         reply_markup=keyboard
     )
     await ChooseVehicle.waiting_for_vehicle_type.set()
@@ -322,6 +327,7 @@ def register_handlers_vehicle(dp: Dispatcher):
     dp.register_message_handler(vehicle_start, commands='tehnika')
     dp.register_message_handler(send_vehicle_report, commands='report')
     dp.register_message_handler(send_vehicle_confirm_resume, commands='resume')
+    dp.register_message_handler(redirect_vehicle, commands='zayavka')
     dp.register_message_handler(
         start_confirm_vehicle_orders,
         commands='confirm'

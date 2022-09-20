@@ -47,20 +47,23 @@ async def count_users(message: types.Message):
 # обработка команды /offer - отзывы и предложения
 async def bot_offer(message: types.Message):
     await message.answer(
-        text=(f'Добрый день {message.from_user.full_name}.\n'
-               'Если у Вас есть предложения по улучшению работы бота - '
-               'напишите о них в следующем сообщении и мы сделаем всё '
-               'возможное для их осуществления.'),
+        text=(
+            f'Добрый день {message.from_user.full_name}.\n'
+            'Если у Вас есть предложения по улучшению работы бота - '
+            'напишите о них в следующем сообщении и мы сделаем всё '
+            'возможное для их осуществления.'
+        ),
     )
     await BotOffer.waiting_for_offer.set()
 
 
+# команда /offer - отправка отзывов и предложений
 async def add_offer(message: types.Message, state: FSMContext):
     await state.update_data(offer=message.text)
     keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True)
     keyboard.add('Нет', 'Да')
     await message.answer(
-        text=f'Вы хотите отправить отзыв о работе бота?',
+        text='Вы хотите отправить отзыв о работе бота?',
         reply_markup=keyboard,
     )
     await BotOffer.waiting_for_offer_confirm.set()
