@@ -9,7 +9,7 @@ INITIAL_TEXT = (
     'Для отзыва и предложений отправь /offer'
 )
 
-FINAL_TEXT = '/help\n/pravila\n/vnimanie\n/pat\n/tu\n/vopros'
+FINAL_TEXT = '/help\n/pravila\n/vnimanie\n/pat\n/tu\n/vopros\n/offer'
 
 KPB_TEXT = 'Это ключевые правила безопасности.\nСоблюдение этих правил позволит сохранить твоё здоровье.\nТрудись безопасно!'
 
