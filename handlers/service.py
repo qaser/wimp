@@ -57,7 +57,6 @@ async def bot_offer(message: types.Message):
     await BotOffer.waiting_for_offer.set()
 
 
-# команда /offer - отправка отзывов и предложений
 async def add_offer(message: types.Message, state: FSMContext):
     await state.update_data(offer=message.text)
     keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True)
