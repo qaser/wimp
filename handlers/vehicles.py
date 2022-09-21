@@ -4,6 +4,7 @@ import pymongo
 from aiogram import Dispatcher, types
 from aiogram.dispatcher import FSMContext
 from aiogram.dispatcher.filters.state import State, StatesGroup
+from config.telegram_config import CHAT_ID_GKS
 
 import utils.constants as const
 from config.bot_config import bot
@@ -115,17 +116,23 @@ async def send_vehicle_confirm_resume(message: types.Message):
 
 # команда /tehnika - входная точка для заявок техники
 async def vehicle_start(message: types.Message):
-    keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True)
-    for name in const.VEHICLES:
-        keyboard.add(name)
-    await message.answer(
-        text=(
-            f'Добрый день {message.from_user.full_name}.\n'
-            'Выберите спец.технику из списка ниже'
-        ),
-        reply_markup=keyboard
-    )
-    await ChooseVehicle.waiting_for_vehicle_type.set()
+    if str(message.chat.id) == CHAT_ID_GKS:
+        await message.answer(
+            text='Эта команда здесь не доступна, нажмите /zayavka',
+            reply_markup=types.ReplyKeyboardRemove()
+        )
+    else:
+        keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True)
+        for name in const.VEHICLES:
+            keyboard.add(name)
+        await message.answer(
+            text=(
+                f'Добрый день {message.from_user.full_name}.\n'
+                'Выберите спец.технику из списка ниже'
+            ),
+            reply_markup=keyboard
+        )
+        await ChooseVehicle.waiting_for_vehicle_type.set()
 
 
 async def vehicle_chosen(message: types.Message, state: FSMContext):
