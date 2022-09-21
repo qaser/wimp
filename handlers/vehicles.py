@@ -131,7 +131,7 @@ async def vehicle_start(message: types.Message):
 async def vehicle_chosen(message: types.Message, state: FSMContext):
     if message.text not in const.VEHICLES:
         await message.answer(
-            'Пожалуйста, выберите технику, используя список ниже.'
+            'Пожалуйста, выберите технику, используя список ниже. '
             'Я не работаю с другой техникой кроме той, что в списке.'
         )
         return
