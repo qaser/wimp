@@ -269,6 +269,7 @@ async def order_chosen(message: types.Message, state: FSMContext):
     # TODO добавить проверку на корректный ввод названия заказа
     await state.update_data(chosen_order=message.text)
     keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True)
+    keyboard.add('Не будет', 'Будет')
     keyboard.add('Без комментария')
     await message.answer(
         text=('Если необходимо - можете добавить комментарий. '
