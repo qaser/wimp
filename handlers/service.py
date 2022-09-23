@@ -32,7 +32,7 @@ async def reset_handler(message: types.Message, state: FSMContext):
     )
 
 
-# обработка команды /users просмотр количества пользователей в БД
+# обработка команды /user просмотр количества пользователей в БД
 async def count_users(message: types.Message):
     queryset = list(users.find({}))
     users_count = len(queryset)

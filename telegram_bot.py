@@ -35,11 +35,12 @@ async def start_handler(message: types.Message):
             'username': user.username,
             'place_of_work': '',
         })
+        await bot.send_message(
+            chat_id=MY_TELEGRAM_ID,
+            text=f'Добавлен новый пользователь в БД:\n{user.full_name}'
+        )
     await message.answer(text=INITIAL_TEXT)
-    await bot.send_message(
-        chat_id=MY_TELEGRAM_ID,
-        text=f'Добавлен новый пользователь в БД:\n{user.full_name}'
-    )
+
 
 
 @dp.message_handler(commands=['help'])
