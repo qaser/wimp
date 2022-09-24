@@ -38,14 +38,28 @@ VEHICLES = [
     'Экскаватор колёсный',
 ]
 
-result = {}
+# всего заказов техники
+# количество заказв по видам техники
 
-for v in VEHICLES:
-    len_queryset = len(list(vehicles.find({'vehicle': v})))
-    result.update({v: len_queryset})
+# result = {}
 
-sorted_x = sorted(result.items(), key=lambda kv: kv[1], reverse=True)
-# sorted_dict = collections.OrderedDict(sorted_x)
+# for v in VEHICLES:
+#     len_queryset = len(list(vehicles.find({'vehicle': v})))
+#     result.update({v: len_queryset})
 
-# print(result)
-pprint.pprint(sorted_x)
+# sorted_x = sorted(result.items(), key=lambda kv: kv[1], reverse=True)
+# # sorted_dict = collections.OrderedDict(sorted_x)
+
+# # print(result)
+# pprint.pprint(sorted_x)
+
+
+pipeline = [
+    {'$group': {'_id': '$vehicle', 'count': {'$sum': 1}}},
+    {'$sort': {'count': -1}}
+]
+
+res = vehicles.aggregate(pipeline)
+
+for document in res:
+       print(document)
