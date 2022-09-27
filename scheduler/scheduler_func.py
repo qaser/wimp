@@ -116,18 +116,51 @@ async def send_vehicle_notify():
 
 
 async def send_vehicle_month_resume():
+    WORDS = ['Не будет', 'Нету', 'Нет']
+    denial_count = 0
+    month_now = dt.datetime.today().month
+    year_now = dt.datetime.today().year
+    previous_month = str(month_now - 1) if str(month_now) != '1' else '12'
+    year = year_now if str(month_now) != '1' else (int(year_now) - 1)
+    for word in WORDS:
+        len_queryset = len(list(vehicles.find(
+            {
+                'confirm_comment': word,
+                'date': { '$gt': f'01.{previous_month}.{year}' }
+            }
+        )))
+        denial_count = denial_count + len_queryset
     location_resume = {}
     vehicle_resume = {}
-    previous_month = dt.datetime.today().month - 1
-    queryset = list(vehicles.find({'date': { '$gt': f'01.{previous_month}.2022' }}))
+    queryset = list(vehicles.find(
+        {'date': { '$gt': f'01.{previous_month}.{year}' }}
+    ))
     for loc in const.LOCATIONS:
-        len_queryset = len(list(vehicles.find({'location': loc, 'date': { '$gt': f'01.{previous_month}.2022' }})))
+        len_queryset = len(list(vehicles.find(
+            {
+                'location': loc,
+                'date': { '$gt': f'01.{previous_month}.{year}' }
+            }
+        )))
         location_resume.update({loc: len_queryset})
-    sorted_locations = sorted(location_resume.items(), key=lambda kv: kv[1], reverse=True)
+    sorted_locations = sorted(
+        location_resume.items(),
+        key=lambda kv: kv[1],
+        reverse=True
+    )
     for veh in const.VEHICLES:
-        len_queryset = len(list(vehicles.find({'vehicle': veh, 'date': { '$gt': f'01.{previous_month}.2022' }})))
+        len_queryset = len(list(vehicles.find(
+            {
+                'vehicle': veh,
+                'date': { '$gt': f'01.{previous_month}.{year}' }
+            }
+        )))
         vehicle_resume.update({veh: len_queryset})
-    sorted_vehicles = sorted(vehicle_resume.items(), key=lambda kv: kv[1], reverse=True)
+    sorted_vehicles = sorted(
+        vehicle_resume.items(),
+        key=lambda kv: kv[1],
+        reverse=True
+    )
     sum_doc = len(queryset)
     word_sum = word_conjugate(sum_doc)
     loc_max, loc_count_max = sorted_locations[0]
@@ -140,6 +173,7 @@ async def send_vehicle_month_resume():
     word_veh_3 = word_conjugate(veh_count_3)
     veh_max_last, veh_count_last = sorted_vehicles[-1]
     word_veh_last = word_conjugate(veh_count_last)
+    accept_percent = math.ceil(100 - ((denial_count / sum_doc) * 100))
     message = (
         'Сегодня будет немного статистики за мой неполный рабочий месяц.\n'
         f'Всего мной обработано {sum_doc} {word_sum} на спец. технику.\n'
@@ -151,7 +185,7 @@ async def send_vehicle_month_resume():
         'Где-то в сторонке "рыдает" '
         f'{veh_max_last} - {veh_count_last} {word_veh_last}.\n\n'
         'Но заявки - это одна сторона монеты, другая - подтверждение.\n'
-        '58% из всего количества заявок были одобрены '
+        f'{accept_percent}% из всего количества заявок были одобрены '
         '(эта информация может быть не точна).\n'
         'На этом всё. Ваш зануда.'
     )

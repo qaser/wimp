@@ -60,6 +60,20 @@ LOCATIONS = [
     'ПТП',
 ]
 
+WORDS = [
+    'Не будет',
+    'Нету',
+    'Нет',
+]
+
+count = 0
+for word in WORDS:
+    len_queryset = len(list(vehicles.find({'confirm_comment': word, 'date': { '$gt': f"01.09.2022" }})))
+    count = count + len_queryset
+
+print(count)
+
+
 # всего заказов техники
 # количество заказов по видам техники
 
