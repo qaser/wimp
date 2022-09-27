@@ -94,16 +94,19 @@ async def send_vehicle_confirm_resume(message: types.Message):
     date = dt.datetime.today().strftime('%d.%m.%Y')
     queryset = list(vehicles.find({'date': date, 'confirm': True}))
     result = ''
-    for i in queryset:
-        vehicle = i.get('vehicle')
-        location = i.get('location')
-        comment = i.get('confirm_comment')
-        text = '<u>{}</u>: <b>{}</b> <i>({})</i>\n'.format(
-            vehicle,
-            location,
-            comment,
-        )
-        result = '{}{}\n'.format(result, text)
+    if len(queryset) == 0:
+        result = 'список пуст'
+    else:
+        for i in queryset:
+            vehicle = i.get('vehicle')
+            location = i.get('location')
+            comment = i.get('confirm_comment')
+            text = '<u>{}</u>: <b>{}</b> <i>({})</i>\n'.format(
+                vehicle,
+                location,
+                comment,
+            )
+            result = '{}{}\n'.format(result, text)
     final_message = '{}\n\n{}'.format(
         'Список согласованной техники:',
         result,

@@ -6,8 +6,9 @@ from aiogram import types
 import utils.constants as const
 from config.bot_config import bot
 from config.mongo_config import vehicles
-from config.telegram_config import CHAT_ID, CHAT_ID_GKS
+from config.telegram_config import CHAT_ID, CHAT_ID_GKS, MY_TELEGRAM_ID
 from functions.plan_check import plan_tu_check
+from functions.word_conjugate import word_conjugate
 from functions.request_weather import request_weather
 from functions.scrap_history_day import scrap_history_day
 from functions.second_level_apk_check import second_level_apk_check
@@ -111,3 +112,47 @@ async def send_vehicle_notify():
         final_text = ''
     message = '{}\n{}\n{}'.format(text_prefix, final_text, text_suffix)
     await bot.send_message(chat_id=CHAT_ID_GKS, text=message)
+
+
+
+async def send_vehicle_month_resume():
+    location_resume = {}
+    vehicle_resume = {}
+    previous_month = dt.datetime.today().month - 1
+    queryset = list(vehicles.find({'date': { '$gt': f'01.{previous_month}.2022' }}))
+    for loc in const.LOCATIONS:
+        len_queryset = len(list(vehicles.find({'location': loc, 'date': { '$gt': f'01.{previous_month}.2022' }})))
+        location_resume.update({loc: len_queryset})
+    sorted_locations = sorted(location_resume.items(), key=lambda kv: kv[1], reverse=True)
+    for veh in const.VEHICLES:
+        len_queryset = len(list(vehicles.find({'vehicle': veh, 'date': { '$gt': f'01.{previous_month}.2022' }})))
+        vehicle_resume.update({veh: len_queryset})
+    sorted_vehicles = sorted(vehicle_resume.items(), key=lambda kv: kv[1], reverse=True)
+    sum_doc = len(queryset)
+    word_sum = word_conjugate(sum_doc)
+    loc_max, loc_count_max = sorted_locations[0]
+    word_loc = word_conjugate(loc_count_max)
+    veh_max_1, veh_count_1 = sorted_vehicles[0]
+    word_veh_1 = word_conjugate(veh_count_1)
+    veh_max_2, veh_count_2 = sorted_vehicles[1]
+    word_veh_2 = word_conjugate(veh_count_2)
+    veh_max_3, veh_count_3 = sorted_vehicles[2]
+    word_veh_3 = word_conjugate(veh_count_3)
+    veh_max_last, veh_count_last = sorted_vehicles[-1]
+    word_veh_last = word_conjugate(veh_count_last)
+    message = (
+        'Сегодня будет немного статистики за мой неполный рабочий месяц.\n'
+        f'Всего мной обработано {sum_doc} {word_sum} на спец. технику.\n'
+        f'Самое активное направление - {loc_max} ({loc_count_max} {word_loc}).\n'
+        'Самый популярный вид техники - '
+        f'{veh_max_1} ({veh_count_1} {word_veh_1}).\n'
+        f'На втором месте - {veh_max_2} ({veh_count_2} {word_veh_2}).\n'
+        f'Замыкает тройку - {veh_max_3} ({veh_count_3} {word_veh_3}).\n'
+        'Где-то в сторонке "рыдает" '
+        f'{veh_max_last} - {veh_count_last} {word_veh_last}.\n\n'
+        'Но заявки - это одна сторона монеты, другая - подтверждение.\n'
+        '58% из всего количества заявок были одобрены '
+        '(эта информация может быть не точна).\n'
+        'На этом всё. Ваш зануда.'
+    )
+    await bot.send_message(chat_id=MY_TELEGRAM_ID, text=message)
