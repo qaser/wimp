@@ -90,9 +90,9 @@ def scheduler_jobs():
     scheduler.add_job(
         send_vehicle_month_resume,
         'cron',
-        day='1',
+        day='27',
         hour=20,
-        minute=5,
+        minute=15,
         timezone=const.TIME_ZONE
     )
     # scheduler.add_job(
