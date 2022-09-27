@@ -92,7 +92,7 @@ def scheduler_jobs():
         'cron',
         day='1',
         hour=20,
-        minute=0,
+        minute=5,
         timezone=const.TIME_ZONE
     )
     # scheduler.add_job(
