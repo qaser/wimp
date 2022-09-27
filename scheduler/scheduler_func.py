@@ -94,7 +94,7 @@ async def send_tu_theme():
 
 
 async def send_vehicle_notify():
-    date = dt.datetime.today().strftime()
+    date = dt.datetime.today().strftime('%d.%m.%Y')
     text_prefix = 'Добрый день. Напоминаю о возможности заявить технику.'
     text_suffix = '/zayavka'
     pipeline = [
