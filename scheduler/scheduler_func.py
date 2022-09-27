@@ -5,7 +5,8 @@ from aiogram import types
 
 import utils.constants as const
 from config.bot_config import bot
-from config.telegram_config import CHAT_ID
+from config.mongo_config import vehicles
+from config.telegram_config import CHAT_ID, CHAT_ID_GKS
 from functions.plan_check import plan_tu_check
 from functions.request_weather import request_weather
 from functions.scrap_history_day import scrap_history_day
@@ -90,3 +91,23 @@ async def send_tu_theme():
             f'Сегодня по плану должна быть техучёба.\nТемы занятий:\n{text}'
         )
         await bot.send_message(chat_id=CHAT_ID, text=message)
+
+
+async def send_vehicle_notify():
+    date = dt.datetime.today().strftime()
+    text_prefix = 'Добрый день. Напоминаю о возможности заявить технику.'
+    text_suffix = '/zayavka'
+    pipeline = [
+        {'$match': {'date': date}},
+        {'$group': {'_id': '$location', 'count': {'$sum': 1}}},
+    ]
+    res = list(vehicles.aggregate(pipeline))
+    text = ''
+    if len(res) != 0:
+        for i in res:
+            text = '{}{}\n'.format(text, i.get('_id'))
+        final_text = f'На данный момент заявились:\n{text}'
+    else:
+        final_text = ''
+    message = '{}\n{}\n{}'.format(text_prefix, final_text, text_suffix)
+    await bot.send_message(chat_id=CHAT_ID_GKS, text=message)

@@ -4,7 +4,7 @@ import utils.constants as const
 from handlers.quiz import send_quiz_shedule
 from scheduler.scheduler_func import (send_apk_2_remainder, send_evening_hello,
                                       send_history_day, send_morning_hello,
-                                      send_morning_wish, send_tu_theme)
+                                      send_morning_wish, send_tu_theme, send_vehicle_notify)
 
 scheduler = AsyncIOScheduler()
 
@@ -66,6 +66,14 @@ def scheduler_jobs():
         'cron',
         day_of_week='mon-sun',
         hour=8,
+        minute=0,
+        timezone=const.TIME_ZONE
+    )
+    scheduler.add_job(
+        send_vehicle_notify,
+        'cron',
+        day_of_week='mon-fri',
+        hour=16,
         minute=0,
         timezone=const.TIME_ZONE
     )
