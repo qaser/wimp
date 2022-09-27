@@ -189,4 +189,4 @@ async def send_vehicle_month_resume():
         '(эта информация может быть не точна).\n'
         'На этом всё. Ваш зануда.'
     )
-    await bot.send_message(chat_id=MY_TELEGRAM_ID, text=message)
+    await bot.send_message(chat_id=CHAT_ID_GKS, text=message)
