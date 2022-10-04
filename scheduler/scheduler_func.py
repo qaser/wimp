@@ -6,7 +6,7 @@ from aiogram import types
 import utils.constants as const
 from config.bot_config import bot
 from config.mongo_config import vehicles
-from config.telegram_config import CHAT_ID, CHAT_ID_GKS, MY_TELEGRAM_ID
+from config.telegram_config import CHAT_ID, CHAT_ID_GKS
 from functions.plan_check import plan_tu_check
 from functions.word_conjugate import word_conjugate
 from functions.request_weather import request_weather
@@ -94,6 +94,7 @@ async def send_tu_theme():
         await bot.send_message(chat_id=CHAT_ID, text=message)
 
 
+# функция напоминания о возможности зявить технику
 async def send_vehicle_notify():
     date = dt.datetime.today().strftime('%d.%m.%Y')
     text_prefix = 'Добрый день. Напоминаю о возможности заявить технику.'
@@ -114,7 +115,7 @@ async def send_vehicle_notify():
     await bot.send_message(chat_id=CHAT_ID_GKS, text=message)
 
 
-
+# функция формирования и отправки статистики по технике
 async def send_vehicle_month_resume():
     WORDS = ['Не будет', 'Нету', 'Нет']
     denial_count = 0
@@ -126,20 +127,20 @@ async def send_vehicle_month_resume():
         len_queryset = len(list(vehicles.find(
             {
                 'confirm_comment': word,
-                'date': { '$gt': f'01.{previous_month}.{year}' }
+                'date': {'$gt': f'01.{previous_month}.{year}'}
             }
         )))
         denial_count = denial_count + len_queryset
     location_resume = {}
     vehicle_resume = {}
     queryset = list(vehicles.find(
-        {'date': { '$gt': f'01.{previous_month}.{year}' }}
+        {'date': {'$gt': f'01.{previous_month}.{year}'}}
     ))
     for loc in const.LOCATIONS:
         len_queryset = len(list(vehicles.find(
             {
                 'location': loc,
-                'date': { '$gt': f'01.{previous_month}.{year}' }
+                'date': {'$gt': f'01.{previous_month}.{year}'}
             }
         )))
         location_resume.update({loc: len_queryset})
@@ -152,7 +153,7 @@ async def send_vehicle_month_resume():
         len_queryset = len(list(vehicles.find(
             {
                 'vehicle': veh,
-                'date': { '$gt': f'01.{previous_month}.{year}' }
+                'date': {'$gt': f'01.{previous_month}.{year}'}
             }
         )))
         vehicle_resume.update({veh: len_queryset})
@@ -175,18 +176,17 @@ async def send_vehicle_month_resume():
     word_veh_last = word_conjugate(veh_count_last)
     accept_percent = math.ceil(100 - ((denial_count / sum_doc) * 100))
     message = (
-        'Сегодня будет немного статистики за мой неполный рабочий месяц.\n'
+        'Статистика за прошедший месяц.\n'
         f'Всего мной обработано {sum_doc} {word_sum} на спец. технику.\n'
-        f'Самое активное направление - {loc_max} ({loc_count_max} {word_loc}).\n'
+        'Самое активное направление - '
+        f'{loc_max} ({loc_count_max} {word_loc}).\n'
         'Самый популярный вид техники - '
         f'{veh_max_1} ({veh_count_1} {word_veh_1}).\n'
         f'На втором месте - {veh_max_2} ({veh_count_2} {word_veh_2}).\n'
         f'Замыкает тройку - {veh_max_3} ({veh_count_3} {word_veh_3}).\n'
         'Где-то в сторонке "рыдает" '
         f'{veh_max_last} - {veh_count_last} {word_veh_last}.\n\n'
-        'Но заявки - это одна сторона монеты, другая - подтверждение.\n'
-        f'{accept_percent}% из всего количества заявок были одобрены '
-        '(эта информация может быть не точна).\n'
+        f'Примерно {accept_percent}% из всего количества заявок были одобрены.\n\n'
         'На этом всё. Ваш зануда.'
     )
     await bot.send_message(chat_id=CHAT_ID_GKS, text=message)
