@@ -25,12 +25,17 @@ class ConfirmVehicleOrder(StatesGroup):
     waiting_for_order_confirm = State()
 
 
+class DeleteVehicleOrder(StatesGroup):
+    waiting_for_delete_confirm = State()
+    waiting_for_delete_done = State()
+
+
 # команда /help_gks
 async def help_vehicle_message(message: types.Message):
     await message.answer(
         text=(
-            'Для создания заявки на технику нажмите /zayavka (можно использовать в группе)\n'
-            'Для создания заявки на технику нажмите /tehnika (не используйте в группе)\n'
+            'Для создания заявки на технику нажмите /tehnika\n'
+            'Для удаления введённой заявки на технику нажмите /tehnika_del\n'
             'Для просмотра списка заявок нажмите /report\n'
             'Для сброса текущего диалога и настроек клавиатуры нажмите /reset\n'
             'Для согласования техники нажмите /confirm\n'
@@ -336,12 +341,93 @@ async def confirm_order(message: types.Message, state: FSMContext):
     await state.finish()
 
 
+async def vehicle_delete(message: types.Message):
+    if str(message.chat.id) == CHAT_ID_GKS:
+        await message.answer(
+            text='Эта команда здесь не доступна, перейдите в чат к боту',
+            reply_markup=types.ReplyKeyboardRemove()
+        )
+    else:
+        date = dt.datetime.today().strftime('%d.%m.%Y')
+        keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True)
+        vehicle_orders = list(vehicles.find({'date': date}).sort(
+            'location',
+            pymongo.ASCENDING
+        ))
+        # добавляем названия кнопок на основе данных из БД
+        if len(list(vehicle_orders)) == 0:
+            await message.answer(
+                'Заявок пока нет',
+                reply_markup=types.ReplyKeyboardRemove()
+            )
+        else:
+            for order in vehicle_orders:
+                vehicle = order.get('vehicle')
+                location = order.get('location')
+                time = order.get('time')
+                key = f'{location} | {vehicle} | {time}'
+                keyboard.add(key)
+            await message.answer(
+                text='Выберите заявку для удаления',
+                reply_markup=keyboard,
+            )
+            await DeleteVehicleOrder.waiting_for_delete_confirm.set()
+
+
+async def vehicle_delete_confirm(message: types.Message, state: FSMContext):
+    await state.update_data(chosen_order=message.text)
+    data = await state.get_data()
+    keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True)
+    keyboard.add('Нет', 'Да')
+    order = data['chosen_order']
+    await message.answer(
+        text=f'Вы подтверждаете удаление заявки?\n\n{order}',
+        reply_markup=keyboard,
+    )
+    await DeleteVehicleOrder.next()
+
+
+async def vehicle_delete_done(message: types.Message, state: FSMContext):
+    if message.text.lower() not in ['нет', 'да']:
+        await message.answer(
+            'Пожалуйста, выберите ответ, используя клавиатуру ниже.'
+        )
+        return
+    if message.text.lower() == 'нет':
+        await message.answer(
+            ('Заявка не удалена.\n'
+             'Если необходимо выбрать другую заявку - нажмите /tehnika_del'),
+            reply_markup=types.ReplyKeyboardRemove()
+        )
+        await state.reset_state()
+    buffer_data = await state.get_data()
+    order = buffer_data['chosen_order']
+    location, vehicle, time = order.split(' | ')
+    date = dt.datetime.today().strftime('%d.%m.%Y')
+    vehicles.delete_one(
+        {
+            'date': date,
+            'vehicle': vehicle,
+            'location': location,
+            'time': time,
+        },
+    )
+    await message.answer(
+        ('Заявка удалена.\n'
+         'Если необходимо продолжить удаление заявок нажмите /tehnika_del\n\n'
+         'Если Вам необходим список заявок - нажмите /report'),
+        reply_markup=types.ReplyKeyboardRemove()
+    )
+    await state.finish()
+
+
 def register_handlers_vehicle(dp: Dispatcher):
     dp.register_message_handler(help_vehicle_message, commands='help_gks')
     dp.register_message_handler(vehicle_start, commands='tehnika')
     dp.register_message_handler(send_vehicle_report, commands='report')
     dp.register_message_handler(send_vehicle_confirm_resume, commands='resume')
     dp.register_message_handler(redirect_vehicle, commands='zayavka')
+    dp.register_message_handler(vehicle_delete, commands='tehnika_del')
     dp.register_message_handler(
         start_confirm_vehicle_orders,
         commands='confirm'
@@ -377,4 +463,12 @@ def register_handlers_vehicle(dp: Dispatcher):
     dp.register_message_handler(
         confirmation,
         state=ChooseVehicle.waiting_confirm
+    )
+    dp.register_message_handler(
+        vehicle_delete_confirm,
+        state=DeleteVehicleOrder.waiting_for_delete_confirm
+    )
+    dp.register_message_handler(
+        vehicle_delete_done,
+        state=DeleteVehicleOrder.waiting_for_delete_done
     )
