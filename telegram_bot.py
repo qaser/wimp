@@ -57,6 +57,16 @@ async def all_commands(message: types.Message):
     await bot.send_message(message.chat.id, text=FINAL_TEXT)
 
 
+@dp.message_handler(content_types=types.ContentType.NEW_CHAT_MEMBERS)
+async def delete_service_message(message: types.Message):
+    await bot.delete_message(message.chat.id, message.message_id)
+
+
+@dp.message_handler(content_types=types.ContentType.LEFT_CHAT_MEMBER)
+async def delete_message_left_member(message: types.Message):
+    await bot.delete_message(message.chat.id, message.message_id)
+
+
 async def on_startup(_):
     scheduler_jobs()
 
