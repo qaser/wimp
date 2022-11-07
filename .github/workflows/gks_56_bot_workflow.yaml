@@ -21,7 +21,7 @@ jobs:
           cd gks_56_bot/
           rm gks56_bot.log
           git pull
-          pm2 restart tg_bot
+          pm2 restart wimp
 
   send_message:
     runs-on: ubuntu-latest
