@@ -9,7 +9,6 @@ from config.telegram_config import MY_TELEGRAM_ID
 from handlers.labor_safety import register_handlers_labor_safety
 from handlers.quiz import register_handlers_quiz
 from handlers.service import register_handlers_service
-from handlers.vehicles import register_handlers_vehicle
 from scheduler.scheduler_jobs import scheduler, scheduler_jobs
 from texts.initial import FINAL_TEXT, HELP_TEXT, INITIAL_TEXT
 
@@ -18,7 +17,8 @@ logging.basicConfig(
     level=logging.INFO,
     filemode='a',
     format='%(asctime)s - %(message)s',
-    datefmt='%d.%m.%y %H:%M:%S'
+    datefmt='%d.%m.%y %H:%M:%S',
+    encoding='UTF-8'
 )
 
 
@@ -74,7 +74,6 @@ async def on_startup(_):
 if __name__ == '__main__':
     scheduler.start()
     register_handlers_service(dp)
-    register_handlers_vehicle(dp)
     register_handlers_quiz(dp)
     register_handlers_labor_safety(dp)
     executor.start_polling(dp, skip_updates=True, on_startup=on_startup)
