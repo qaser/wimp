@@ -12,7 +12,6 @@ from handlers.service import register_handlers_service
 from scheduler.scheduler_jobs import scheduler, scheduler_jobs
 from texts.initial import FINAL_TEXT, HELP_TEXT, INITIAL_TEXT
 
-
 logging.basicConfig(
     filename='gks56_bot.log',
     level=logging.INFO,
@@ -60,12 +59,18 @@ async def all_commands(message: types.Message):
 
 @dp.message_handler(content_types=types.ContentType.NEW_CHAT_MEMBERS)
 async def delete_service_message(message: types.Message):
-    await bot.delete_message(message.chat.id, message.message_id)
+    try:
+        await bot.delete_message(message.chat.id, message.message_id)
+    except:
+        pass
 
 
 @dp.message_handler(content_types=types.ContentType.LEFT_CHAT_MEMBER)
 async def delete_message_left_member(message: types.Message):
-    await bot.delete_message(message.chat.id, message.message_id)
+    try:
+        await bot.delete_message(message.chat.id, message.message_id)
+    except:
+        pass
 
 
 async def on_startup(_):
