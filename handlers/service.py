@@ -106,7 +106,7 @@ async def confirm_offer(message: types.Message, state: FSMContext):
 
 
 # обработка команды /log
-async def count_users(message: types.Message):
+async def send_logs(message: types.Message):
     file = f'logs_bot.log'
     with open(file, 'rb') as f:
         content = f.read()
