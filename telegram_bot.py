@@ -57,16 +57,19 @@ async def all_commands(message: types.Message):
     await bot.send_message(message.chat.id, text=FINAL_TEXT)
 
 
-@dp.message_handler(content_types=types.ContentType.NEW_CHAT_MEMBERS)
+@dp.message_handler(content_types=['new_chat_members'])
 async def delete_service_message(message: types.Message):
+    for chat_member in message.new_chat_members:
+        await message.answer(f'Привет {chat_member.full_name}')
     try:
         await bot.delete_message(message.chat.id, message.message_id)
     except:
         pass
 
 
-@dp.message_handler(content_types=types.ContentType.LEFT_CHAT_MEMBER)
+@dp.message_handler(content_types=['left_chat_member'])
 async def delete_message_left_member(message: types.Message):
+    await message.answer(f'Пока-пока {message.left_chat_member.full_name}')
     try:
         await bot.delete_message(message.chat.id, message.message_id)
     except:
