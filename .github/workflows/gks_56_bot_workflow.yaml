@@ -19,7 +19,7 @@ jobs:
         passphrase: ${{ secrets.PASSPHRASE }}
         script: |
           cd gks_56_bot/
-          rm gks56_bot.log
+          rm logs_bot.log
           git pull
           pm2 restart wimp
 
