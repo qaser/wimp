@@ -13,7 +13,7 @@ from scheduler.scheduler_jobs import scheduler, scheduler_jobs
 from texts.initial import FINAL_TEXT, HELP_TEXT, INITIAL_TEXT
 
 logging.basicConfig(
-    filename='gks56_bot.log',
+    filename='logs_bot.log',
     level=logging.INFO,
     filemode='a',
     format='%(asctime)s - %(message)s',

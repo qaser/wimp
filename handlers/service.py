@@ -32,7 +32,7 @@ async def reset_handler(message: types.Message, state: FSMContext):
     )
 
 
-# обработка команды /user просмотр количества пользователей в БД
+# обработка команды /users просмотр количества пользователей в БД
 async def count_users(message: types.Message):
     queryset = list(users.find({}))
     users_count = len(queryset)
@@ -105,11 +105,20 @@ async def confirm_offer(message: types.Message, state: FSMContext):
     )
 
 
+# обработка команды /log
+async def count_users(message: types.Message):
+    file = f'logs_bot.log'
+    with open(file, 'rb') as f:
+        content = f.read()
+        await bot.send_document(chat_id=MY_TELEGRAM_ID, document=content)
+
+
 def register_handlers_service(dp: Dispatcher):
     dp.register_message_handler(service_end_handler, commands='service_end')
     dp.register_message_handler(service_handler, commands='service')
     dp.register_message_handler(reset_handler, commands='reset', state='*')
     dp.register_message_handler(count_users, commands='users')
+    dp.register_message_handler(send_logs, commands='log')
     dp.register_message_handler(bot_offer, commands='offer')
     dp.register_message_handler(add_offer, state=BotOffer.waiting_for_offer)
     dp.register_message_handler(
