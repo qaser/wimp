@@ -11,6 +11,8 @@ from handlers.quiz import register_handlers_quiz
 from handlers.service import register_handlers_service
 from scheduler.scheduler_jobs import scheduler, scheduler_jobs
 from texts.initial import FINAL_TEXT, HELP_TEXT, INITIAL_TEXT
+from texts.photo import PHOTO
+from utils.random_list_elem import random_list_elem
 
 
 logging.basicConfig(
@@ -66,6 +68,13 @@ async def delete_service_message(message: types.Message):
 @dp.message_handler(content_types=types.ContentType.LEFT_CHAT_MEMBER)
 async def delete_message_left_member(message: types.Message):
     await bot.delete_message(message.chat.id, message.message_id)
+
+
+@dp.message_handler(content_types=types.ContentType.PHOTO)
+async def photo_reaction(message: types.Message):
+    rand_num= random_list_elem(PHOTO)
+    random_reaction = PHOTO[rand_num]
+    await message.answer(random_reaction)
 
 
 async def on_startup(_):
