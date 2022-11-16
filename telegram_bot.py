@@ -44,7 +44,6 @@ async def start_handler(message: types.Message):
     await message.answer(text=INITIAL_TEXT)
 
 
-
 @dp.message_handler(commands=['help'])
 async def help_handler(message: types.Message):
     await bot.send_message(
@@ -57,32 +56,6 @@ async def help_handler(message: types.Message):
 @dp.message_handler(commands=['menu'])
 async def all_commands(message: types.Message):
     await bot.send_message(message.chat.id, text=FINAL_TEXT)
-
-
-@dp.message_handler(content_types=['new_chat_members'])
-async def delete_service_message(message: types.Message):
-    for chat_member in message.new_chat_members:
-        await message.answer(f'Привет {chat_member.full_name}')
-    try:
-        await bot.delete_message(message.chat.id, message.message_id)
-    except:
-        pass
-
-
-@dp.message_handler(content_types=['left_chat_member'])
-async def delete_message_left_member(message: types.Message):
-    await message.answer(f'Пока-пока {message.left_chat_member.full_name}')
-    try:
-        await bot.delete_message(message.chat.id, message.message_id)
-    except:
-        pass
-
-
-@dp.message_handler(content_types=types.ContentType.PHOTO)
-async def photo_reaction(message: types.Message):
-    rand_num= random_list_elem(PHOTO)
-    random_reaction = PHOTO[rand_num]
-    await message.answer(random_reaction)
 
 
 async def on_startup(_):
