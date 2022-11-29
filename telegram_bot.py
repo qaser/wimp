@@ -11,7 +11,6 @@ from handlers.quiz import register_handlers_quiz
 from handlers.service import register_handlers_service
 from scheduler.scheduler_jobs import scheduler, scheduler_jobs
 from texts.initial import FINAL_TEXT, HELP_TEXT, INITIAL_TEXT
-from texts.photo import PHOTO
 from utils.random_list_elem import random_list_elem
 
 logging.basicConfig(
@@ -56,6 +55,11 @@ async def help_handler(message: types.Message):
 @dp.message_handler(commands=['menu'])
 async def all_commands(message: types.Message):
     await bot.send_message(message.chat.id, text=FINAL_TEXT)
+
+
+@dp.message_handler(regexp='привет')
+async def all_commands(message: types.Message):
+    await message.answer('привет')
 
 
 async def on_startup(_):
