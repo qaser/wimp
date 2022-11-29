@@ -57,7 +57,7 @@ async def all_commands(message: types.Message):
     await bot.send_message(message.chat.id, text=FINAL_TEXT)
 
 
-@dp.message_handler(regexp=['привет', 'добрый день', 'добрый вечер'])
+@dp.message_handler(regexp='привет')
 async def all_commands(message: types.Message):
     await message.answer('привет')
 
