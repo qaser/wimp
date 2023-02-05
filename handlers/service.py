@@ -1,14 +1,19 @@
 import datetime as dt
+import os
+import openai
 
 from aiogram import Dispatcher, types
 from aiogram.dispatcher import FSMContext
 from aiogram.dispatcher.filters.state import State, StatesGroup
+from aiogram.dispatcher.filters import Text
 
-from config.bot_config import bot
+from config.bot_config import bot, dp
 from config.mongo_config import offers, users
 from config.telegram_config import CHAT_ID, MY_TELEGRAM_ID
 from texts.initial import SERVICE_END_TEXT, SERVICE_TEXT
 
+
+openai.api_key = os.getenv('OPENAI_API_KEY')
 
 class BotOffer(StatesGroup):
     waiting_for_offer = State()
@@ -111,6 +116,19 @@ async def send_logs(message: types.Message):
     with open(file, 'rb') as f:
         content = f.read()
         await bot.send_document(chat_id=MY_TELEGRAM_ID, document=content)
+
+
+@dp.message_handler(Text(startswith='!'))
+async def chat_gpt_request(message: types.Message):
+    promt = message.text.partition('!')[2]
+    response = openai.Completion.create(
+            model="text-davinci-003",
+            prompt=promt,
+            max_tokens=700,
+            temperature=0.8,
+        )
+    text = response.choices[0].text
+    await message.answer(text.capitalize())
 
 
 def register_handlers_service(dp: Dispatcher):

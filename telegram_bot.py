@@ -13,6 +13,7 @@ from scheduler.scheduler_jobs import scheduler, scheduler_jobs
 from texts.initial import FINAL_TEXT, HELP_TEXT, INITIAL_TEXT
 from utils.random_list_elem import random_list_elem
 
+
 logging.basicConfig(
     filename='logs_bot.log',
     level=logging.INFO,
