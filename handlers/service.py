@@ -128,7 +128,7 @@ async def chat_gpt_request(message: types.Message):
             temperature=0.8,
         )
     text = response.choices[0].text
-    await message.answer(text.capitalize())
+    await message.reply(text.capitalize())
 
 
 def register_handlers_service(dp: Dispatcher):
