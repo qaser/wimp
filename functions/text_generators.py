@@ -1,4 +1,5 @@
 import datetime as dt
+import openai
 
 from functions.plan_check import plan_pat_check
 from texts.evening import EVENING_HELLO
@@ -10,8 +11,17 @@ from utils.random_list_elem import random_list_elem
 
 
 def hello_generator():
-    rand_num = random_list_elem(MORNING_HELLO)
-    morning_text = MORNING_HELLO[rand_num]
+    prompt = 'пожелай коллективу доброго утра в ироничной манере, но с рифмой'
+    response = openai.Completion.create(
+        model="text-davinci-003",
+        prompt=prompt,
+        max_tokens=700,
+        temperature=0.8,
+    )
+    text = response.choices[0].text
+    morning_text = text.capitalize()
+    # rand_num = random_list_elem(MORNING_HELLO)
+    # morning_text = MORNING_HELLO[rand_num]
     return morning_text
 
 
