@@ -44,13 +44,13 @@ async def start_handler(message: types.Message):
     await message.answer(text=INITIAL_TEXT)
 
 
-@dp.message_handler(commands=['help'])
-async def help_handler(message: types.Message):
-    await bot.send_message(
-        message.chat.id,
-        text=f'{message.from_user.full_name}{HELP_TEXT}'
-    )
-    await bot.send_message(message.chat.id, text=FINAL_TEXT)
+# @dp.message_handler(commands=['help'])
+# async def help_handler(message: types.Message):
+#     await bot.send_message(
+#         message.chat.id,
+#         text=f'{message.from_user.full_name}{HELP_TEXT}'
+#     )
+#     await bot.send_message(message.chat.id, text=FINAL_TEXT)
 
 
 @dp.message_handler(commands=['menu'])
