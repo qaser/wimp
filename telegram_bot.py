@@ -44,16 +44,6 @@ async def start_handler(message: types.Message):
     await message.answer(text=INITIAL_TEXT)
 
 
-# @dp.message_handler(commands=['menu'])
-# async def all_commands(message: types.Message):
-#     await bot.send_message(message.chat.id, text=FINAL_TEXT)
-
-
-@dp.message_handler()
-async def all_commands(message: types.Message):
-    await bot.send_message(message.chat.id, text=dir(message))
-
-
 # удаление сервисного сообщения 'пользователь удалён'
 @dp.message_handler(content_types=['pinned_message', 'left_chat_member', 'forum_topic_created', 'forum_topic_closed', 'forum_topic_reopened'])
 async def delete_service_pinned_message(message: types.Message):
