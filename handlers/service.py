@@ -134,9 +134,9 @@ async def chat_gpt_request(message: types.Message):
 def register_handlers_service(dp: Dispatcher):
     # dp.register_message_handler(service_end_handler, commands='service_end')
     # dp.register_message_handler(service_handler, commands='service')
-    # dp.register_message_handler(reset_handler, commands='reset', state='*')
+    dp.register_message_handler(reset_handler, commands='reset', state='*')
     # dp.register_message_handler(count_users, commands='users')
-    # dp.register_message_handler(send_logs, commands='log')
+    dp.register_message_handler(send_logs, commands='log')
     dp.register_message_handler(bot_offer, commands='offer')
     dp.register_message_handler(add_offer, state=BotOffer.waiting_for_offer)
     dp.register_message_handler(
