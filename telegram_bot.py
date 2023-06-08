@@ -44,9 +44,14 @@ async def start_handler(message: types.Message):
     await message.answer(text=INITIAL_TEXT)
 
 
-@dp.message_handler(commands=['menu'])
+# @dp.message_handler(commands=['menu'])
+# async def all_commands(message: types.Message):
+#     await bot.send_message(message.chat.id, text=FINAL_TEXT)
+
+
+@dp.message_handler()
 async def all_commands(message: types.Message):
-    await bot.send_message(message.chat.id, text=FINAL_TEXT)
+    await bot.send_message(message.chat.id, text=dir(message))
 
 
 # удаление сервисного сообщения 'пользователь удалён'
