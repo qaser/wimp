@@ -60,7 +60,7 @@ async def all_commands(message: types.Message):
 async def delete_service_pinned_message(message: types.Message):
     try:
         await bot.delete_message(message.chat.id, message.message_id)
-        await bot.send_message(message.chat.id, message.text)
+        # await bot.send_message(message.chat.id, message.text)
     except:
         pass
 
