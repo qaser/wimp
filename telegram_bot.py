@@ -46,7 +46,7 @@ async def start_handler(message: types.Message):
 
 @dp.message_handler()
 async def help_handler(message: types.Message):
-    await bot.answer(message.content_type)
+    await message.answer(message.content_type)
 
 
 @dp.message_handler(commands=['menu'])
