@@ -44,13 +44,19 @@ async def start_handler(message: types.Message):
     await message.answer(text=INITIAL_TEXT)
 
 
+@dp.message_handler()
+async def help_handler(message: types.Message):
+    if message.forum_topic_created:
+        await message.answer('обана')
+
+
 @dp.message_handler(commands=['menu'])
 async def all_commands(message: types.Message):
     await bot.send_message(message.chat.id, text=FINAL_TEXT)
 
 
 # удаление сервисного сообщения 'пользователь удалён'
-@dp.message_handler(content_types=['pinned_message', 'left_chat_member', 'forum_topic_created'])
+@dp.message_handler(content_types=['pinned_message', 'left_chat_member'])
 async def delete_service_pinned_message(message: types.Message):
     try:
         await bot.delete_message(message.chat.id, message.message_id)
