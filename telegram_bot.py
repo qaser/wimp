@@ -44,12 +44,6 @@ async def start_handler(message: types.Message):
     await message.answer(text=INITIAL_TEXT)
 
 
-@dp.message_handler()
-async def help_handler(message: types.Message):
-    if message.:
-        await message.answer('обана')
-
-
 @dp.message_handler(commands=['menu'])
 async def all_commands(message: types.Message):
     await bot.send_message(message.chat.id, text=FINAL_TEXT)
@@ -60,7 +54,7 @@ async def all_commands(message: types.Message):
 async def delete_service_pinned_message(message: types.Message):
     try:
         await bot.delete_message(message.chat.id, message.message_id)
-        # await bot.send_message(message.chat.id, message.text)
+        await bot.send_message(message.chat.id, message.text)
     except:
         pass
 
