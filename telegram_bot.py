@@ -45,7 +45,7 @@ async def start_handler(message: types.Message):
 
 
 # удаление сервисного сообщения 'пользователь удалён'
-@dp.message_handler(content_types=['pinned_message', 'left_chat_member', 'forum_topic_created', 'forum_topic_closed', 'forum_topic_reopened'])
+@dp.message_handler(content_types=['pinned_message', 'left_chat_member', 'forum_topic_created', 'forum_topic_closed', 'forum_topic_reopened',])
 async def delete_service_pinned_message(message: types.Message):
     try:
         await bot.delete_message(message.chat.id, message.message_id)
