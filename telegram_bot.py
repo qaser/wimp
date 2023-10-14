@@ -11,7 +11,6 @@ from handlers.quiz import register_handlers_quiz
 from handlers.service import register_handlers_service
 from scheduler.scheduler_jobs import scheduler, scheduler_jobs
 from texts.initial import FINAL_TEXT, HELP_TEXT, INITIAL_TEXT
-from utils.random_list_elem import random_list_elem
 
 
 logging.basicConfig(
@@ -24,43 +23,39 @@ logging.basicConfig(
 )
 
 
-@dp.message_handler(commands=['start'])
-async def start_handler(message: types.Message):
-    user = message.from_user
-    # проверяю есть ли пользователь в БД, если нет - добавляю
-    check_user = users.find_one({'id': user.id})
-    if check_user is None:
-        users.insert_one({
-            'id': user.id,
-            'first_name': user.first_name,
-            'last_name': user.last_name,
-            'username': user.username,
-            'place_of_work': '',
-        })
-        await bot.send_message(
-            chat_id=MY_TELEGRAM_ID,
-            text=f'Добавлен новый пользователь в БД:\n{user.full_name}'
-        )
-    await message.answer(text=INITIAL_TEXT)
+# @dp.message_handler(commands=['start'])
+# async def start_handler(message: types.Message):
+#     user = message.from_user
+#     # проверяю есть ли пользователь в БД, если нет - добавляю
+#     check_user = users.find_one({'id': user.id})
+#     if check_user is None:
+#         users.insert_one({
+#             'id': user.id,
+#             'first_name': user.first_name,
+#             'last_name': user.last_name,
+#             'username': user.username,
+#             'place_of_work': '',
+#         })
+#         await bot.send_message(
+#             chat_id=MY_TELEGRAM_ID,
+#             text=f'Добавлен новый пользователь в БД:\n{user.full_name}'
+#         )
+#     await message.answer(text=INITIAL_TEXT)
 
 
-@dp.message_handler(commands=['help'])
-async def help_handler(message: types.Message):
-    await bot.send_message(
-        message.chat.id,
-        text=f'{message.from_user.full_name}{HELP_TEXT}'
-    )
-    await bot.send_message(message.chat.id, text=FINAL_TEXT)
+# @dp.message_handler(commands=['help'])
+# async def help_handler(message: types.Message):
+#     await bot.send_message(
+#         message.chat.id,
+#         text=f'{message.from_user.full_name}{HELP_TEXT}'
+#     )
+#     await bot.send_message(message.chat.id, text=FINAL_TEXT)
 
 
-@dp.message_handler(commands=['menu'])
-async def all_commands(message: types.Message):
-    await bot.send_message(message.chat.id, text=FINAL_TEXT)
+# @dp.message_handler(commands=['menu'])
+# async def all_commands(message: types.Message):
+#     await bot.send_message(message.chat.id, text=FINAL_TEXT)
 
-
-@dp.message_handler(regexp='привет')
-async def all_commands(message: types.Message):
-    await message.answer('привет')
 
 
 async def on_startup(_):
@@ -70,6 +65,6 @@ async def on_startup(_):
 if __name__ == '__main__':
     scheduler.start()
     register_handlers_service(dp)
-    register_handlers_quiz(dp)
-    register_handlers_labor_safety(dp)
+    # register_handlers_quiz(dp)
+    # register_handlers_labor_safety(dp)
     executor.start_polling(dp, skip_updates=True, on_startup=on_startup)
