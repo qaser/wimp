@@ -43,6 +43,7 @@ logging.basicConfig(
 #     await message.answer(text=INITIAL_TEXT)
 
 
+<<<<<<< HEAD
 # @dp.message_handler(commands=['help'])
 # async def help_handler(message: types.Message):
 #     await bot.send_message(
@@ -56,6 +57,16 @@ logging.basicConfig(
 # async def all_commands(message: types.Message):
 #     await bot.send_message(message.chat.id, text=FINAL_TEXT)
 
+=======
+# удаление сервисного сообщения 'пользователь удалён'
+@dp.message_handler(content_types=['pinned_message', 'left_chat_member', 'forum_topic_created', 'forum_topic_closed', 'forum_topic_reopened',])
+async def delete_service_pinned_message(message: types.Message):
+    try:
+        await bot.delete_message(message.chat.id, message.message_id)
+        await bot.send_message(message.chat.id, message.text)
+    except:
+        pass
+>>>>>>> 4b6067cea8d5ac862ae4fc74abd8a5b30e09df50
 
 
 async def on_startup(_):
