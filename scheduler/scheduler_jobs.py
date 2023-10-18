@@ -1,10 +1,7 @@
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
 
 import utils.constants as const
-from handlers.quiz import send_quiz_shedule
-from scheduler.scheduler_func import (send_apk_2_remainder, send_evening_hello,
-                                      send_history_day, send_morning_hello,
-                                      send_morning_wish, send_tu_theme)
+from scheduler.scheduler_func import send_apk_2_remainder, send_tu_theme
 
 scheduler = AsyncIOScheduler()
 

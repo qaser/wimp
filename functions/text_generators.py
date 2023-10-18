@@ -10,36 +10,6 @@ from texts.weather import (WEATHER_COLD_PREFIX, WEATHER_HOT_PREFIX,
 from utils.random_list_elem import random_list_elem
 
 
-def hello_generator():
-    prompt = 'пожелай коллективу доброго утра в ироничной манере, но с рифмой'
-    response = openai.Completion.create(
-        model="text-davinci-003",
-        prompt=prompt,
-        max_tokens=700,
-        temperature=0.8,
-    )
-    text = response.choices[0].text
-    morning_text = text.capitalize()
-    # rand_num = random_list_elem(MORNING_HELLO)
-    # morning_text = MORNING_HELLO[rand_num]
-    return morning_text
-
-
-def evening_hello_generator():
-    rand_num = random_list_elem(EVENING_HELLO)
-    evening_text = EVENING_HELLO[rand_num]
-    return evening_text
-
-
-def wish_generator():
-    rand_num = random_list_elem(MORNING_WISHES)
-    day_week = dt.datetime.today().weekday()
-    text_wish = MORNING_WISHES[rand_num]
-    if day_week < 5:
-        return text_wish
-    return '{}\n{}'.format(text_wish, '\nP.S. Дневная смена не забудьте про ГиперФлоу.')
-
-
 def weather_text_generator(temperature, condition):
     check_rain = condition.find('rain')
     prefix = ''
