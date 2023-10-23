@@ -1,7 +1,8 @@
 from aiogram import Bot, Dispatcher
-from aiogram.contrib.fsm_storage.memory import MemoryStorage
-
+from aiogram.fsm.storage.memory import MemoryStorage
 from config.telegram_config import TELEGRAM_TOKEN
 
+
+storage = MemoryStorage()
 bot = Bot(token=TELEGRAM_TOKEN)
-dp = Dispatcher(bot, storage=MemoryStorage())
+dp = Dispatcher(storage=storage)
