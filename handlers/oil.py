@@ -1,29 +1,31 @@
 import re
 import datetime as dt
+import time
 
 from math import pi, sqrt, pow, acos, sin, degrees, radians
 from aiogram import F, Router
 from aiogram.types import Message
 
-from config.telegram_config import ADMIN_TELEGRAM_ID, MESSAGE_THREAD_ID, CHAT_ID
+from config.telegram_config import CHAT_ID, ADMIN_TELEGRAM_ID, MESSAGE_THREAD_ID
 from config.mongo_config import tanks, oil_actions
 from pymongo.errors import PyMongoError
 from utils import constants as const
+from config.bot_config import bot
 
 
 router = Router()
+THREAD_ID = -1001902490328
+CHAT = 19
 
 
-@router.message((F.message_thread_id == MESSAGE_THREAD_ID) & (F.chat.id == CHAT_ID))
+@router.message((F.message_thread_id == 46) & (F.chat.id == -1001978478140))
 async def counting_oil(message: Message):
     text = message.text
-    print(text)
     check_date = re.search(r'\d{2}.\d{2}.\d{4}', text)
     date = dt.datetime.strptime(check_date[0], '%d.%m.%Y') if check_date else dt.datetime.today()
     actions = text.split('\n')
     for rec in actions:
         if re.match(r'\w+\s\d+/\d+\s\w+', rec.lower()):
-            print('fgh')
             await load_handler(rec, date, message)
         elif re.match(r'((?:гсм\w*|мх\w*|\dбпм\w*|\w*\d\d\w*)(?:\s\S-\d+){1,6})', rec.lower()):
             await level_handler(rec, date, message)
@@ -78,11 +80,13 @@ async def insert_records_db(params, message: Message):
     )
     full_name = const.TANK_FULL_NAME[target_tank[2].lower()]
     action_name = 'закачано' if action == 'upload' else 'скачано'
-    await message.answer(
-        text=(f'Данные приняты:\n{target_tank[0]}{target_tank[1]} {full_name}'
+    msg = await message.answer(
+        text=(f'Данные приняты:\n{target_tank[0]}{target_tank[1]} {full_name} '
               f'{action_name} {cost} л. масла'),
         disable_notification=True,
     )
+    time.sleep(30)
+    await bot.delete_message(msg.chat.id, msg.message_id)
 
 
 def update_target(tank, after_vol, date):
@@ -110,7 +114,7 @@ def update_source(tank, cost, date, action):
     return res['_id']
 
 
-async def level_handler(record, date, message):
+async def level_handler(record, date, message: Message):
     gpa_check = re.fullmatch(r'\w+\s(?:д|н)-\d{1,3}\s(?:д|н)-\d{1,3}', record.lower())
     unit_check = re.fullmatch(r'((?:гсм\w*|мх\w*|\w*\dбпм\w*)(?:\s\d-\d*){1,6})', record.lower())
     if gpa_check:
@@ -125,10 +129,15 @@ async def level_handler(record, date, message):
         unit_num = '5' if unit.isalpha() else unit[0]  # все относится к пятому КЦ
         update_level(unit_tanks, unit_type, unit_num, date)
     else:
-        message.answer(
+        msg = await message.answer(
             f'Ошибка обработки записи "{record}"\nВнесите запись согласно шаблону',
             disable_notification=True
         )
+        time.sleep(30)
+        await bot.delete_message(msg.chat.id, msg.message_id)
+    m = await message.answer('Данные по уровням масла получены')
+    time.sleep(10)
+    await bot.delete_message(m.chat.id, m.message_id)
 
 
 def update_level(unit_tanks, unit_type, unit_num, date, is_work=False):
