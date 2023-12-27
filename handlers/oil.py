@@ -13,18 +13,6 @@ from utils import constants as const
 
 router = Router()
 
-LOAD_PATTERNS = [
-    r'(?:гпа\d\d\w|\d\d\w)\s\d+/\d+\s\w+',  # 62Д 225/253 МХ2
-    r'\dбпм\d\s\d+/\d+\s\w+',  # 2БПМ3 225/253 3БПМ2
-    r'мх\d\s\d+/\d+\s\w+',  # МХ3 225/253 ГСМ3
-    r'гсм\d\s\d+/\d+\s\w+',  # ГСМ3 225/253 АЦ
-]
-
-LEVEL_PATTERNS = [
-    r'((?:гсм|мх|\dбпм)(?:\s\d-\d+){1,6})',
-    r'\w+\s(?:д|н)-\d{1,3}\s(?:д|н)-\d{1,3}',
-]
-
 
 @router.message((F.message_thread_id == MESSAGE_THREAD_ID) & (F.chat.id == CHAT_ID))
 async def counting_oil(message: Message):
@@ -35,6 +23,7 @@ async def counting_oil(message: Message):
     actions = text.split('\n')
     for rec in actions:
         if re.match(r'\w+\s\d+/\d+\s\w+', rec.lower()):
+            print('fgh')
             await load_handler(rec, date, message)
         elif re.match(r'((?:гсм\w*|мх\w*|\dбпм\w*|\w*\d\d\w*)(?:\s\S-\d+){1,6})', rec.lower()):
             await level_handler(rec, date, message)
@@ -68,7 +57,7 @@ def tank_parse(record):
         return ['КОЛОДЕЦ', '5', '0']  # это безвозвратный расход для пятого цеха
 
 
-async def insert_records_db(params, message):
+async def insert_records_db(params, message: Message):
     target_tank, source_tank = params['tanks']
     before_vol = params['before_vol']
     after_vol = params['after_vol']
@@ -86,6 +75,13 @@ async def insert_records_db(params, message):
             'user_id': message.from_user.id,
             'cost': cost,
         }
+    )
+    full_name = const.TANK_FULL_NAME[target_tank[2].lower()]
+    action_name = 'закачано' if action == 'upload' else 'скачано'
+    await message.answer(
+        text=(f'Данные приняты:\n{target_tank[0]}{target_tank[1]} {full_name}'
+              f'{action_name} {cost} л. масла'),
+        disable_notification=True,
     )
 
 

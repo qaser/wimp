@@ -38,6 +38,11 @@ CONDITIONS_WEATHER = {
     'thunderstorm-with-hail': 'Град с грозой',
 }
 
+TANK_FULL_NAME = {
+    'н': 'МБН',
+    'д': 'МБД',
+}
+
 GSM_TANKS = {
     '1': {'length': 8604, 'radius': 2700},
     '2': {'length': 8483, 'radius': 2660},
@@ -48,6 +53,18 @@ GSM_TANKS = {
 }
 
 HYDRO_AKK_VOL = 1252
+
+LOAD_PATTERNS = [
+    r'(?:гпа\d\d\w|\d\d\w)\s\d+/\d+\s\w+',  # 62Д 225/253 МХ2
+    r'\dбпм\d\s\d+/\d+\s\w+',  # 2БПМ3 225/253 3БПМ2
+    r'мх\d\s\d+/\d+\s\w+',  # МХ3 225/253 ГСМ3
+    r'гсм\d\s\d+/\d+\s\w+',  # ГСМ3 225/253 АЦ
+]
+
+LEVEL_PATTERNS = [
+    r'((?:гсм|мх|\dбпм)(?:\s\d-\d+){1,6})',
+    r'\w+\s(?:д|н)-\d{1,3}\s(?:д|н)-\d{1,3}',
+]
 
 RECOMMEND_TEMP = {
     '1': {
