@@ -29,11 +29,13 @@ LEVEL_PATTERNS = [
 @router.message((F.message_thread_id == MESSAGE_THREAD_ID) & (F.chat.id == CHAT_ID))
 async def counting_oil(message: Message):
     text = message.text
+    print(text)
     check_date = re.search(r'\d{2}.\d{2}.\d{4}', text)
     date = dt.datetime.strptime(check_date[0], '%d.%m.%Y') if check_date else dt.datetime.today()
     actions = text.split('\n')
     for rec in actions:
         if re.match(r'\w+\s\d+/\d+\s\w+', rec.lower()):
+            print('Это закачка', rec, date)
             await load_handler(rec, date, message)
         elif re.match(r'((?:гсм\w*|мх\w*|\dбпм\w*|\w*\d\d\w*)(?:\s\S-\d+){1,6})', rec.lower()):
             await level_handler(rec, date, message)
@@ -48,6 +50,7 @@ async def load_handler(record, date, message):
         'after_vol': int(after_vol),
         'date': date
     }
+    print(load_params)
     await insert_records_db(load_params, message)
 
 
@@ -86,30 +89,35 @@ async def insert_records_db(params, message):
             'cost': cost,
         }
     )
+    print('Запись добавлена')
 
 
 def update_target(tank, after_vol, date):
-    res = tanks.find_one({'type': tank[0], 'num': tank[1], 'tank': tank[2]})
+    res = tanks.find_one({'type': tank[0], 'num': tank[1], 'tank': tank[2].upper()})
+    print({'type': tank[0], 'num': tank[1], 'tank': tank[2]})
     tank_id = res['_id']
     caliber = res['calibration']
     volume = int(after_vol * caliber)
     if tank[0].upper() == 'ГСМ':
         volume = gsm_vol_calc(volume, tank[2])
     tanks.update_one(
-        {'type': tank[0], 'num': tank[1], 'tank': tank[2]},
+        {'type': tank[0], 'num': tank[1], 'tank': tank[2].upper()},
         {'$set': {'cur_volume': volume, 'last_update': date}},
     )
+    print('Запись добавлена')
     return [tank_id, caliber]
 
 
 def update_source(tank, cost, date, action):
-    res = tanks.find_one({'type': tank[0], 'num': tank[1], 'tank': tank[2]})
+    res = tanks.find_one({'type': tank[0], 'num': tank[1], 'tank': tank[2].upper()})
+    print({'type': tank[0], 'num': tank[1], 'tank': tank[2]})
     cur_volume = res['cur_volume']
     volume = cur_volume + cost if action == 'download' else cur_volume - cost
     tanks.update_one(
-        {'type': tank[0], 'num': tank[1], 'tank': tank[2]},
+        {'type': tank[0], 'num': tank[1], 'tank': tank[2].upper()},
         {'$set': {'cur_volume': volume, 'last_update': date}},
     )
+    print('Запись добавлена')
     return res['_id']
 
 
