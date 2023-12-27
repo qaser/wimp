@@ -85,7 +85,7 @@ async def insert_records_db(params, message: Message):
               f'{action_name} {cost} л. масла'),
         disable_notification=True,
     )
-    time.sleep(30)
+    time.sleep(10)
     await bot.delete_message(msg.chat.id, msg.message_id)
 
 
