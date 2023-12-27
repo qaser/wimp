@@ -38,6 +38,17 @@ CONDITIONS_WEATHER = {
     'thunderstorm-with-hail': 'Град с грозой',
 }
 
+GSM_TANKS = {
+    '1': {'length': 8604, 'radius': 2700},
+    '2': {'length': 8483, 'radius': 2660},
+    '3': {'length': 8483, 'radius': 2660},
+    '4': {'length': 9660, 'radius': 2540},
+    '5': {'length': 9660, 'radius': 2540},
+    '6': {'length': 4287, 'radius': 2430},
+}
+
+HYDRO_AKK_VOL = 1252
+
 RECOMMEND_TEMP = {
     '1': {
         '1': '10.0',
