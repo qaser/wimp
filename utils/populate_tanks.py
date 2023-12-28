@@ -347,7 +347,7 @@ TANKS = [
         'cur_volume': 0,
         'last_update': '',
         'calibration': 1,
-        'description': 'Колодец для безвозвратных потерь масла',
+        'description': 'Безвозвратные потери масла',
         'is_work': False,
     },
 ]

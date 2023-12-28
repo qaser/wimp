@@ -5,6 +5,7 @@ import time
 from math import pi, sqrt, pow, acos, sin, degrees, radians
 from aiogram import F, Router
 from aiogram.types import Message
+from aiogram.enums import ParseMode
 
 from config.telegram_config import CHAT_ID, ADMIN_TELEGRAM_ID, MESSAGE_THREAD_ID
 from config.mongo_config import tanks, oil_actions
@@ -17,18 +18,51 @@ router = Router()
 THREAD_ID = -1001902490328
 CHAT = 19
 
+THREAD_ID = -1001978478140
+CHAT = 46
+
 
 @router.message((F.message_thread_id == 46) & (F.chat.id == -1001978478140))
 async def counting_oil(message: Message):
+    load_ids = []
+    count_objects = 0
     text = message.text
     check_date = re.search(r'\d{2}.\d{2}.\d{4}', text)
     date = dt.datetime.strptime(check_date[0], '%d.%m.%Y') if check_date else dt.datetime.today()
     actions = text.split('\n')
     for rec in actions:
         if re.match(r'\w+\s\d+/\d+\s\w+', rec.lower()):
-            await load_handler(rec, date, message)
+            id = await load_handler(rec, date, message)
+            load_ids.append(id)
         elif re.match(r'((?:гсм\w*|мх\w*|\dбпм\w*|\w*\d\d\w*)(?:\s\S-\d+){1,6})', rec.lower()):
-            await level_handler(rec, date, message)
+            count_obj = await level_handler(rec, date, message)
+            count_objects += count_obj
+    await send_report(message, load_ids, count_objects)
+
+
+async def send_report(message: Message, load_list: list, count_objects: int):
+    if len(load_list) != 0 or count_objects > 0:
+        if len(load_list) != 0:
+            load_text = '\n<i><u>Раскачка масла:</u></i>\n'
+            for id in load_list:
+                rec = oil_actions.find_one({'_id': id})
+                target = tanks.find_one({'_id': rec['target_id']})['description']
+                cost = rec['cost']
+                action = 'закачано' if rec['action'] == 'upload' else 'скачано'
+                rec_text = f'{target}: {action} <b>{cost}</b> л.'
+                load_text = f'{load_text}{rec_text}\n'
+        else:
+            load_text = ''
+        if count_objects > 0:
+            level_text = f'<i><u>Обновлено уровней:</u></i> <b>{count_objects}</b>'
+        else:
+            level_text = ''
+        await message.answer(
+            ('<b>Получены данные:</b>'
+            f'{load_text}\n{level_text}'),
+            parse_mode=ParseMode.HTML,
+            disable_notification=True,
+        )
 
 
 async def load_handler(record, date, message):
@@ -40,7 +74,7 @@ async def load_handler(record, date, message):
         'after_vol': int(after_vol),
         'date': date
     }
-    await insert_records_db(load_params, message)
+    return await insert_records_db(load_params, message)
 
 
 def tank_parse(record):
@@ -68,7 +102,7 @@ async def insert_records_db(params, message: Message):
     cost = before_vol - after_vol
     cost = int(max(cost, -cost) * caliber)
     source_id = update_source(source_tank, cost, params['date'], action)
-    oil_actions.insert_one(
+    record = oil_actions.insert_one(
         {
             'date': params['date'],
             'action': action,
@@ -78,15 +112,7 @@ async def insert_records_db(params, message: Message):
             'cost': cost,
         }
     )
-    full_name = const.TANK_FULL_NAME[target_tank[2].lower()]
-    action_name = 'закачано' if action == 'upload' else 'скачано'
-    msg = await message.answer(
-        text=(f'Данные приняты:\n{target_tank[0]}{target_tank[1]} {full_name} '
-              f'{action_name} {cost} л. масла'),
-        disable_notification=True,
-    )
-    time.sleep(10)
-    await bot.delete_message(msg.chat.id, msg.message_id)
+    return record.inserted_id
 
 
 def update_target(tank, after_vol, date):
@@ -115,6 +141,7 @@ def update_source(tank, cost, date, action):
 
 
 async def level_handler(record, date, message: Message):
+    count_level = 0
     gpa_check = re.fullmatch(r'\w+\s(?:д|н)-\d{1,3}\s(?:д|н)-\d{1,3}', record.lower())
     unit_check = re.fullmatch(r'((?:гсм\w*|мх\w*|\w*\dбпм\w*)(?:\s\d-\d*){1,6})', record.lower())
     if gpa_check:
@@ -122,22 +149,22 @@ async def level_handler(record, date, message: Message):
         unit_tanks = re.findall(r'(?:д-|н-)\d+', record.lower())
         is_work = False if record.find('р') == -1 else True
         update_level(unit_tanks, 'ГПА', gpa_num, date, is_work)
+        count_level += 1
     elif unit_check:
         unit = re.search(r'(?:гсм|мх|\dбпм)', record.lower())[0]
         unit_tanks = re.findall(r'\d-\d+', record)
         unit_type = unit if unit.isalpha() else unit[1:]
         unit_num = '5' if unit.isalpha() else unit[0]  # все относится к пятому КЦ
         update_level(unit_tanks, unit_type, unit_num, date)
+        count_level += 1
     else:
         msg = await message.answer(
             f'Ошибка обработки записи "{record}"\nВнесите запись согласно шаблону',
             disable_notification=True
         )
-        time.sleep(30)
+        time.sleep(10)
         await bot.delete_message(msg.chat.id, msg.message_id)
-    m = await message.answer('Данные по уровням масла получены')
-    time.sleep(10)
-    await bot.delete_message(m.chat.id, m.message_id)
+    return count_level
 
 
 def update_level(unit_tanks, unit_type, unit_num, date, is_work=False):
@@ -171,7 +198,7 @@ def update_level(unit_tanks, unit_type, unit_num, date, is_work=False):
 
 def insert_oil_outlay(cost, date, tank_id):
     target_id = tanks.find_one({'type': 'КОЛОДЕЦ'})['_id']
-    oil_actions.insert_one(
+    record = oil_actions.insert_one(
         {
             'date': date,
             'action': 'outlay',
@@ -181,6 +208,8 @@ def insert_oil_outlay(cost, date, tank_id):
             'cost': cost,
         }
     )
+    return record.inserted_id
+
 
 
 def gsm_vol_calc(level, num_tank):
