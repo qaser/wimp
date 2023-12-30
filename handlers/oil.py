@@ -2,10 +2,16 @@ import re
 import datetime as dt
 import time
 
+import keyboards.for_oil as kb
+import utils.pipelines as pipeline
+
 from math import pi, sqrt, pow, acos, sin, degrees, radians
 from aiogram import F, Router
-from aiogram.types import Message
+from aiogram.types import CallbackQuery, Message
 from aiogram.enums import ParseMode
+from aiogram.filters import Command
+from aiogram.fsm.context import FSMContext
+from aiogram.exceptions import AiogramError
 
 from config.telegram_config import CHAT_ID, ADMIN_TELEGRAM_ID, MESSAGE_THREAD_ID
 from config.mongo_config import tanks, oil_actions
@@ -15,14 +21,35 @@ from config.bot_config import bot
 
 
 router = Router()
-THREAD_ID = -1001902490328
-CHAT = 19
-
-THREAD_ID = -1001978478140
-CHAT = 46
 
 
-@router.message((F.message_thread_id == 46) & (F.chat.id == -1001978478140))
+@router.message(
+    Command('oil'),
+    (F.message_thread_id == int(MESSAGE_THREAD_ID)) & (F.chat.id == int(CHAT_ID))
+)
+async def oil_level_show(message: Message):
+    await message.delete()
+    res_text = '<b>Количество масла в МБ ГПА:</b>\n'
+    gpa_queryset = tanks.aggregate(pipeline.GPA_PIPELINE)
+    for rec in gpa_queryset:
+        tank_text = f'<u>ГПА №{rec["_id"]}:</u>'
+        for tank in rec['tanks']:
+            t_type = tank['tank']
+            t_vol = tank['vol']
+            t_cal = tank['cal']
+            t_level = int(t_vol / t_cal)
+            t_date = tank['date'].strftime('%d.%m.%Y') if tank['date'] != '' else '30.11.2023'
+            tank_text = f'{tank_text}\nМБ{t_type} <b>{t_vol}л / {t_level}мм</b> (<i>{t_date}</i>)'
+        res_text = f'{res_text}{tank_text}\n'
+    await message.answer(
+        res_text,
+        disable_notification=True,
+        parse_mode=ParseMode.HTML,
+        reply_markup=kb.unit_choose_kb('ГПА'),
+    )
+
+
+@router.message((F.message_thread_id == int(MESSAGE_THREAD_ID)) & (F.chat.id == int(CHAT_ID)))
 async def counting_oil(message: Message):
     load_ids = []
     count_objects = 0
@@ -227,3 +254,76 @@ def gsm_vol_calc(level, num_tank):
     # определение объёма
     v = int(s * l / 1000000)
     return v
+
+
+@router.callback_query(F.data.startswith('close'))
+async def report_close(callback: CallbackQuery, state: FSMContext):
+    await state.clear()
+    await callback.message.delete()
+
+
+@router.callback_query(F.data.startswith('choose_'))
+async def change_unit(callback: CallbackQuery):
+    _, unit = callback.data.split('_')
+    if unit == 'gpa':
+        unit_kb = 'ГПА'
+        res_text = '<b>Количество масла в МБ ГПА:</b>\n'
+        queryset = tanks.aggregate(pipeline.GPA_PIPELINE)
+        for rec in queryset:
+            tank_text = f'<u>ГПА №{rec["_id"]}:</u>'
+            for tank in rec['tanks']:
+                t_type = tank['tank']
+                t_vol = tank['vol']
+                t_cal = tank['cal']
+                t_level = int(t_vol / t_cal)
+                t_date = tank['date'].strftime('%d.%m.%Y') if tank['date'] != '' else '30.11.2023'
+                tank_text = f'{tank_text}\nМБ{t_type} <b>{t_vol}л / {t_level}мм</b> (<i>{t_date}</i>)'
+            res_text = f'{res_text}{tank_text}\n'
+    elif unit == 'bpm':
+        unit_kb = 'БПМ'
+        res_text = '<b>Количество масла в БПМ:</b>\n'
+        queryset = tanks.aggregate(pipeline.BPM_PIPELINE)
+        for rec in queryset:
+            tank_text = f'<u>БПМ №{rec["_id"]}:</u>'
+            for tank in rec['tanks']:
+                t_type = tank['tank']
+                t_vol = tank['vol']
+                t_cal = tank['cal']
+                t_level = int(t_vol / t_cal)
+                t_date = tank['date'].strftime('%d.%m.%Y') if tank['date'] != '' else '30.11.2023'
+                tank_text = f'{tank_text}\nБак №{t_type} <b>{t_vol}л / {t_level}мм</b> (<i>{t_date}</i>)'
+            res_text = f'{res_text}{tank_text}\n'
+    elif unit == 'gsm':
+        unit_kb = 'ГСМ'
+        res_text = '<b>Количество масла на складе ГСМ:</b>\n'
+        queryset = tanks.aggregate(pipeline.GSM_PIPELINE)
+        for tank in queryset:
+            tank_text = ''
+            for param in tank['data']:
+                t_vol = param['vol']
+                t_cal = param['cal']
+                t_level = int(t_vol / t_cal)
+                t_date = param['date'].strftime('%d.%m.%Y') if param['date'] != '' else '30.11.2023'
+                tank_text = f'{tank_text}<u>Емк №{tank["_id"]}:</u>\n<b>{t_vol} л</b> (<i>{t_date}</i>)'
+            res_text = f'{res_text}{tank_text}\n'
+    elif unit == 'mh':
+        unit_kb = 'МХ'
+        res_text = '<b>Количество масла в м/х КЦ-6:</b>\n'
+        queryset = tanks.aggregate(pipeline.MH_PIPELINE)
+        for tank in queryset:
+            tank_text = ''
+            for param in tank['data']:
+                t_vol = param['vol']
+                t_cal = param['cal']
+                t_level = int(t_vol / t_cal)
+                t_date = param['date'].strftime('%d.%m.%Y') if param['date'] != '' else '30.11.2023'
+                tank_text = f'{tank_text}<u>Бак №{tank["_id"]}:</u> <b>{t_vol} л / {t_level}мм</b> (<i>{t_date}</i>)'
+            res_text = f'{res_text}{tank_text}\n'
+    try:
+        await callback.message.edit_text(
+            res_text,
+            parse_mode=ParseMode.HTML,
+            reply_markup=kb.unit_choose_kb(unit_kb),
+        )
+    except AiogramError as err:
+        pass
