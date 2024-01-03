@@ -7,6 +7,7 @@ from aiogram.types import Message
 from aiogram import F, Router
 
 from config.bot_config import bot, dp
+from config.telegram_config import ADMIN_TELEGRAM_ID
 from handlers import service, oil
 
 
@@ -17,9 +18,12 @@ async def cmd_reset(message: Message, state: FSMContext):
     await message.answer('Ошибки сброшены')
 
 
-# @dp.message(F.text)
-# async def archive_messages(message: Message):
-#     print(message)
+@dp.message(F.text)
+async def archive_messages(message: Message):
+    await bot.send_message(
+        chat_id=ADMIN_TELEGRAM_ID,
+        text=f'{message.chat.id}\n{message.message_thread_id}'
+    )
 
 
 async def main():

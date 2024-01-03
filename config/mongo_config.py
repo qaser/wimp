@@ -8,6 +8,7 @@ db = client['gks_bot_db']
 users = db['users']
 tanks = db['tanks']
 oil_actions = db['oil_actions']
+oil_reports = db['oil_reports']
 
 
 '''
@@ -19,6 +20,12 @@ oil_actions = db['oil_actions']
     'last_update' - последнее изменение
     'calibration' - тарировка бака
     'description' - описание бака
+'''
+
+'''
+структура хранения данных об отчетах
+    'date' - это дата формирования отчета
+    'volumes' - это словарь с данными уровней на текущий момент
 '''
 
 '''
