@@ -8,7 +8,7 @@ from aiogram import F, Router
 
 from config.bot_config import bot, dp
 from config.telegram_config import ADMIN_TELEGRAM_ID
-from handlers import service, oil
+from handlers import service, oil, report
 
 
 @dp.message(Command('reset'))
@@ -29,6 +29,7 @@ async def cmd_reset(message: Message, state: FSMContext):
 async def main():
     dp.include_router(service.router)
     dp.include_router(oil.router)
+    dp.include_router(report.router)
     await dp.start_polling(bot)
 
 if __name__ == "__main__":
