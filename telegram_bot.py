@@ -28,8 +28,8 @@ async def cmd_reset(message: Message, state: FSMContext):
 
 async def main():
     dp.include_router(service.router)
-    dp.include_router(oil.router)
     dp.include_router(report.router)
+    dp.include_router(oil.router)
     await dp.start_polling(bot)
 
 if __name__ == "__main__":

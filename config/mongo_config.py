@@ -20,6 +20,7 @@ oil_reports = db['oil_reports']
     'last_update' - последнее изменение
     'calibration' - тарировка бака
     'description' - описание бака
+    'is_work' - в каком состоянии на данный момент находится Оборудование
 '''
 
 '''
