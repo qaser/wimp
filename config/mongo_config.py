@@ -9,9 +9,24 @@ users = db['users']
 tanks = db['tanks']
 oil_actions = db['oil_actions']
 oil_reports = db['oil_reports']
-
+gpa_params = db['gpa_params']
 
 '''
+структура хранения gpa_params
+    'user_id':
+    'date'
+    'gpa_num':
+    'params': {
+        fsn
+        fun
+        mbd
+        fsd
+        mbn
+        rso
+        dst
+        dmn
+    }
+
 структура хранения данных о масле
     'type' - это ГПА, МХ, БПМ, ГСМ, АВТО или безвозвратные потери (расход)
     'num' - это станционный номер

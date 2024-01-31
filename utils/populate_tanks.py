@@ -10,12 +10,16 @@ tanks = db['tanks']
 oil_actions = db['oil_actions']
 
 
+# pipeline = [
+#     {'$match': {
+#         'date': {'$gte': dt.datetime(2024, 1, 1), '$lt': dt.datetime(2024, 1, 31)},
+#         'action': 'outlay'
+#     }},
+#     {'$group':{'_id': '$source_id', 'sum':{'$sum':'$cost'}}}
+# ]
 pipeline = [
-    {'$match': {
-        'date': {'$gte': dt.datetime(2024, 1, 1), '$lt': dt.datetime(2024, 1, 31)},
-        'action': 'outlay'
-    }},
-    {'$group':{'_id': '$source_id', 'sum':{'$sum':'$cost'}}}
+    {'$match': {'date': {'$gte': dt.datetime(2024, 1, 1), '$lt': dt.datetime(2024, 1, 31)}, 'action': 'upload'}},
+    {'$group':{'_id': '$target_id', 'sum':{'$sum':'$cost'}, 'source': {'$push': '$source_id'}}}
 ]
 
 res = oil_actions.aggregate(pipeline)

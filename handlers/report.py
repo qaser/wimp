@@ -120,15 +120,31 @@ async def get_report(call: CallbackQuery):
                 ms_volume = 618
             wb[const.EXCEL_COORDINATES[tank][0]][const.EXCEL_COORDINATES[tank][4]] = ms_volume
     # заполнение параметрами расхода ГПА
-    pipeline = [
+    pipeline_outlays = [
         {'$match': {'date': {'$gte': start_date, '$lt': end_date}, 'action': 'outlay'}},
         {'$group':{'_id': '$source_id', 'sum':{'$sum':'$cost'}}}
     ]
-    outlays = oil_actions.aggregate(pipeline)
+    outlays = oil_actions.aggregate(pipeline_outlays)
     for obj in outlays:
         tank_obj = tanks.find_one({'_id': obj['_id']})
         tank = f'{tank_obj["type"]}_{tank_obj["num"]}_{tank_obj["tank"]}'
-        wb[const.EXCEL_COORDINATES[tank][0]][const.EXCEL_COORDINATES[tank][5]] = obj['sum']
+        wb[const.EXCEL_COORDINATES[tank][0]][const.EXCEL_COORDINATES[tank][5]] = ceil(obj['sum'] * 0.88)
+    # заполнение параметрами закачки
+    pipeline_uploads = [
+        {'$match': {'date': {'$gte': start_date, '$lt': end_date}, 'action': 'upload'}},
+        {'$group':{'_id': '$target_id', 'sum':{'$sum':'$cost'}, 'source': {'$push': '$source_id'}}}
+    ]
+    uploads = oil_actions.aggregate(pipeline_uploads)
+    for obj in uploads:
+        tank_obj = tanks.find_one({'_id': obj['_id']})
+        tank = f'{tank_obj["type"]}_{tank_obj["num"]}_{tank_obj["tank"]}'
+        wb[const.EXCEL_COORDINATES[tank][0]][const.EXCEL_COORDINATES[tank][6]] = ceil(obj['sum'] * 0.88)
+        sources = ''
+        for source_id in obj['source']:
+            tank_obj = tanks.find_one({'_id': source_id})
+            tank_name = f'{tank_obj["type"]}-{tank_obj["num"]}-{tank_obj["tank"]}'
+            sources = f'{sources}{tank_name}\n'
+        wb[const.EXCEL_COORDINATES[tank][0]][const.EXCEL_COORDINATES[tank][7]] = sources
     wb.save(f'./static/oil_reports/{month}_{year}.xlsx')
     await call.message.delete()
 
