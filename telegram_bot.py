@@ -13,6 +13,7 @@ from config.telegram_config import ADMIN_TELEGRAM_ID
 from handlers import service, oil
 from gid import refresh_token
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
+from handlers import service, oil, report, gpa_params
 
 
 @dp.message(Command('reset'))
@@ -40,6 +41,8 @@ async def main():
     )
     scheduler.start()
     dp.include_router(service.router)
+    dp.include_router(report.router)
+    dp.include_router(gpa_params.router)
     dp.include_router(oil.router)
     dp.include_router(refresh_token.router)
     await dp.start_polling(bot)

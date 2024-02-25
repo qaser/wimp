@@ -11,12 +11,31 @@ users = db['users']
 tanks = db['tanks']
 oil_actions = db['oil_actions']
 oil_reports = db['oil_reports']
+<<<<<<< HEAD
 
 auth_gid = gid_db['auth']
 cookies_gid = gid_db['cookies']
 users_gid = gid_db['users']
+=======
+gpa_params = db['gpa_params']
+>>>>>>> 2c9a211b5d193464b74088a8db0a9216cfcadce9
 
 '''
+структура хранения gpa_params
+    'user_id':
+    'date'
+    'gpa_num':
+    'params': {
+        fsn
+        fun
+        mbd
+        fsd
+        mbn
+        rso
+        dst
+        dmn
+    }
+
 структура хранения данных о масле
     'type' - это ГПА, МХ, БПМ, ГСМ, АВТО или безвозвратные потери (расход)
     'num' - это станционный номер
@@ -25,12 +44,15 @@ users_gid = gid_db['users']
     'last_update' - последнее изменение
     'calibration' - тарировка бака
     'description' - описание бака
+    'is_work' - в каком состоянии на данный момент находится Оборудование
 '''
 
 '''
 структура хранения данных об отчетах
+    'type' - тип отчета, промежуточный или окончательный (final, current)
     'date' - это дата формирования отчета
-    'volumes' - это словарь с данными уровней на текущий момент
+    'volumes_before' - это словарь с данными уровней за прошлый период
+    'volumes_after' - это словарь с данными уровней на текущий момент
 '''
 
 '''
