@@ -29,11 +29,8 @@ tzdata==2022.1
 tzlocal==4.2
 urllib3==1.26.10
 yarl==1.8.2
-<<<<<<< HEAD
 dnspython==2.6.1
 pycurl==7.45.3
 pymongo==4.6.2
 certifi==2024.2.2
-=======
 python-dateutil==2.8.2
->>>>>>> 2c9a211b5d193464b74088a8db0a9216cfcadce9
