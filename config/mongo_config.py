@@ -11,14 +11,12 @@ users = db['users']
 tanks = db['tanks']
 oil_actions = db['oil_actions']
 oil_reports = db['oil_reports']
-<<<<<<< HEAD
+gpa_params = db['gpa_params']
 
 auth_gid = gid_db['auth']
 cookies_gid = gid_db['cookies']
 users_gid = gid_db['users']
-=======
-gpa_params = db['gpa_params']
->>>>>>> 2c9a211b5d193464b74088a8db0a9216cfcadce9
+
 
 '''
 структура хранения gpa_params
