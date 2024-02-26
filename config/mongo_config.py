@@ -13,8 +13,8 @@ oil_actions = db['oil_actions']
 oil_reports = db['oil_reports']
 gpa_params = db['gpa_params']
 
-auth_gid = gid_db['auth_params']
-cookies_gid = gid_db['cookies_params']
+auth_gid = gid_db['auth']
+cookies_gid = gid_db['cookies']
 users_gid = gid_db['users']
 
 
