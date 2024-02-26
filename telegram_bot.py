@@ -36,7 +36,7 @@ async def main():
     scheduler.add_job(
         refresh_token_func,
         'interval',
-        hours=12,
+        minutes=29,
         timezone=const.TIME_ZONE
     )
     scheduler.start()
