@@ -4,7 +4,7 @@ import certifi
 import json
 
 # data = json.dumps({"content": "ok"})  # для комментов
-data = json.dumps({"isAnonymous": False, "recipientAccountId": "733cbc6a-0a87-4a1a-9ad1-1afebd3c01d1", "appreciation": "Спасибо"}).encode()
+data = json.dumps({"isAnonymous": False, "recipientAccountId": "733cbc6a-0a87-4a1a-9ad1-1afebd3c01d1", "appreciation": "Это бот"}).encode()
 # data = json.dumps({"type": "like"})  # для лайков
 # data = json.dumps({"content": "ок"})  # для реакций на комменты
 

@@ -27,7 +27,11 @@ ADD_HEADERS = [
 ]
 
 
-# @router.message(Command('token'))
+@router.message(Command('token'))
+async def manual_refresh_token(message):
+    await manual_refresh_token()
+
+
 async def refresh_token_func():
     refresh_token = auth_gid.find_one({'username': 'huji'}).get('refresh_token')
     data = {'grant_type': 'refresh_token', 'refresh_token': refresh_token, 'client_id': 'webapp'}
@@ -70,6 +74,11 @@ async def refresh_token_func():
         await bot.send_message(
             chat_id=ADMIN_TELEGRAM_ID,
             text=f'Токен ГИД обновлен',
+            disable_notification=True
+        )
+        await bot.send_message(
+            chat_id=ADMIN_TELEGRAM_ID,
+            text=resp_data['access_token'],
             disable_notification=True
         )
     else:
