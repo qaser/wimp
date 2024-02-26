@@ -32,14 +32,14 @@ async def cmd_reset(message: Message, state: FSMContext):
 
 
 async def main():
-    scheduler = AsyncIOScheduler()
-    scheduler.add_job(
-        refresh_token_func,
-        'interval',
-        minutes=29,
-        timezone=const.TIME_ZONE
-    )
-    scheduler.start()
+    # scheduler = AsyncIOScheduler()
+    # scheduler.add_job(
+    #     refresh_token_func,
+    #     'interval',
+    #     minutes=29,
+    #     timezone=const.TIME_ZONE
+    # )
+    # scheduler.start()
     dp.include_router(service.router)
     dp.include_router(report.router)
     dp.include_router(gpa_params.router)
