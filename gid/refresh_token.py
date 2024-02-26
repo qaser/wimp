@@ -2,7 +2,6 @@ import pycurl
 from io import BytesIO
 import certifi
 import ast
-import pymongo
 import datetime as dt
 
 from aiogram import F, Router
@@ -29,7 +28,7 @@ ADD_HEADERS = [
 
 @router.message(Command('token'))
 async def manual_refresh_token(message):
-    await manual_refresh_token()
+    await refresh_token_func()
 
 
 async def refresh_token_func():
