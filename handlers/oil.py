@@ -1,6 +1,7 @@
 import re
 import datetime as dt
 import time
+from gid.send_gratitude import send_gratitude_func
 
 import keyboards.for_oil as kb
 import utils.pipelines as pipeline
@@ -22,6 +23,11 @@ from config.bot_config import bot
 
 router = Router()
 
+
+@router.message(Command('qwerty'))
+async def manual_refresh_token(message):
+    print('ccc')
+    await send_gratitude_func()
 
 @router.message(
     Command('oil'),

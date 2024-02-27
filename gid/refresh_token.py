@@ -12,8 +12,7 @@ from config.telegram_config import ADMIN_TELEGRAM_ID
 from config.bot_config import bot
 
 from .constants import HEADERS
-from config.mongo_config import auth_gid, cookies_gid
-
+from config.mongo_config import auth_gid
 
 router = Router()
 
