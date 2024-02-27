@@ -34,16 +34,16 @@ async def cmd_reset(message: Message, state: FSMContext):
 
 async def main():
     scheduler = AsyncIOScheduler()
-    # scheduler.add_job(
-    #     refresh_token_func,
-    #     'interval',
-    #     minutes=27,
-    #     timezone=const.TIME_ZONE
-    # )
+    scheduler.add_job(
+        refresh_token_func,
+        'interval',
+        minutes=15,
+        timezone=const.TIME_ZONE
+    )
     scheduler.add_job(
         send_gratitude_func,
         'interval',
-        minutes=1,
+        minutes=17,
         timezone=const.TIME_ZONE
     )
     scheduler.start()
