@@ -38,7 +38,7 @@ async def send_gratitude_func():
     users = list(users_gid.find({'latest_like': {'$ne': today}}))
     if len(users) != 0:
         user = users[0]
-        username = user['username'].split(' ')[1]
+        username = user['username']
         name = username.split(' ')[1]
         user_id = user['id']
         likes = user['likes']
