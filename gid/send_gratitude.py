@@ -50,7 +50,6 @@ async def send_gratitude_func():
             gratitude_text = f'{gratitude_giga_chat}\n\nСгенерировано нейросетью :)'
         except:
             gratitude_text = 'Спасибо, просто так'
-        print(gratitude_text)
         headers_with_tokens = [
             f'X-CSRF-TOKEN: {csrf}',
             f'Authorization: Bearer {token}',

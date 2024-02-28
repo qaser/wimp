@@ -5,6 +5,7 @@ from aiogram.filters.command import Command
 from aiogram.fsm.context import FSMContext
 from aiogram.types import Message
 from aiogram import F, Router
+from gid.get_courses import get_courses
 import utils.constants as const
 from gid.refresh_token import refresh_token_func
 from gid.send_gratitude import send_gratitude_func
@@ -43,7 +44,15 @@ async def main():
     scheduler.add_job(
         send_gratitude_func,
         'interval',
-        minutes=2,
+        minutes=30,
+        timezone=const.TIME_ZONE
+    )
+    scheduler.add_job(
+        get_courses,
+        'cron',
+        day_of_week='mon-sun',
+        hour=12,
+        minute=0,
         timezone=const.TIME_ZONE
     )
     scheduler.start()

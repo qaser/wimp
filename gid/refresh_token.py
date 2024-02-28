@@ -5,14 +5,15 @@ import ast
 import datetime as dt
 
 from aiogram import F, Router
-from aiogram.types import CallbackQuery, Message
-from aiogram.enums import ParseMode
-from aiogram.filters import Command
 from config.telegram_config import ADMIN_TELEGRAM_ID
 from config.bot_config import bot
+from aiogram.fsm.state import State, StatesGroup
+from aiogram.types import Message
+from aiogram.fsm.context import FSMContext
 
 from .constants import HEADERS
 from config.mongo_config import auth_gid
+
 
 router = Router()
 
@@ -23,11 +24,6 @@ ADD_HEADERS = [
     'Content-Type: application/x-www-form-urlencoded',
     'Referer: https://web.gid.ru/',
 ]
-
-
-@router.message(Command('token'))
-async def manual_refresh_token(message):
-    await refresh_token_func()
 
 
 async def refresh_token_func():
@@ -71,11 +67,6 @@ async def refresh_token_func():
         )
         await bot.send_message(
             chat_id=ADMIN_TELEGRAM_ID,
-            text=f'Токен ГИД обновлен',
-            disable_notification=True
-        )
-        await bot.send_message(
-            chat_id=ADMIN_TELEGRAM_ID,
             text=resp_data['access_token'],
             disable_notification=True
         )
@@ -83,5 +74,4 @@ async def refresh_token_func():
         await bot.send_message(
             chat_id=ADMIN_TELEGRAM_ID,
             text=f'Ошибка {resp_code}\n{body_str}',
-            disable_notification=True
         )

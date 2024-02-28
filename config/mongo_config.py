@@ -7,18 +7,27 @@ client = pymongo.MongoClient('localhost', 27017)
 db = client['gks_bot_db']
 gid_db = client['gid_db']
 
+# коллекции для масла и обходов
 users = db['users']
 tanks = db['tanks']
 oil_actions = db['oil_actions']
 oil_reports = db['oil_reports']
 gpa_params = db['gpa_params']
 
+# коллекциии для ГИДа
 auth_gid = gid_db['auth_gid']
 users_gid = gid_db['users']
-buffer_gid = gid_db['buffer_gid']
+courses_gid = gid_db['courses']
+quiz_gid = gid_db['quiz']
+buffer_gid = gid_db['buffer']
 
 
 '''
+структура хранения данных о курсах
+    'course_id': айди курса (items.раздел.items.id)
+    'lessons': [] список айди уроков в курсе
+    'is_complete' true/false
+
 структура хранения gpa_params
     'user_id':
     'date'
