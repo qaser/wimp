@@ -1,19 +1,20 @@
-import pycurl
-from io import BytesIO
-import certifi
-import json
-from .constants import HEADERS
-from config.mongo_config import auth_gid, buffer_gid, users_gid
-from aiogram import F, Router
-from langchain.chat_models.gigachat import GigaChat
-from langchain.schema import HumanMessage, SystemMessage, AIMessage
-from config.giga_chat_config import GIGA_CHAT_TOKEN
-from aiogram.filters import Command
-import ast
-from config.telegram_config import ADMIN_TELEGRAM_ID
-from config.bot_config import bot
 import datetime as dt
+import json
+import time
+from io import BytesIO
 
+import certifi
+import pycurl
+from langchain.chat_models.gigachat import GigaChat
+from langchain.schema import SystemMessage
+
+from config.bot_config import bot
+from config.gid_config import MY_GID_ID
+from config.giga_chat_config import GIGA_CHAT_TOKEN
+from config.mongo_config import auth_gid, users_gid
+from config.telegram_config import ADMIN_TELEGRAM_ID
+from handlers.collect_energy import collect_energy_func
+from utils.constants import HEADERS
 
 ACTIVATE_MSG = (
     'Напиши хокку коллеге по работе. '
@@ -22,6 +23,11 @@ ACTIVATE_MSG = (
     'В тексте должны быть проялены уважение и гордость за будущие заслуги. '
     'Только не нужно говорить в начале фразы "Спасибо, коллега". '
     'Коллегу зовут '
+)
+TEXT_FOOTER = (
+    'Сгенерировано нейросетью...\n'
+    'Рассылается автоматически...\n'
+    '...но это не значит, что я Вас не ценю :)'
 )
 URL = 'https://web.gid.ru/api/gratitude'
 ADD_HEADERS = [
@@ -47,7 +53,7 @@ async def send_gratitude_func():
         try:
             chat_instance = GigaChat(credentials=GIGA_CHAT_TOKEN, verify_ssl_certs=False)
             gratitude_giga_chat = chat_instance([SystemMessage(content=f'{ACTIVATE_MSG} {name}')]).content
-            gratitude_text = f'{gratitude_giga_chat}\n\nСгенерировано нейросетью :)'
+            gratitude_text = f'{gratitude_giga_chat}\n\n{TEXT_FOOTER}'
         except:
             gratitude_text = 'Спасибо, просто так'
         headers_with_tokens = [
@@ -80,6 +86,9 @@ async def send_gratitude_func():
                 {'id': user_id},
                 {'$set': {'likes': likes + 1, 'latest_like': today}}
             )
+            await collect_energy_func(user_id, MY_GID_ID)
+            time.sleep(2)
+            await collect_energy_func(MY_GID_ID, user_id)
             await bot.send_message(
                 chat_id=ADMIN_TELEGRAM_ID,
                 text=f'Статус {resp_code}\n{username}\n{gratitude_text}',

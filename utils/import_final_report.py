@@ -1,6 +1,6 @@
 import datetime as dt
-import pymongo
 
+import pymongo
 
 client = pymongo.MongoClient('localhost', 27017)
 # Connect to our database

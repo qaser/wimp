@@ -1,16 +1,16 @@
-import pycurl
-from io import BytesIO
-import certifi
 import json
 import time
+from io import BytesIO
 
-from .constants import HEADERS
-from config.mongo_config import auth_gid, courses_gid
-from aiogram.filters import Command
-from config.telegram_config import ADMIN_TELEGRAM_ID
-from config.bot_config import bot
+import certifi
+import pycurl
 from aiogram import Router
+from aiogram.filters import Command
 
+from config.bot_config import bot
+from config.mongo_config import auth_gid, courses_gid
+from config.telegram_config import ADMIN_TELEGRAM_ID
+from utils.constants import HEADERS
 
 router = Router()
 

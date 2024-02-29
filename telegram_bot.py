@@ -4,18 +4,14 @@ import logging
 from aiogram.filters.command import Command
 from aiogram.fsm.context import FSMContext
 from aiogram.types import Message
-from aiogram import F, Router
-from gid.get_courses import get_courses
-import utils.constants as const
-from gid.refresh_token import refresh_token_func
-from gid.send_gratitude import send_gratitude_func
-
-from config.bot_config import bot, dp
-from config.telegram_config import ADMIN_TELEGRAM_ID
-from handlers import service, oil
-from gid import refresh_token, send_gratitude
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
-from handlers import service, oil, report, gpa_params
+
+import utils.constants as const
+from config.bot_config import bot, dp
+from handlers import gid_auth, gpa_params, oil, report, service
+from handlers.get_courses import get_courses
+from handlers.gid_auth import refresh_token_func
+from handlers.send_gratitude import send_gratitude_func
 
 
 @dp.message(Command('reset'))
@@ -23,14 +19,6 @@ async def cmd_reset(message: Message, state: FSMContext):
     await message.delete()
     await state.clear()
     await message.answer('Ошибки сброшены')
-
-
-# @dp.message(F.text)
-# async def archive_messages(message: Message):
-#     await bot.send_message(
-#         chat_id=ADMIN_TELEGRAM_ID,
-#         text=f'{message.chat.id}\n{message.message_thread_id}'
-#     )
 
 
 async def main():
@@ -60,7 +48,7 @@ async def main():
     dp.include_router(report.router)
     dp.include_router(gpa_params.router)
     dp.include_router(oil.router)
-    dp.include_router(refresh_token.router)
+    dp.include_router(gid_auth.router)
     await dp.start_polling(bot)
 
 

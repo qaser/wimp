@@ -1,18 +1,16 @@
 import datetime as dt
 
-import keyboards.for_gpa_params as kb
-
 from aiogram import F, Router
-from aiogram.types import CallbackQuery, Message
 from aiogram.enums import ParseMode
 from aiogram.filters import Command
 from aiogram.fsm.context import FSMContext
 from aiogram.fsm.state import State, StatesGroup
+from aiogram.types import CallbackQuery, Message
 
+import keyboards.for_gpa_params as kb
+from config.bot_config import bot
 from config.mongo_config import gpa_params
 from utils import constants as const
-from config.bot_config import bot
-
 
 router = Router()
 

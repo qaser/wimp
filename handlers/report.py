@@ -1,26 +1,25 @@
-import re
 import datetime as dt
+import re
 import time
 from math import ceil
+
+from aiogram import F, Router
+from aiogram.enums import ParseMode
+from aiogram.exceptions import AiogramError
+from aiogram.filters import Command
+from aiogram.fsm.context import FSMContext
+from aiogram.types import CallbackQuery, Message
 from dateutil.relativedelta import relativedelta
 from openpyxl import load_workbook
+from pymongo.errors import PyMongoError
 
 import keyboards.for_report as kb
 import utils.pipelines as pipeline
-
-from aiogram import F, Router
-from aiogram.types import CallbackQuery, Message
-from aiogram.enums import ParseMode
-from aiogram.filters import Command
-from aiogram.fsm.context import FSMContext
-from aiogram.exceptions import AiogramError
-
-from config.telegram_config import CHAT_ID, ADMIN_TELEGRAM_ID, MESSAGE_THREAD_ID
-from config.mongo_config import tanks, oil_actions, oil_reports
-from pymongo.errors import PyMongoError
-from utils import constants as const
 from config.bot_config import bot
-
+from config.mongo_config import oil_actions, oil_reports, tanks
+from config.telegram_config import (ADMIN_TELEGRAM_ID, CHAT_ID,
+                                    MESSAGE_THREAD_ID)
+from utils import constants as const
 
 router = Router()
 

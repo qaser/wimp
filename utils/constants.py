@@ -158,3 +158,16 @@ GPA_PARAMS =  {
 
 
 GPA_NUMS = ['52', '53', '54', '55', '61', '62', '63', '64', '65']
+
+
+HEADERS = [
+    'User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:123.0) Gecko/20100101 Firefox/123.0',
+    'Accept-Language: ru-RU,ru;q=0.8,en-US;q=0.5,en;q=0.3',
+    'Origin: https://web.gid.ru',
+    'DNT: 1',
+    'Sec-Fetch-Dest: empty',
+    'Sec-Fetch-Mode: cors',
+    'Sec-Fetch-Site: same-site',
+    'Connection: keep-alive',
+    'TE: trailers',
+]

@@ -1,7 +1,6 @@
 import pymongo
 from aiogram.fsm.storage.base import BaseStorage
 
-
 # Create an instance of the MongoDB client
 client = pymongo.MongoClient('localhost', 27017)
 db = client['gks_bot_db']
