@@ -21,6 +21,7 @@ ADD_HEADERS = [
 
 
 def get_request_data(user_id, recipient_id):
+    date = str(dt.datetime.now())
     data = json.dumps({
         'batch': [
             {
@@ -30,12 +31,12 @@ def get_request_data(user_id, recipient_id):
                 'properties': {
                     'recipient': recipient_id
                 },
-                'timestamp': dt.datetime.now(),
+                'timestamp': date,
                 'type': 'track',
                 'userId': f'[{user_id},80f8a415-c1ad-4d70-957b-587e42f6ac03]'
             }
         ],
-        'sentAt': dt.datetime.now(),
+        'sentAt': date,
         'writeKey': 'sdk'}).encode()
     return data
 
