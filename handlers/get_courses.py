@@ -59,7 +59,7 @@ def get_response(url, method='GET', fields_data='', no_data=False):
 
 async def get_courses():
     resp_code, resp_data = get_response(URL_COURSES)
-    if resp_code == 201 or resp_code == 200:
+    if resp_code == 201:
         chapters = resp_data['items']  # list of dicts
         for chapter in chapters:
             courses = chapter['items']  # list of dicts
@@ -71,7 +71,7 @@ async def get_courses():
                     course_check = courses_gid.find_one({'course_id': course_id})
                     if course_check is None:
                         resp_code, resp_data = get_response(f'{URL_LESSONS}{course_id}')
-                        new_courses += new_courses
+                        new_courses += 1
                         lessons = [lesson['id'] for lesson in resp_data['lessons']]
                         courses_gid.insert_one({
                             'course_id': course_id,
