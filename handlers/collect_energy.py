@@ -1,6 +1,7 @@
 import datetime as dt
 import json
 from io import BytesIO
+import uuid
 
 import certifi
 import pycurl
@@ -21,13 +22,16 @@ ADD_HEADERS = [
 
 
 def get_request_data(user_id, recipient_id):
-    date = str(dt.datetime.now())
+    date, time = str(dt.datetime.now()).split(' ')
+    date = f'{date}T{time}'
+    anonymous_id = str(uuid.uuid4())
+    message_id = str(uuid.uuid4())
     data = json.dumps({
         'batch': [
             {
-                'anonymousId': 'cf0c67b1-80a5-4c4b-b5af-58c324e345ba',
+                'anonymousId': anonymous_id,
                 'event': 'thanks_new_create_click',
-                'messageId': 'e824954c-b3c9-4ea2-8905-40438c85adc1',
+                'messageId': message_id,
                 'properties': {
                     'recipient': recipient_id
                 },
