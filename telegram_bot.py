@@ -5,6 +5,7 @@ from aiogram.filters.command import Command
 from aiogram.fsm.context import FSMContext
 from aiogram.types import Message
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
+from handlers.get_posts import get_posts_and_comments
 
 import utils.constants as const
 from config.bot_config import bot, dp
@@ -41,6 +42,14 @@ async def main():
         day_of_week='mon-sun',
         hour=12,
         minute=15,
+        timezone=const.TIME_ZONE
+    )
+    scheduler.add_job(
+        get_posts_and_comments,
+        'cron',
+        day_of_week='mon-sun',
+        hour=22,
+        minute=20,
         timezone=const.TIME_ZONE
     )
     scheduler.start()
