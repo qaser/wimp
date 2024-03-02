@@ -1,5 +1,4 @@
 import pymongo
-from aiogram.fsm.storage.base import BaseStorage
 import datetime as dt
 
 # Create an instance of the MongoDB client
