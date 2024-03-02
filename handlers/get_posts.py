@@ -93,7 +93,6 @@ async def send_comment(post_id, post_title):
         await bot.send_message(
             ADMIN_TELEGRAM_ID,
             f'{post_title}: мой комментарий - {com_text}',
-            add_headers=ADD_HEADERS
         )
 
 
