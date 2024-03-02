@@ -169,12 +169,6 @@ HEADERS = [
     'Sec-Fetch-Site: same-site',
     'Connection: keep-alive',
     'TE: trailers',
-]
-
-USER_AGENTS = [
-    'User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.36',
-    'User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/56.0.2924.87 Safari/537.36 OPR/43.0.2442.991'
-    'User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_2) AppleWebKit/604.4.7 (KHTML, like Gecko) Version/11.0.2 Safari/604.4.7',
     'User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:123.0) Gecko/20100101 Firefox/123.0',
 ]
 
@@ -198,9 +192,9 @@ AUTHORS = [
 ]
 
 GIGACHAT_ACTIVATE_MSG = ('Напиши короткий стих (трехстишие или четверостишие) коллеге по работе. '
-                'Мы работаем на газотранспортной станции. Только без нежностей и добавь '
+                'Мы работаем на газотранспортной станции. Без нежностей, добавь '
                 'немного сарказма. Будь креативней. В тексте должны быть проявлены уважение '
-                'и гордость за будущие заслуги. Не сравнивай коллегу с газом. '
+                'и гордость за будущие заслуги. Не нужно сравнивать его с газом. '
                 'Стих должен быть таким, как-будто его написал ')
 
 COMMENTS = [

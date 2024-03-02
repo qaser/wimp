@@ -3,6 +3,8 @@ import random
 
 from aiogram import Router
 from aiogram.filters import Command
+from config.gid_config import MY_GID_ID
+from handlers.collect_energy import collect_energy_func
 from handlers.get_response import get_response
 
 from config.bot_config import bot
@@ -10,7 +12,7 @@ from config.telegram_config import ADMIN_TELEGRAM_ID
 from utils.constants import COMMENTS
 
 
-URL_POSTS = 'https://web.gid.ru/api/ugc/post/public/v1//post?limit=5'  # эндпоин для списка постов
+URL_POSTS = 'https://web.gid.ru/api/ugc/post/public/v1//post?limit=10'  # эндпоин для списка постов
 URL_LIKE = 'https://web.gid.ru/api/ugc/reactions/public/v1/ugc/reaction/'  # эндпоинт для лайка
 URL_COMMENTS = 'https://web.gid.ru/api/ugc/comments/public/v1/post/'  # эндпоинт для comments
 URL_POST = 'https://web.gid.ru/api/ugc/post/public/v1/post/'  # эндпоинт для одного поста
@@ -50,10 +52,12 @@ async def send_reaction(post_id, post_title):
         add_handlers=ADD_HEADERS
     )
     if like_code == 200:
+        await collect_energy_func(MY_GID_ID, 'reaction_comment_click')
         msg = like_data['message']
         await bot.send_message(ADMIN_TELEGRAM_ID, f'{post_title}: {msg}')
     else:
         await bot.send_message(ADMIN_TELEGRAM_ID, like_data)
+
 
 async def send_replay(post_id):
     coms_code, coms_data = get_response(
@@ -84,6 +88,7 @@ async def send_comment(post_id, post_title):
         add_handlers=ADD_HEADERS
     )
     if com_code == 201:
+        await collect_energy_func(MY_GID_ID, 'news_comment_send')
         await bot.send_message(
             ADMIN_TELEGRAM_ID,
             f'{post_title}: мой комментарий - {com_text}',

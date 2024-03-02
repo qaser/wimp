@@ -3,7 +3,9 @@ from aiogram.filters import Command
 from aiogram.types import Message
 
 from config.bot_config import bot
+from config.gid_config import MY_GID_ID
 from config.telegram_config import ADMIN_TELEGRAM_ID
+from handlers.collect_energy import collect_energy_func
 from handlers.get_courses import get_courses
 from handlers.gid_auth import (manual_auth_func, refresh_token_func,
                                send_user_token)
@@ -29,6 +31,11 @@ async def manual_auth(message):
 @router.message(Command('courses'))
 async def manual_complete_courses(message: Message):
     await get_courses()
+
+
+@router.message(Command('collect'))
+async def manual_collect_energy(message: Message):
+    await collect_energy_func(MY_GID_ID, 'news_comment_send')
 
 
 # обработка команды /log

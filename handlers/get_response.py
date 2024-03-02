@@ -12,11 +12,11 @@ from langchain.schema import SystemMessage
 from config.gid_config import MY_GID_ID
 
 from config.mongo_config import auth_gid
-from utils.constants import HEADERS, USER_AGENTS
+from utils.constants import HEADERS
 
 
 def get_response(url, method='GET', fields_data='', no_data=False, add_headers=[], user_id=MY_GID_ID):
-    time.sleep(random.randint(5, 10))
+    time.sleep(2)
     auth_param = auth_gid.find_one({'gid_id': user_id})
     token = auth_param['access_token']
     csrf = auth_param['csrf']
@@ -25,7 +25,6 @@ def get_response(url, method='GET', fields_data='', no_data=False, add_headers=[
         f'Authorization: Bearer {token}',
         f'Cookie: X-CSRF-TOKEN={csrf}',
     ]
-    HEADERS.append(random.choice(USER_AGENTS))
     buffer = BytesIO()
     c = pycurl.Curl()
     c.setopt(c.URL, url)

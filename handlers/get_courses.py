@@ -43,7 +43,6 @@ async def get_courses():
                 chapter_name = chapter.get('name')
                 if len(courses) != 0 and chapter_name is not None:
                     for course in courses:
-                        n_courses = 0
                         course_id = course.get('id')
                         course_name = course.get('name')
                         course_check = courses_gid.find_one(
@@ -55,7 +54,7 @@ async def get_courses():
                                 add_headers=ADD_HEADERS,
                                 user_id=user_id
                             )
-                            n_courses += 1
+                            new_courses += 1
                             lessons = [lesson['id'] for lesson in resp_data['lessons']]
                             courses_gid.insert_one({
                                 'course_id': course_id,
@@ -98,7 +97,7 @@ async def check_course_status(course_id, user_id, username):
                 user_id=user_id
             )
             if resp_code == 201:
-                await complete_course(course_id, user_id)
+                await complete_course(course_id, user_id, username)
         elif course_status == 'started':
             await complete_course(course_id, user_id, username)
 
@@ -149,6 +148,7 @@ async def complete_course(course_id, user_id, username):
                         user_id
                     )
                     count += 1 if resp_code == 200 else count
+            print(len_lessons, count)
             if len_lessons == count:
                 courses_gid.update_one(
                     {'course_id': course_id, 'user_id':user_id},
