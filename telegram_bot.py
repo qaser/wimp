@@ -48,8 +48,8 @@ async def main():
         get_posts_and_comments,
         'cron',
         day_of_week='mon-sun',
-        hour=23,
-        minute=5,
+        hour=10,
+        minute=0,
         timezone=const.TIME_ZONE
     )
     scheduler.add_job(

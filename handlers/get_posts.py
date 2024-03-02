@@ -12,7 +12,7 @@ from config.telegram_config import ADMIN_TELEGRAM_ID
 from utils.constants import COMMENTS
 
 
-URL_POSTS = 'https://web.gid.ru/api/ugc/post/public/v1//post?limit=10'  # эндпоин для списка постов
+URL_POSTS = 'https://web.gid.ru/api/ugc/post/public/v1//post?limit=8'  # эндпоин для списка постов
 URL_LIKE = 'https://web.gid.ru/api/ugc/reactions/public/v1/ugc/reaction/'  # эндпоинт для лайка
 URL_COMMENTS = 'https://web.gid.ru/api/ugc/comments/public/v1/post/'  # эндпоинт для comments
 URL_POST = 'https://web.gid.ru/api/ugc/post/public/v1/post/'  # эндпоинт для одного поста
