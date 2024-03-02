@@ -50,7 +50,7 @@ async def get_courses():
                         if course_check is None:
                             resp_code, resp_data = get_response(
                                 f'{URL_LESSONS}{course_id}',
-                                add_handlers=ADD_HEADERS,
+                                add_headers=ADD_HEADERS,
                                 user_id=user_id
                             )
                             new_courses += 1
@@ -78,7 +78,7 @@ async def get_courses():
 async def check_course_status(course_id, user_id, username):
     resp_code, resp_data = get_response(
         f'{URL_LESSONS}{course_id}',
-        add_handlers=ADD_HEADERS,
+        add_headers=ADD_HEADERS,
         user_id=user_id
     )
     if resp_code == 200:
@@ -92,7 +92,7 @@ async def check_course_status(course_id, user_id, username):
             resp_code = get_response(
                 f'{URL_LESSONS}{course_id}/start',
                 no_data=True,
-                add_handlers=ADD_HEADERS,
+                add_headers=ADD_HEADERS,
                 user_id=user_id
             )
             if resp_code == 201:
@@ -113,7 +113,7 @@ async def complete_course(course_id, user_id, username):
         for lesson_id in lessons:
             resp_code, resp_data = get_response(
                 f'{URL_LESSON}{lesson_id}',
-                add_handlers=ADD_HEADERS,
+                add_headers=ADD_HEADERS,
                 user_id=user_id
             )
             if resp_code == 200:
