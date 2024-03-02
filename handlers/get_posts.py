@@ -35,7 +35,7 @@ async def get_posts_and_comments():
             post_title = post['title']
             post_code, post_data = get_response(
                 f'{URL_POST}{post_id}',
-                add_handlers=ADD_HEADERS
+                add_headers=ADD_HEADERS
             )
             if post_code == 200:
                 is_liked = post_data['result']['reactions']['currentReaction']
@@ -49,7 +49,7 @@ async def send_reaction(post_id, post_title):
     like_code, like_data = get_response(
         f'{URL_LIKE}{post_id}/like',
         'POST',
-        add_handlers=ADD_HEADERS
+        add_headers=ADD_HEADERS
     )
     if like_code == 200:
         await collect_energy_func(MY_GID_ID, 'reaction_comment_click')
@@ -62,7 +62,7 @@ async def send_reaction(post_id, post_title):
 async def send_replay(post_id):
     coms_code, coms_data = get_response(
         f'{URL_COMMENTS}{post_id}?offset=0&limit=3',
-        add_handlers=ADD_HEADERS
+        add_headers=ADD_HEADERS
     )
     if coms_code == 200:
         total = coms_data['total']
@@ -75,7 +75,7 @@ async def send_replay(post_id):
                     f'{URL_COMMENTS}{post_id}/comments/{comment_id}/replies',
                     'POST',
                     request_data,
-                    add_handlers=ADD_HEADERS
+                    add_headers=ADD_HEADERS
                 )
 
 
@@ -85,14 +85,14 @@ async def send_comment(post_id, post_title):
     com_code, _ = get_response(
         f'{URL_COMMENTS}{post_id}',
         'POST', request_data,
-        add_handlers=ADD_HEADERS
+        add_headers=ADD_HEADERS
     )
     if com_code == 201:
         await collect_energy_func(MY_GID_ID, 'news_comment_send')
         await bot.send_message(
             ADMIN_TELEGRAM_ID,
             f'{post_title}: мой комментарий - {com_text}',
-            add_handlers=ADD_HEADERS
+            add_headers=ADD_HEADERS
         )
 
 
@@ -102,7 +102,7 @@ async def send_emotion():
         URL_EMOTIONS,
         'POST',
         request_data,
-        add_handlers=ADD_HEADERS
+        add_headers=ADD_HEADERS
     )
     if code == 200:
         await bot.send_message(ADMIN_TELEGRAM_ID, 'Эмоция отправлена')
