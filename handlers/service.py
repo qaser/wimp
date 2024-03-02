@@ -4,6 +4,7 @@ from aiogram.types import Message
 
 from config.bot_config import bot
 from config.telegram_config import ADMIN_TELEGRAM_ID
+from handlers.get_courses import get_courses
 from handlers.gid_auth import (manual_auth_func, refresh_token_func,
                                send_user_token)
 
@@ -21,8 +22,13 @@ async def manual_refresh_token(message: Message):
 
 
 @router.message(Command('auth'))
-async def manual_auth(message, state):
-    await manual_auth_func(message, state)
+async def manual_auth(message):
+    await manual_auth_func(message)
+
+
+@router.message(Command('courses'))
+async def manual_complete_courses(message: Message):
+    await get_courses()
 
 
 # обработка команды /log

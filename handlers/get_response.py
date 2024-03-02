@@ -15,9 +15,9 @@ from config.mongo_config import auth_gid
 from utils.constants import HEADERS, USER_AGENTS
 
 
-def get_response(url, method='GET', fields_data='', no_data=False, add_headers=[]):
+def get_response(url, method='GET', fields_data='', no_data=False, add_headers=[], user_id=MY_GID_ID):
     time.sleep(random.randint(5, 10))
-    auth_param = auth_gid.find_one({'gid_id': MY_GID_ID})
+    auth_param = auth_gid.find_one({'gid_id': user_id})
     token = auth_param['access_token']
     csrf = auth_param['csrf']
     auth_headers = [
