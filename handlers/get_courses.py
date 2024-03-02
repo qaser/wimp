@@ -28,6 +28,7 @@ ADD_HEADERS = [
 async def get_courses():
     users = list(auth_gid.find({}))
     for user in users:
+        new_courses = 0
         user_id = user['gid_id']
         username = user['username']
         resp_code, resp_data = get_response(
@@ -42,6 +43,7 @@ async def get_courses():
                 chapter_name = chapter.get('name')
                 if len(courses) != 0 and chapter_name is not None:
                     for course in courses:
+                        n_courses = 0
                         course_id = course.get('id')
                         course_name = course.get('name')
                         course_check = courses_gid.find_one(
@@ -53,7 +55,7 @@ async def get_courses():
                                 add_headers=ADD_HEADERS,
                                 user_id=user_id
                             )
-                            new_courses += 1
+                            n_courses += 1
                             lessons = [lesson['id'] for lesson in resp_data['lessons']]
                             courses_gid.insert_one({
                                 'course_id': course_id,
