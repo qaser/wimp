@@ -161,7 +161,6 @@ GPA_NUMS = ['52', '53', '54', '55', '61', '62', '63', '64', '65']
 
 
 HEADERS = [
-    'User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:123.0) Gecko/20100101 Firefox/123.0',
     'Accept-Language: ru-RU,ru;q=0.8,en-US;q=0.5,en;q=0.3',
     'Origin: https://web.gid.ru',
     'DNT: 1',
@@ -170,4 +169,30 @@ HEADERS = [
     'Sec-Fetch-Site: same-site',
     'Connection: keep-alive',
     'TE: trailers',
+]
+
+USER_AGENTS = [
+    'User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.36',
+    'User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/56.0.2924.87 Safari/537.36 OPR/43.0.2442.991'
+    'User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_2) AppleWebKit/604.4.7 (KHTML, like Gecko) Version/11.0.2 Safari/604.4.7',
+    'User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:123.0) Gecko/20100101 Firefox/123.0',
+]
+
+AUTHORS = [
+    'Александр Пушкин',
+    'Владимир Маяковский',
+    'Сергей Есенин',
+    'Корней Чуковский',
+    'Афанасий Фет',
+    'Михаил Лермонтов',
+    'Иосиф Бродский',
+    'Борис Пастернак',
+    'Николай Некрасов',
+    'Булат Окуджава',
+    'Роберт Рождественский',
+    'Шекспир',
+    'Александр Блок',
+    'Владимир Высоцкий',
+    'Омар Хайям',
+    'Константин Симонов',
 ]

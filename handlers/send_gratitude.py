@@ -1,5 +1,6 @@
 import datetime as dt
 import json
+import random
 import time
 from io import BytesIO
 
@@ -15,20 +16,16 @@ from config.mongo_config import auth_gid, users_gid
 from config.telegram_config import ADMIN_TELEGRAM_ID
 from handlers.collect_energy import collect_energy_func
 from utils.constants import HEADERS
+from utils.constants import AUTHORS
 
-ACTIVATE_MSG = (
-    'Напиши хокку коллеге по работе. '
-    'Мы работаем на газотранспортной станции. '
-    'Только без нежностей и добавь немного сарказма. Будь креативней. '
-    'В тексте должны быть проялены уважение и гордость за будущие заслуги. '
-    'Только не нужно говорить в начале фразы "Спасибо, коллега". '
-    'Коллегу зовут '
-)
-TEXT_FOOTER = (
-    'Сгенерировано нейросетью...\n'
-    'Рассылается автоматически...\n'
-    '...но это не значит, что я Вас не ценю :)'
-)
+ACTIVATE_MSG = ('Напиши короткий стих (трехстишие или четверостишие) коллеге по работе. '
+                'Мы работаем на газотранспортной станции. Только без нежностей и добавь '
+                'немного сарказма. Будь креативней. В тексте должны быть проявлены уважение '
+                'и гордость за будущие заслуги. Не сравнивай коллегу с газом. '
+                'Стих должен быть таким, как-будто его написал ')
+TEXT_FOOTER = ('Сгенерировано нейросетью...\n'
+               'Рассылается автоматически...\n'
+               '...но это не значит, что я Вас не ценю :)')
 URL = 'https://web.gid.ru/api/gratitude'
 ADD_HEADERS = [
     'Accept: application/json, text/plain, */*',
@@ -43,16 +40,16 @@ async def send_gratitude_func():
     today = dt.datetime.today().strftime('%d.%m.%Y')
     users = list(users_gid.find({'latest_like': {'$ne': today}}))
     if len(users) != 0:
+        author = random.choice(AUTHORS)
         user = users[0]
         username = user['username']
-        name = username.split(' ')[1]
         user_id = user['id']
         likes = user['likes']
         token = auth_gid.find_one({'username': 'huji'}).get('access_token')
         csrf = auth_gid.find_one({'username': 'huji'}).get('csrf')
         try:
             chat_instance = GigaChat(credentials=GIGA_CHAT_TOKEN, verify_ssl_certs=False)
-            gratitude_giga_chat = chat_instance([SystemMessage(content=f'{ACTIVATE_MSG} {name}')]).content
+            gratitude_giga_chat = chat_instance([SystemMessage(content=f'{ACTIVATE_MSG}{author}')]).content
             gratitude_text = f'{gratitude_giga_chat}\n\n{TEXT_FOOTER}'
         except:
             gratitude_text = 'Спасибо, просто так'
