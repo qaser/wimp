@@ -7,8 +7,7 @@ from handlers.get_response import get_response
 
 from config.bot_config import bot
 from config.telegram_config import ADMIN_TELEGRAM_ID
-from config.giga_chat_config import GIGA_CHAT_TOKEN
-from utils.constants import USER_AGENTS
+from utils.constants import COMMENTS
 
 
 URL_POSTS = 'https://web.gid.ru/api/ugc/post/public/v1//post?limit=5'  # эндпоин для списка постов
@@ -77,7 +76,7 @@ async def send_replay(post_id):
 
 
 async def send_comment(post_id, post_title):
-    com_text = 'Очень интересно, продолжайте'
+    com_text = random.choice(COMMENTS)
     request_data = json.dumps({'content': com_text})
     com_code, _ = get_response(
         f'{URL_COMMENTS}{post_id}',

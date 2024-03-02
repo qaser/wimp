@@ -7,6 +7,7 @@ import certifi
 import pycurl
 
 from config.bot_config import bot
+from config.gid_config import MY_GID_ID
 from config.mongo_config import auth_gid
 from config.telegram_config import ADMIN_TELEGRAM_ID
 from utils.constants import HEADERS
@@ -46,8 +47,8 @@ def get_request_data(user_id, recipient_id):
 
 
 async def collect_energy_func(user_id, recipient_id):
-    token = auth_gid.find_one({'username': 'huji'}).get('access_token')
-    csrf = auth_gid.find_one({'username': 'huji'}).get('csrf')
+    token = auth_gid.find_one({'gid_id': MY_GID_ID}).get('access_token')
+    csrf = auth_gid.find_one({'gid_id': MY_GID_ID}).get('csrf')
     headers_with_tokens = [
         f'X-CSRF-TOKEN: {csrf}',
         f'Authorization: Bearer {token}',

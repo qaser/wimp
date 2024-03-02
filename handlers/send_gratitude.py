@@ -16,13 +16,8 @@ from config.mongo_config import auth_gid, users_gid
 from config.telegram_config import ADMIN_TELEGRAM_ID
 from handlers.collect_energy import collect_energy_func
 from utils.constants import HEADERS
-from utils.constants import AUTHORS
+from utils.constants import AUTHORS, GIGACHAT_ACTIVATE_MSG
 
-ACTIVATE_MSG = ('Напиши короткий стих (трехстишие или четверостишие) коллеге по работе. '
-                'Мы работаем на газотранспортной станции. Только без нежностей и добавь '
-                'немного сарказма. Будь креативней. В тексте должны быть проявлены уважение '
-                'и гордость за будущие заслуги. Не сравнивай коллегу с газом. '
-                'Стих должен быть таким, как-будто его написал ')
 TEXT_FOOTER = ('Сгенерировано нейросетью...\n'
                'Рассылается автоматически...\n'
                '...но это не значит, что я Вас не ценю :)')
@@ -45,11 +40,11 @@ async def send_gratitude_func():
         username = user['username']
         user_id = user['id']
         likes = user['likes']
-        token = auth_gid.find_one({'username': 'huji'}).get('access_token')
-        csrf = auth_gid.find_one({'username': 'huji'}).get('csrf')
+        token = auth_gid.find_one({'gid_id': MY_GID_ID}).get('access_token')
+        csrf = auth_gid.find_one({'gid_id': MY_GID_ID}).get('csrf')
         try:
             chat_instance = GigaChat(credentials=GIGA_CHAT_TOKEN, verify_ssl_certs=False)
-            gratitude_giga_chat = chat_instance([SystemMessage(content=f'{ACTIVATE_MSG}{author}')]).content
+            gratitude_giga_chat = chat_instance([SystemMessage(content=f'{GIGACHAT_ACTIVATE_MSG}{author}')]).content
             gratitude_text = f'{gratitude_giga_chat}\n\n{TEXT_FOOTER}'
         except:
             gratitude_text = 'Спасибо, просто так'
@@ -83,12 +78,12 @@ async def send_gratitude_func():
                 {'id': user_id},
                 {'$set': {'likes': likes + 1, 'latest_like': today}}
             )
-            await collect_energy_func(user_id, MY_GID_ID)
-            time.sleep(2)
-            await collect_energy_func(MY_GID_ID, user_id)
+            # await collect_energy_func(user_id, MY_GID_ID)
+            # time.sleep(2)
+            # await collect_energy_func(MY_GID_ID, user_id)
             await bot.send_message(
                 chat_id=ADMIN_TELEGRAM_ID,
-                text=f'Статус {resp_code}\n{username}\n{gratitude_text}',
+                text=f'Статус {resp_code}\n{username}\n\n{gratitude_text}',
                 disable_notification=True
             )
         else:

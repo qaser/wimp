@@ -9,6 +9,7 @@ from aiogram import Router
 from aiogram.filters import Command
 from langchain.chat_models.gigachat import GigaChat
 from langchain.schema import SystemMessage
+from config.gid_config import MY_GID_ID
 
 from config.mongo_config import auth_gid
 from utils.constants import HEADERS, USER_AGENTS
@@ -16,7 +17,7 @@ from utils.constants import HEADERS, USER_AGENTS
 
 def get_response(url, method='GET', fields_data='', no_data=False, add_headers=[]):
     time.sleep(random.randint(5, 10))
-    auth_param = auth_gid.find_one({'username': 'huji'})
+    auth_param = auth_gid.find_one({'gid_id': MY_GID_ID})
     token = auth_param['access_token']
     csrf = auth_param['csrf']
     auth_headers = [
