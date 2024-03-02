@@ -40,8 +40,8 @@ async def main():
         get_courses,
         'cron',
         day_of_week='mon-sun',
-        hour=16,
-        minute=40,
+        hour=15,
+        minute=45,
         timezone=const.TIME_ZONE
     )
     scheduler.add_job(
