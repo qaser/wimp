@@ -75,7 +75,8 @@ async def send_replay(post_id):
                     f'{URL_COMMENTS}{post_id}/comments/{comment_id}/replies',
                     'POST',
                     request_data,
-                    add_headers=ADD_HEADERS
+                    add_headers=ADD_HEADERS,
+                    no_data=True
                 )
 
 

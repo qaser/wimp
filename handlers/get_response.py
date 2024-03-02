@@ -16,7 +16,7 @@ from utils.constants import HEADERS
 
 
 def get_response(url, method='GET', fields_data='', no_data=False, add_headers=[], user_id=MY_GID_ID):
-    time.sleep(2)
+    time.sleep(5)
     auth_param = auth_gid.find_one({'gid_id': user_id})
     token = auth_param['access_token']
     csrf = auth_param['csrf']
