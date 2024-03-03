@@ -6,10 +6,7 @@ import time
 import certifi
 import pycurl
 from aiogram import F, Router
-from aiogram.filters import Command
-from aiogram.fsm.context import FSMContext
-from aiogram.fsm.state import State, StatesGroup
-from aiogram.types import Message
+
 
 from config.bot_config import bot
 from config.gid_config import MY_GID_ID
@@ -18,13 +15,6 @@ from config.telegram_config import ADMIN_TELEGRAM_ID
 from utils.constants import HEADERS
 
 router = Router()
-
-
-class Token(StatesGroup):
-    token_value = State()
-    csrf_value = State()
-    refresh_token_value = State()
-    session_value = State()
 
 
 URL = "https://app.gid.ru/auth/realms/gid/protocol/openid-connect/token"
@@ -86,52 +76,8 @@ async def refresh_token_func():
         else:
             await bot.send_message(
                 chat_id=ADMIN_TELEGRAM_ID,
-                text=f'Обновление токена не удалось.\nОшибка {resp_code}\n{body_str}\n{username}',
+                text=f'Ошибка обновления токена: {resp_code}\n{body_str}\n{username}',
             )
-
-
-async def manual_auth_func(message: Message, state: FSMContext):
-    await message.answer('Введите значение токена')
-    await state.set_state(Token.token_value)
-
-
-@router.message(Token.token_value)
-async def get_token(message: Message, state: FSMContext):
-    auth_gid.update_one(
-        {'gid_id': MY_GID_ID},
-        {'$set': {'access_token': message.text, 'id_token': message.text}}
-    )
-    await message.answer('Введите значение CSRF')
-    await state.set_state(Token.csrf_value)
-
-
-@router.message(Token.csrf_value)
-async def get_csrf(message: Message, state: FSMContext):
-    auth_gid.update_one(
-        {'gid_id': MY_GID_ID},
-        {'$set': {'csrf': message.text}}
-    )
-    await message.answer('Введите значение refresh_token')
-    await state.set_state(Token.refresh_token_value)
-
-
-@router.message(Token.refresh_token_value)
-async def get_refresh_token(message: Message, state: FSMContext):
-    auth_gid.update_one(
-        {'gid_id': MY_GID_ID},
-        {'$set': {'refresh_token': message.text}}
-    )
-    await message.answer('Введите значение session')
-    await state.set_state(Token.session_value)
-
-
-@router.message(Token.session_value)
-async def get_session(message: Message, state: FSMContext):
-    auth_gid.update_one(
-        {'gid_id': MY_GID_ID},
-        {'$set': {'session_state': message.text}}
-    )
-    await message.answer('Принято')
 
 
 async def send_user_token():
