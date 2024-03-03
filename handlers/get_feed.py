@@ -37,13 +37,15 @@ async def get_feeds():
 
 
 async def send_like(feed_id, feed_title):
+    request_data = json.dumps({'type': 'like'})
     like_code = get_response(
         f'{URL_FEED}{feed_id}/reactions',
         'POST',
+        request_data,
         add_headers=ADD_HEADERS,
         no_data=True
     )
-    if like_code == 200:
+    if like_code == 201:
         await bot.send_message(ADMIN_TELEGRAM_ID, f'{feed_title}: лайк поставлен')
     else:
         await bot.send_message(ADMIN_TELEGRAM_ID, 'c лайком новостей что-то не так :(')

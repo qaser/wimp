@@ -5,10 +5,6 @@ from io import BytesIO
 
 import certifi
 import pycurl
-from aiogram import Router
-from aiogram.filters import Command
-from langchain.chat_models.gigachat import GigaChat
-from langchain.schema import SystemMessage
 from config.gid_config import MY_GID_ID
 
 from config.mongo_config import auth_gid
@@ -21,7 +17,7 @@ def get_response(url, method='GET', fields_data='', no_data=False, add_headers=[
     Переменная no_data используется для маркировки запроса, при котором север не возвращает данных.
     Переменная add_headers используется для передачи дополнительных заголовков запроса
     '''
-    time.sleep(3)
+    time.sleep(random.randint(2, 6))
     auth_param = auth_gid.find_one({'gid_id': user_id})
     token = auth_param['access_token']
     csrf = auth_param['csrf']
