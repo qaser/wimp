@@ -62,7 +62,6 @@ async def send_logs(message: Message):
         await bot.send_document(chat_id=ADMIN_TELEGRAM_ID, document=content)
 
 
-
 @router.message(Command('auth'))
 async def manual_auth_func(message: Message, state: FSMContext):
     await message.answer('Введите значение токена')

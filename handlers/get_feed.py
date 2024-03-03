@@ -22,6 +22,7 @@ ADD_HEADERS = [
 
 
 async def get_feeds():
+    await bot.send_message(ADMIN_TELEGRAM_ID, 'Запуск задачи чтения новостей')
     resp_code, resp_data = get_response(URL_FEEDS)
     if resp_code == 200:
         feeds = resp_data['items']  # list of dicts

@@ -25,6 +25,7 @@ ADD_HEADERS = [
 
 
 async def get_posts_and_comments():
+    await bot.send_message(ADMIN_TELEGRAM_ID, 'Запуск задачи чтения постов')
     resp_code, resp_data = get_response(URL_POSTS)
     if resp_code == 201 or resp_code == 200:
         posts = resp_data['result']  # list of dicts
@@ -111,6 +112,7 @@ async def send_comment(post_id, post_title):
 
 
 async def send_emotion():
+    await bot.send_message(ADMIN_TELEGRAM_ID, 'Запуск задачи отправки эмоции')
     request_data = json.dumps({'values':[1,1,1]})
     code, data = get_response(
         URL_EMOTIONS,
