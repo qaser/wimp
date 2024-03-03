@@ -78,7 +78,7 @@ async def send_gratitude_func():
                 {'id': user_id},
                 {'$set': {'likes': likes + 1, 'latest_like': today}}
             )
-            await collect_energy_func(user_id, 'thanks_new_create_click')
+            await collect_energy_func(MY_GID_ID, 'thanks_new_create_click')
             await bot.send_message(
                 chat_id=ADMIN_TELEGRAM_ID,
                 text=f'Статус {resp_code}\n{username}\n\n{gratitude_text}',

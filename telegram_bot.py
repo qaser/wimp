@@ -33,7 +33,7 @@ async def main():
     scheduler.add_job(
         send_gratitude_func,
         'interval',
-        minutes=30,
+        minutes=5,
         timezone=const.TIME_ZONE
     )
     scheduler.add_job(
