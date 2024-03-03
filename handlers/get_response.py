@@ -16,7 +16,12 @@ from utils.constants import HEADERS
 
 
 def get_response(url, method='GET', fields_data='', no_data=False, add_headers=[], user_id=MY_GID_ID):
-    time.sleep(5)
+    '''
+    Отправка запроса на ресурс.
+    Переменная no_data используется для маркировки запроса, при котором север не возвращает данных.
+    Переменная add_headers используется для передачи дополнительных заголовков запроса
+    '''
+    time.sleep(3)
     auth_param = auth_gid.find_one({'gid_id': user_id})
     token = auth_param['access_token']
     csrf = auth_param['csrf']
@@ -45,5 +50,8 @@ def get_response(url, method='GET', fields_data='', no_data=False, add_headers=[
     c.close()
     if no_data:
         return resp_code
-    resp_data = json.loads(body.decode())
+    if resp_code in [200, 201, 202]:
+        resp_data = json.loads(body.decode())
+    else:
+        resp_data == {'error': f'Ошибка {resp_code}\n{body}'}
     return (resp_code, resp_data)

@@ -5,6 +5,7 @@ from aiogram.filters.command import Command
 from aiogram.fsm.context import FSMContext
 from aiogram.types import Message
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
+from handlers.get_feed import get_feeds
 from handlers.get_posts import get_posts_and_comments, send_emotion
 
 import utils.constants as const
@@ -33,14 +34,14 @@ async def main():
     scheduler.add_job(
         send_gratitude_func,
         'interval',
-        minutes=5,
+        minutes=30,
         timezone=const.TIME_ZONE
     )
     scheduler.add_job(
-        get_courses,
+        send_emotion,
         'cron',
         day_of_week='mon-sun',
-        hour=12,
+        hour=8,
         minute=0,
         timezone=const.TIME_ZONE
     )
@@ -53,13 +54,22 @@ async def main():
         timezone=const.TIME_ZONE
     )
     scheduler.add_job(
-        send_emotion,
+        get_courses,
         'cron',
         day_of_week='mon-sun',
-        hour=8,
+        hour=12,
         minute=0,
         timezone=const.TIME_ZONE
     )
+    scheduler.add_job(
+        get_feeds,
+        'cron',
+        day_of_week='mon-sun',
+        hour=15,
+        minute=0,
+        timezone=const.TIME_ZONE
+    )
+
     scheduler.start()
     dp.include_router(service.router)
     dp.include_router(report.router)

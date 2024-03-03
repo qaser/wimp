@@ -1,15 +1,13 @@
 import json
 import random
 
-from aiogram import Router
-from aiogram.filters import Command
 from config.gid_config import MY_GID_ID
 from handlers.collect_energy import collect_energy_func
 from handlers.get_response import get_response
 
 from config.bot_config import bot
 from config.telegram_config import ADMIN_TELEGRAM_ID
-from utils.constants import COMMENTS
+from utils.constants import COMMENTS_POST
 
 
 URL_POSTS = 'https://web.gid.ru/api/ugc/post/public/v1//post?limit=8'  # эндпоин для списка постов
@@ -43,6 +41,8 @@ async def get_posts_and_comments():
                     await send_reaction(post_id, post_title)
                 await send_replay(post_id)
                 await send_comment(post_id, post_title)
+            else:
+                await bot.send_message(ADMIN_TELEGRAM_ID, post_data['error'])
 
 
 async def send_reaction(post_id, post_title):
@@ -56,7 +56,10 @@ async def send_reaction(post_id, post_title):
         msg = like_data['message']
         await bot.send_message(ADMIN_TELEGRAM_ID, f'{post_title}: {msg}')
     else:
-        await bot.send_message(ADMIN_TELEGRAM_ID, like_data)
+        await bot.send_message(
+            ADMIN_TELEGRAM_ID,
+            f'Отправка лайка за пост: {like_data['error']}'
+        )
 
 
 async def send_replay(post_id):
@@ -78,14 +81,20 @@ async def send_replay(post_id):
                     add_headers=ADD_HEADERS,
                     no_data=True
                 )
+    else:
+        await bot.send_message(
+            ADMIN_TELEGRAM_ID,
+            f'Получение комментариев.\n{coms_data['error']}'
+        )
 
 
 async def send_comment(post_id, post_title):
-    com_text = random.choice(COMMENTS)
+    com_text = random.choice(COMMENTS_POST)
     request_data = json.dumps({'content': com_text})
-    com_code, _ = get_response(
+    com_code, com_data = get_response(
         f'{URL_COMMENTS}{post_id}',
-        'POST', request_data,
+        'POST',
+        request_data,
         add_headers=ADD_HEADERS
     )
     if com_code == 201:
@@ -94,15 +103,25 @@ async def send_comment(post_id, post_title):
             ADMIN_TELEGRAM_ID,
             f'{post_title}: мой комментарий - {com_text}',
         )
+    else:
+        await bot.send_message(
+            ADMIN_TELEGRAM_ID,
+            f'Отправка комментария.\n{com_data['error']}'
+        )
 
 
 async def send_emotion():
     request_data = json.dumps({'values':[1,1,1]})
-    code, _ = get_response(
+    code, data = get_response(
         URL_EMOTIONS,
         'POST',
         request_data,
         add_headers=ADD_HEADERS
     )
-    if code == 200:
+    if code == 201:
         await bot.send_message(ADMIN_TELEGRAM_ID, 'Эмоция отправлена')
+    else:
+        await bot.send_message(
+            ADMIN_TELEGRAM_ID,
+            f'Отправка настроения.\n{data['error']}'
+        )
