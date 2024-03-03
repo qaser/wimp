@@ -58,7 +58,7 @@ async def send_reaction(post_id, post_title):
     else:
         await bot.send_message(
             ADMIN_TELEGRAM_ID,
-            f'Отправка лайка за пост: {like_data['error']}'
+            f'Отправка лайка за пост: {like_data["error"]}'
         )
 
 
@@ -84,7 +84,7 @@ async def send_replay(post_id):
     else:
         await bot.send_message(
             ADMIN_TELEGRAM_ID,
-            f'Получение комментариев.\n{coms_data['error']}'
+            f'Получение комментариев.\n{coms_data["error"]}'
         )
 
 
@@ -106,7 +106,7 @@ async def send_comment(post_id, post_title):
     else:
         await bot.send_message(
             ADMIN_TELEGRAM_ID,
-            f'Отправка комментария.\n{com_data['error']}'
+            f'Отправка комментария.\n{com_data["error"]}'
         )
 
 
@@ -123,5 +123,5 @@ async def send_emotion():
     else:
         await bot.send_message(
             ADMIN_TELEGRAM_ID,
-            f'Отправка настроения.\n{data['error']}'
+            f'Отправка настроения.\n{data["error"]}'
         )

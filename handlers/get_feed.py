@@ -67,5 +67,5 @@ async def send_comment(feed_id, feed_title):
     else:
         await bot.send_message(
             ADMIN_TELEGRAM_ID,
-            f'Отправка комментария.\n{com_data['error']}'
+            f'Отправка комментария.\n{com_data["error"]}'
         )
