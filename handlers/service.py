@@ -38,7 +38,6 @@ async def manual_collect_energy(message: Message):
     await collect_energy_func(MY_GID_ID, 'news_comment_send')
 
 
-# обработка команды /log
 @router.message(Command('log'))
 async def send_logs(message: Message):
     file = f'logs_bot.log'
