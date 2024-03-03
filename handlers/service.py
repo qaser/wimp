@@ -26,8 +26,8 @@ async def manual_refresh_token(message: Message):
 
 
 @router.message(Command('auth'))
-async def manual_auth(message):
-    await manual_auth_func(message)
+async def manual_auth(message, state):
+    await manual_auth_func(message, state)
 
 
 @router.message(Command('courses'))
