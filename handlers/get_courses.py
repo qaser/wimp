@@ -148,7 +148,11 @@ async def complete_course(course_id, user_id, username):
                         user_id
                     )
                     count += 1 if resp_code == 200 else count
-            print(len_lessons, count)
+            else:
+                await bot.send_message(
+                    ADMIN_TELEGRAM_ID,
+                    f'Курс "{course_name}". Пользователь {username}\nОшибка {resp_code}: {resp_data}'
+                )
             if len_lessons == count:
                 courses_gid.update_one(
                     {'course_id': course_id, 'user_id':user_id},
