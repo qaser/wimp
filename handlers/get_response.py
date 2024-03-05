@@ -49,5 +49,5 @@ def get_response(url, method='GET', fields_data='', no_data=False, add_headers=[
     if resp_code in [200, 201, 202]:
         resp_data = json.loads(body.decode())
     else:
-        resp_data == {'error': f'Ошибка {resp_code}\n{body}'}
+        resp_data = {'error': f'Ошибка {resp_code}\n{body}'}
     return (resp_code, resp_data)
