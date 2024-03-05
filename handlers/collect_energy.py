@@ -55,7 +55,7 @@ async def collect_energy_func(user_id, event):
     if resp_code == 202:
         await bot.send_message(
             chat_id=ADMIN_TELEGRAM_ID,
-            text=f'Должно начислиться энергии: {energy}',
+            text=f'Начисление энергии: {energy}',
             disable_notification=True
         )
     else:

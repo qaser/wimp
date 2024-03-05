@@ -120,7 +120,7 @@ async def send_emotion():
         request_data,
         add_headers=ADD_HEADERS
     )
-    if code == 201:
+    if code == 201 or code == 200:
         await bot.send_message(ADMIN_TELEGRAM_ID, 'Эмоция отправлена')
     else:
         await bot.send_message(
