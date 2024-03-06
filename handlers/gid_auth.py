@@ -69,11 +69,13 @@ async def refresh_token_func():
                 }},
                 upsert=True
             )
+            return resp_code
         else:
             await bot.send_message(
                 chat_id=ADMIN_TELEGRAM_ID,
                 text=f'Ошибка обновления токена: {resp_code}\n{body_str}\n{username}',
             )
+            return resp_code
 
 
 async def send_user_token():
