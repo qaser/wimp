@@ -30,6 +30,7 @@ async def get_posts_and_comments():
     await bot.send_message(ADMIN_TELEGRAM_ID, 'Запуск задачи чтения постов')
     tokens_update = await refresh_token_func()
     if tokens_update == 200:
+        print('привет')
         resp_code, resp_data = get_response(URL_POSTS)
         if resp_code == 201 or resp_code == 200:
             users = list(auth_gid.find({}))
