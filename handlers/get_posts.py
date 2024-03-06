@@ -50,11 +50,11 @@ async def get_posts_and_comments():
                 await send_comment(post_id, post_title, user_id)
             else:
                 await bot.send_message(ADMIN_TELEGRAM_ID, post_data['error'])
-        else:
-            await bot.send_message(
-                ADMIN_TELEGRAM_ID,
-                f'Получение списка постов: {resp_data["error"]}'
-            )
+    else:
+        await bot.send_message(
+            ADMIN_TELEGRAM_ID,
+            f'Получение списка постов: {resp_data["error"]}'
+        )
 
 
 async def send_reaction(post_id, post_title, user_id):
