@@ -50,7 +50,7 @@ async def main():
         'cron',
         day_of_week='mon-sun',
         hour=10,
-        minute=0,
+        minute=10,
         timezone=const.TIME_ZONE
     )
     scheduler.add_job(

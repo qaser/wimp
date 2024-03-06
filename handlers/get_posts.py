@@ -8,6 +8,7 @@ from handlers.get_response import get_response
 from config.bot_config import bot
 from config.telegram_config import ADMIN_TELEGRAM_ID
 from utils.constants import COMMENTS_POST
+from config.mongo_config import auth_gid
 
 
 URL_POSTS = 'https://web.gid.ru/api/ugc/post/public/v1//post?limit=8'  # эндпоин для списка постов
@@ -28,32 +29,37 @@ async def get_posts_and_comments():
     await bot.send_message(ADMIN_TELEGRAM_ID, 'Запуск задачи чтения постов')
     resp_code, resp_data = get_response(URL_POSTS)
     if resp_code == 201 or resp_code == 200:
+        users = list(auth_gid.find({}))
         posts = resp_data['result']  # list of dicts
-        for post in posts:
-            post_id = post['id']
-            post_title = post['title']
-            post_code, post_data = get_response(
-                f'{URL_POST}{post_id}',
-                add_headers=ADD_HEADERS
-            )
-            if post_code == 200:
-                is_liked = post_data['result']['reactions']['currentReaction']
-                if is_liked != 'LIKE':
-                    await send_reaction(post_id, post_title)
-                await send_replay(post_id)
-                await send_comment(post_id, post_title)
-            else:
-                await bot.send_message(ADMIN_TELEGRAM_ID, post_data['error'])
+        for user in users:
+            user_id = user['gid_id']
+            for post in posts:
+                post_id = post['id']
+                post_title = post['title']
+                post_code, post_data = get_response(
+                    f'{URL_POST}{post_id}',
+                    add_headers=ADD_HEADERS,
+                    user_id=user_id
+                )
+                if post_code == 200:
+                    is_liked = post_data['result']['reactions']['currentReaction']
+                    if is_liked != 'LIKE':
+                        await send_reaction(post_id, post_title, user_id)
+                    await send_replay(post_id, user_id)
+                    await send_comment(post_id, post_title, user_id)
+                else:
+                    await bot.send_message(ADMIN_TELEGRAM_ID, post_data['error'])
 
 
-async def send_reaction(post_id, post_title):
+async def send_reaction(post_id, post_title, user_id):
     like_code, like_data = get_response(
         f'{URL_LIKE}{post_id}/like',
         'POST',
-        add_headers=ADD_HEADERS
+        add_headers=ADD_HEADERS,
+        user_id=user_id,
     )
     if like_code == 200:
-        await collect_energy_func(MY_GID_ID, 'reaction_comment_click')
+        await collect_energy_func(user_id, 'reaction_comment_click')
         msg = like_data['message']
         await bot.send_message(ADMIN_TELEGRAM_ID, f'{post_title}: {msg}')
     else:
@@ -63,10 +69,11 @@ async def send_reaction(post_id, post_title):
         )
 
 
-async def send_replay(post_id):
+async def send_replay(post_id, user_id):
     coms_code, coms_data = get_response(
         f'{URL_COMMENTS}{post_id}?offset=0&limit=3',
-        add_headers=ADD_HEADERS
+        add_headers=ADD_HEADERS,
+        user_id=user_id
     )
     if coms_code == 200:
         total = coms_data['total']
@@ -80,7 +87,8 @@ async def send_replay(post_id):
                     'POST',
                     request_data,
                     add_headers=ADD_HEADERS,
-                    no_data=True
+                    no_data=True,
+                    user_id=user_id,
                 )
     else:
         await bot.send_message(
@@ -89,17 +97,18 @@ async def send_replay(post_id):
         )
 
 
-async def send_comment(post_id, post_title):
+async def send_comment(post_id, post_title, user_id):
     com_text = random.choice(COMMENTS_POST)
     request_data = json.dumps({'content': com_text})
     com_code, com_data = get_response(
         f'{URL_COMMENTS}{post_id}',
         'POST',
         request_data,
-        add_headers=ADD_HEADERS
+        add_headers=ADD_HEADERS,
+        user_id=user_id,
     )
     if com_code == 201:
-        await collect_energy_func(MY_GID_ID, 'news_comment_send')
+        await collect_energy_func(user_id, 'news_comment_send')
         await bot.send_message(
             ADMIN_TELEGRAM_ID,
             f'{post_title}: мой комментарий - {com_text}',
