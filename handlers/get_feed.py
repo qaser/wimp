@@ -12,7 +12,7 @@ from utils.constants import COMMENTS_FEED
 from config.mongo_config import auth_gid
 
 
-URL_FEEDS = 'https://web.gid.ru/api/public/v3/feed?gidOnly=true&pinsOnly=false&recommendationsOnly=false&limit=10'  # эндпоин для списка новостей
+URL_FEEDS = 'https://web.gid.ru/api/public/v3/feed?gidOnly=true&pinsOnly=false&recommendationsOnly=false&limit=5'  # эндпоин для списка новостей
 URL_FEED = 'https://web.gid.ru/api/feed/'  # эндпоинт для лайка h9qT5wJyHPbw/reactions
 ADD_HEADERS = [
     'Accept: application/json, text/plain, */*',
@@ -25,23 +25,23 @@ ADD_HEADERS = [
 
 async def get_feeds():
     await bot.send_message(ADMIN_TELEGRAM_ID, 'Запуск задачи чтения новостей')
-    tokens_update = await refresh_token_func()
-    if tokens_update == 200:
-        resp_code, resp_data = get_response(URL_FEEDS)
-        if resp_code == 200:
-            feeds = resp_data['items']  # list of dicts
-            users = list(auth_gid.find({}))
-            for user in users:
-                user_id = user['gid_id']
-                for feed in feeds:
-                    feed_id = feed['id']
-                    feed_title = feed['title']
-                    comment_enabled = feed['isCommentsEnabled']
-                    is_liked = feed['rating']['myRating']
-                    if is_liked != 'LIKE':
-                        await send_like(feed_id, feed_title, user_id)
-                    if comment_enabled is True:
-                        await send_comment(feed_id, feed_title, user_id)
+    await refresh_token_func()
+    resp_code, resp_data = get_response(URL_FEEDS)
+    if resp_code == 200:
+        feeds = resp_data['items']  # list of dicts
+        users = list(auth_gid.find({}))
+        for user in users:
+            user_id = user['gid_id']
+            for feed in feeds:
+                feed_id = feed['id']
+                feed_title = feed['title']
+                comment_enabled = feed['isCommentsEnabled']
+                is_liked = feed['rating']['myRating']
+                if is_liked != 'LIKE':
+                    await send_like(feed_id, feed_title, user_id)
+                if comment_enabled is True:
+                    await send_comment(feed_id, feed_title, user_id)
+        await bot.send_message(ADMIN_TELEGRAM_ID, 'Задачa чтения новостей завершена')
 
 
 async def send_like(feed_id, feed_title, user_id):

@@ -28,28 +28,30 @@ ADD_HEADERS = [
 
 async def get_posts_and_comments():
     await bot.send_message(ADMIN_TELEGRAM_ID, 'Запуск задачи чтения постов')
+    await refresh_token_func()
     resp_code, resp_data = get_response(URL_POSTS)
     if resp_code == 201 or resp_code == 200:
-        # users = list(auth_gid.find({}))
+        users = list(auth_gid.find({}))
         posts = resp_data['result']  # list of dicts
-        # for user in users:
-        user_id = MY_GID_ID
-        for post in posts:
-            post_id = post['id']
-            post_title = post['title']
-            post_code, post_data = get_response(
-                f'{URL_POST}{post_id}',
-                add_headers=ADD_HEADERS,
-                user_id=user_id
-            )
-            if post_code == 200:
-                is_liked = post_data['result']['reactions']['currentReaction']
-                if is_liked != 'LIKE':
-                    await send_reaction(post_id, post_title, user_id)
-                await send_replay(post_id, user_id)
-                await send_comment(post_id, post_title, user_id)
-            else:
-                await bot.send_message(ADMIN_TELEGRAM_ID, post_data['error'])
+        for user in users:
+            user_id = user['gid_id']
+            for post in posts:
+                post_id = post['id']
+                post_title = post['title']
+                post_code, post_data = get_response(
+                    f'{URL_POST}{post_id}',
+                    add_headers=ADD_HEADERS,
+                    user_id=user_id
+                )
+                if post_code == 200:
+                    is_liked = post_data['result']['reactions']['currentReaction']
+                    if is_liked != 'LIKE':
+                        await send_reaction(post_id, post_title, user_id)
+                    await send_replay(post_id, user_id)
+                    await send_comment(post_id, post_title, user_id)
+                else:
+                    await bot.send_message(ADMIN_TELEGRAM_ID, post_data['error'])
+        await bot.send_message(ADMIN_TELEGRAM_ID, 'Задача чтения постов завершена')
     else:
         await bot.send_message(
             ADMIN_TELEGRAM_ID,

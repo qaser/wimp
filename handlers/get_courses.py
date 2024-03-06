@@ -11,6 +11,7 @@ from config.bot_config import bot
 from config.mongo_config import courses_gid, auth_gid
 from config.telegram_config import ADMIN_TELEGRAM_ID
 from handlers.get_response import get_response
+from handlers.gid_auth import refresh_token_func
 
 
 URL_COURSES = "https://web.gid.ru/api/lms/v2/courses"  # эндпоин для списка курсов
@@ -27,6 +28,7 @@ ADD_HEADERS = [
 
 async def get_courses():
     users = list(auth_gid.find({}))
+    await refresh_token_func()
     for user in users:
         new_courses = 0
         user_id = user['gid_id']
