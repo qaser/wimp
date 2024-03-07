@@ -168,6 +168,7 @@ async def send_emotion():
 
 
 async def change_name():
+    await refresh_token_func()
     await bot.send_message(ADMIN_TELEGRAM_ID, 'Запуск задачи смены имени')
     request_data = json.dumps({'aliasFirstName':'Алексей Сайгин','aliasLastName':'(Mr. GeeKS)'})
     code, data = get_response(
