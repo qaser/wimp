@@ -63,7 +63,7 @@ async def get_feeds():
                 report = f'{report}{e}\n'
         await bot.send_message(
             ADMIN_TELEGRAM_ID,
-            f'Задачa чтения новостей завершена\n{report}',
+            f'Задачa чтения новостей завершена\n\n{report}',
             parse_mode=ParseMode.HTML,
         )
         buffer_gid.delete_one({'_id': buffer_id})
