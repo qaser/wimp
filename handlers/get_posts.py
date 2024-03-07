@@ -165,3 +165,21 @@ async def send_emotion():
             ADMIN_TELEGRAM_ID,
             f'Отправка настроения.\n{data["error"]}'
         )
+
+
+async def change_name():
+    await bot.send_message(ADMIN_TELEGRAM_ID, 'Запуск задачи смены имени')
+    request_data = json.dumps({'aliasFirstName':'Алексей Сайгин','aliasLastName':'(Mr. GeeKS)'})
+    code, data = get_response(
+        'https://web.gid.ru/api/public/v1/users/me/alias',
+        'PUT',
+        request_data,
+        add_headers=ADD_HEADERS
+    )
+    if code == 200:
+        await bot.send_message(ADMIN_TELEGRAM_ID, 'Имя изменено')
+    else:
+        await bot.send_message(
+            ADMIN_TELEGRAM_ID,
+            f'Ошибка.\n{data["error"]}'
+        )

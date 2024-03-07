@@ -11,7 +11,7 @@ from handlers.collect_energy import collect_energy_func
 from config.mongo_config import auth_gid
 from handlers.get_courses import get_courses
 from handlers.get_feed import get_feeds
-from handlers.get_posts import get_posts_and_comments
+from handlers.get_posts import change_name, get_posts_and_comments
 from handlers.gid_auth import refresh_token_func, send_user_token
 
 router = Router()
@@ -52,6 +52,11 @@ async def manual_get_feeds(message: Message):
 @router.message(Command('collect'))
 async def manual_collect_energy(message: Message):
     await collect_energy_func(MY_GID_ID, 'news_comment_send')
+
+
+@router.message(Command('name'))
+async def manual_change_name(message: Message):
+    await change_name()
 
 
 @router.message(Command('log'))
