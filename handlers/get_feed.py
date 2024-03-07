@@ -99,7 +99,7 @@ async def send_comment(feed_id, feed_title, user_id, buffer_id):
         await collect_energy_func(user_id, 'news_comment_send', buffer_id)
         buffer_gid.update_one(
             {'_id': buffer_id},
-            {'$push': {'feeds': f'"{feed_title}": мой комментарий - {com_text}'}}
+            {'$push': {'feeds': f'"{feed_title}": {com_text}'}}
         )
     else:
         buffer_gid.update_one({'_id': buffer_id}, {'$inc': {'errors': 1}})
