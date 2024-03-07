@@ -9,10 +9,11 @@ from config.bot_config import bot
 from config.telegram_config import ADMIN_TELEGRAM_ID
 from handlers.gid_auth import refresh_token_func
 from utils.constants import COMMENTS_POST
-from config.mongo_config import auth_gid
+from config.mongo_config import auth_gid, buffer_gid
 
 
-URL_POSTS = 'https://web.gid.ru/api/ugc/post/public/v1//post?limit=8'  # эндпоин для списка постов
+LIKE_OR_DISLIKE = ['like', 'dislike']
+URL_POSTS = 'https://web.gid.ru/api/ugc/post/public/v1//post?limit=5'  # эндпоин для списка постов
 URL_LIKE = 'https://web.gid.ru/api/ugc/reactions/public/v1/ugc/reaction/'  # эндпоинт для лайка
 URL_COMMENTS = 'https://web.gid.ru/api/ugc/comments/public/v1/post/'  # эндпоинт для comments
 URL_POST = 'https://web.gid.ru/api/ugc/post/public/v1/post/'  # эндпоинт для одного поста
@@ -27,31 +28,52 @@ ADD_HEADERS = [
 
 
 async def get_posts_and_comments():
+    user_id = MY_GID_ID
     await bot.send_message(ADMIN_TELEGRAM_ID, 'Запуск задачи чтения постов')
     await refresh_token_func()
     resp_code, resp_data = get_response(URL_POSTS)
     if resp_code == 201 or resp_code == 200:
-        users = list(auth_gid.find({}))
+        buffer_id = buffer_gid.insert_one({
+            'likes': 0,
+            'replies': 0,
+            'posts': [],
+            'errors': 0,
+            'errors_log': [],
+            'energy': 0,
+        }).inserted_id
         posts = resp_data['result']  # list of dicts
-        for user in users:
-            user_id = user['gid_id']
-            for post in posts:
-                post_id = post['id']
-                post_title = post['title']
-                post_code, post_data = get_response(
-                    f'{URL_POST}{post_id}',
-                    add_headers=ADD_HEADERS,
-                    user_id=user_id
-                )
-                if post_code == 200:
-                    is_liked = post_data['result']['reactions']['currentReaction']
-                    if is_liked != 'LIKE':
-                        await send_reaction(post_id, post_title, user_id)
-                    await send_replay(post_id, user_id)
-                    await send_comment(post_id, post_title, user_id)
-                else:
-                    await bot.send_message(ADMIN_TELEGRAM_ID, post_data['error'])
-        await bot.send_message(ADMIN_TELEGRAM_ID, 'Задача чтения постов завершена')
+        for post in posts:
+            post_id = post['id']
+            post_title = post['title']
+            post_code, post_data = get_response(
+                f'{URL_POST}{post_id}',
+                add_headers=ADD_HEADERS,
+                user_id=user_id
+            )
+            if post_code == 200:
+                is_liked = post_data['result']['reactions']['currentReaction']
+                if is_liked != 'LIKE':
+                    await send_reaction(post_id, user_id, buffer_id)
+                await send_replay(post_id, user_id, buffer_id)
+                await send_comment(post_id, post_title, user_id, buffer_id)
+            else:
+                buffer_gid.update_one({'_id': buffer_id}, {'$inc': {'errors': 1}})
+                buffer_gid.update_one({'_id': buffer_id}, {'$push': {'errors_log': post_data}})
+        # формирование отчета по работе бота
+        res = buffer_gid.find_one({'_id': buffer_id})
+        report = ''
+        if len(res['posts']) > 0:
+            for f in res['posts']:
+                report = f'{report}{f}\n'
+        report = f'{report}\nЛайков: {res['likes']}\n'
+        report = f'{report}Реакций: {res['replies']}\n'
+        report = f'{report}Энергия: {res['energy']}\n'
+        report = f'{report}Ошибок: {res['errors']}\n'
+        if res['errors'] > 0:
+            for e in res['errors_log']:
+                report = f'{report}{e}\n'
+        await bot.send_message(ADMIN_TELEGRAM_ID, f'Задачa чтения постов завершена\n{report}')
+        buffer_gid.delete_one({'_id': buffer_id})
     else:
         await bot.send_message(
             ADMIN_TELEGRAM_ID,
@@ -59,25 +81,22 @@ async def get_posts_and_comments():
         )
 
 
-async def send_reaction(post_id, post_title, user_id):
-    like_code, like_data = get_response(
-        f'{URL_LIKE}{post_id}/like',
+async def send_reaction(post_id, user_id, buffer_id):
+    url_action = random.choice(LIKE_OR_DISLIKE)
+    like_code, _ = get_response(
+        f'{URL_LIKE}{post_id}/{url_action}',
         'POST',
         add_headers=ADD_HEADERS,
         user_id=user_id,
     )
     if like_code == 200:
-        await collect_energy_func(user_id, 'reaction_comment_click')
-        msg = like_data['message']
-        await bot.send_message(ADMIN_TELEGRAM_ID, f'{post_title}: {msg}')
+        await collect_energy_func(user_id, 'reaction_comment_click', buffer_id)
+        buffer_gid.update_one({'_id': buffer_id}, {'$inc': {'likes': 1}})
     else:
-        await bot.send_message(
-            ADMIN_TELEGRAM_ID,
-            f'Отправка лайка за пост: {like_data["error"]}'
-        )
+        buffer_gid.update_one({'_id': buffer_id}, {'$inc': {'errors': 1}})
 
 
-async def send_replay(post_id, user_id):
+async def send_replay(post_id, user_id, buffer_id):
     coms_code, coms_data = get_response(
         f'{URL_COMMENTS}{post_id}?offset=0&limit=3',
         add_headers=ADD_HEADERS,
@@ -98,14 +117,13 @@ async def send_replay(post_id, user_id):
                     no_data=True,
                     user_id=user_id,
                 )
+                buffer_gid.update_one({'_id': buffer_id}, {'$inc': {'replies': 1}})
     else:
-        await bot.send_message(
-            ADMIN_TELEGRAM_ID,
-            f'Получение комментариев.\n{coms_data["error"]}'
-        )
+        buffer_gid.update_one({'_id': buffer_id}, {'$inc': {'errors': 1}})
+        buffer_gid.update_one({'_id': buffer_id}, {'$push': {'errors_log': coms_data['error']}})
 
 
-async def send_comment(post_id, post_title, user_id):
+async def send_comment(post_id, post_title, user_id, buffer_id):
     com_text = random.choice(COMMENTS_POST)
     request_data = json.dumps({'content': com_text})
     com_code, com_data = get_response(
@@ -116,16 +134,14 @@ async def send_comment(post_id, post_title, user_id):
         user_id=user_id,
     )
     if com_code == 201:
-        await collect_energy_func(user_id, 'news_comment_send')
-        await bot.send_message(
-            ADMIN_TELEGRAM_ID,
-            f'{post_title}: мой комментарий - {com_text}',
+        await collect_energy_func(user_id, 'news_comment_send', buffer_id)
+        buffer_gid.update_one(
+            {'_id': buffer_id},
+            {'$push': {'posts': f'"{post_title}": мой комментарий - {com_text}'}}
         )
     else:
-        await bot.send_message(
-            ADMIN_TELEGRAM_ID,
-            f'Отправка комментария.\n{com_data["error"]}'
-        )
+        buffer_gid.update_one({'_id': buffer_id}, {'$inc': {'errors': 1}})
+        buffer_gid.update_one({'_id': buffer_id}, {'$push': {'errors_log': com_data}})
 
 
 async def send_emotion():

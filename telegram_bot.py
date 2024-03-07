@@ -37,14 +37,14 @@ async def main():
     #     minutes=30,
     #     timezone=const.TIME_ZONE
     # )
-    scheduler.add_job(
-        send_emotion,
-        'cron',
-        day_of_week='mon-sun',
-        hour=8,
-        minute=0,
-        timezone=const.TIME_ZONE
-    )
+    # scheduler.add_job(
+    #     send_emotion,
+    #     'cron',
+    #     day_of_week='mon-sun',
+    #     hour=8,
+    #     minute=0,
+    #     timezone=const.TIME_ZONE
+    # )
     scheduler.add_job(
         get_posts_and_comments,
         'cron',

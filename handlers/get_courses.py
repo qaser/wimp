@@ -36,7 +36,7 @@ async def get_courses():
         resp_code, resp_data = get_response(
             URL_COURSES,
             add_headers=ADD_HEADERS,
-            user_id=user_id
+            user_id=user_id,
         )
         if resp_code == 201:
             chapters = resp_data['items']  # list of dicts

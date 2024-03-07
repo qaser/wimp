@@ -6,7 +6,7 @@ import certifi
 import pycurl
 
 from config.bot_config import bot
-from config.mongo_config import auth_gid
+from config.mongo_config import auth_gid, buffer_gid
 from config.telegram_config import ADMIN_TELEGRAM_ID
 from utils.constants import HEADERS
 
@@ -20,7 +20,7 @@ ADD_HEADERS = [
 ]
 
 
-async def collect_energy_func(user_id, event):
+async def collect_energy_func(user_id, event, buffer_id):
     user = auth_gid.find_one({'gid_id': user_id})
     token = user.get('access_token')
     csrf = user.get('csrf')
@@ -49,20 +49,12 @@ async def collect_energy_func(user_id, event):
         energy = 5
     c.perform()
     resp_code = c.getinfo(c.RESPONSE_CODE)
-    body = buffer.getvalue()
-    body_str = body.decode('utf-8')
+    # body = buffer.getvalue()
     c.close()
     if resp_code == 202:
-        await bot.send_message(
-            chat_id=ADMIN_TELEGRAM_ID,
-            text=f'Начисление энергии: {energy}',
-            disable_notification=True
-        )
+        buffer_gid.update_one({'_id': buffer_id}, {'$inc': {'energy': energy}})
     else:
-        await bot.send_message(
-            chat_id=ADMIN_TELEGRAM_ID,
-            text=f'Проблема с энергией:\n{body_str}',
-        )
+        buffer_gid.update_one({'_id': buffer_id}, {'$inc': {'errors': 1}})
 
 
 def get_request_data_comment(user_id):
