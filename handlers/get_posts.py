@@ -9,7 +9,8 @@ from config.bot_config import bot
 from config.telegram_config import ADMIN_TELEGRAM_ID
 from handlers.gid_auth import refresh_token_func
 from utils.constants import COMMENTS_POST
-from config.mongo_config import auth_gid, buffer_gid
+from config.mongo_config import buffer_gid
+from aiogram.enums import ParseMode
 
 
 LIKE_OR_DISLIKE = ['like', 'dislike']
@@ -72,12 +73,16 @@ async def get_posts_and_comments():
         if res['errors'] > 0:
             for e in res['errors_log']:
                 report = f'{report}{e}\n'
-        await bot.send_message(ADMIN_TELEGRAM_ID, f'Задачa чтения постов завершена\n{report}')
+        await bot.send_message(
+            ADMIN_TELEGRAM_ID,
+            f'Задачa чтения постов завершена\n\n{report}',
+            parse_mode=ParseMode.HTML,
+        )
         buffer_gid.delete_one({'_id': buffer_id})
     else:
         await bot.send_message(
             ADMIN_TELEGRAM_ID,
-            f'Получение списка постов: {resp_data["error"]}'
+            f'Получение списка постов: {resp_data["error"]}',
         )
 
 
@@ -137,7 +142,7 @@ async def send_comment(post_id, post_title, user_id, buffer_id):
         await collect_energy_func(user_id, 'news_comment_send', buffer_id)
         buffer_gid.update_one(
             {'_id': buffer_id},
-            {'$push': {'posts': f'"{post_title}": {com_text}'}}
+            {'$push': {'posts': f'<b>"{post_title}"</b>: {com_text}'}}
         )
     else:
         buffer_gid.update_one({'_id': buffer_id}, {'$inc': {'errors': 1}})
