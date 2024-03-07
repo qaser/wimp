@@ -54,9 +54,9 @@ async def get_feeds():
         if len(res['feeds']) > 0:
             for f in res['feeds']:
                 report = f'{report}{f}\n'
-        report = f'{report}\nЛайков: {res['likes']}\n'
-        report = f'{report}Энергия: {res['energy']}\n'
-        report = f'{report}Ошибок: {res['errors']}\n'
+        report = f'{report}\nЛайков: {res["likes"]}\n'
+        report = f'{report}Энергия: {res["energy"]}\n'
+        report = f'{report}Ошибок: {res["errors"]}\n'
         if res['errors'] > 0:
             for e in res['errors_log']:
                 report = f'{report}{e}\n'

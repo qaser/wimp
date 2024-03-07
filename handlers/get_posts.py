@@ -65,10 +65,10 @@ async def get_posts_and_comments():
         if len(res['posts']) > 0:
             for f in res['posts']:
                 report = f'{report}{f}\n'
-        report = f'{report}\nЛайков: {res['likes']}\n'
-        report = f'{report}Реакций: {res['replies']}\n'
-        report = f'{report}Энергия: {res['energy']}\n'
-        report = f'{report}Ошибок: {res['errors']}\n'
+        report = f'{report}\nЛайков: {res["likes"]}\n'
+        report = f'{report}Реакций: {res["replies"]}\n'
+        report = f'{report}Энергия: {res["energy"]}\n'
+        report = f'{report}Ошибок: {res["errors"]}\n'
         if res['errors'] > 0:
             for e in res['errors_log']:
                 report = f'{report}{e}\n'
