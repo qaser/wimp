@@ -23,14 +23,9 @@ from utils import constants as const
 router = Router()
 
 
-@router.message(Command('qwerty'))
-async def manual_refresh_token(message):
-    print('ccc')
-    await send_gratitude_func()
-
 @router.message(
     Command('oil'),
-    # (F.message_thread_id == int(MESSAGE_THREAD_ID)) & (F.chat.id == int(CHAT_ID))
+    (F.message_thread_id == int(MESSAGE_THREAD_ID)) & (F.chat.id == int(CHAT_ID))
 )
 async def oil_level_show(message: Message):
     await message.delete()
@@ -54,8 +49,8 @@ async def oil_level_show(message: Message):
     )
 
 
-@router.message()
-# @router.message((F.message_thread_id == int(MESSAGE_THREAD_ID)) & (F.chat.id == int(CHAT_ID)))
+# @router.message()
+@router.message((F.message_thread_id == int(MESSAGE_THREAD_ID)) & (F.chat.id == int(CHAT_ID)))
 async def counting_oil(message: Message):
     load_ids = []
     count_objects = 0

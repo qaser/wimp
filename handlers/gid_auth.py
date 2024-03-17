@@ -6,8 +6,11 @@ import time
 import certifi
 import pycurl
 from aiogram import F, Router
+from aiogram.enums import ParseMode
+from aiogram.types import CallbackQuery, Message
+from bson.objectid import ObjectId
 
-
+import keyboards.for_gid as kb
 from config.bot_config import bot
 from config.gid_config import MY_GID_ID
 from config.mongo_config import auth_gid
@@ -15,7 +18,6 @@ from config.telegram_config import ADMIN_TELEGRAM_ID
 from utils.constants import HEADERS
 
 router = Router()
-
 
 URL = "https://app.gid.ru/auth/realms/gid/protocol/openid-connect/token"
 ADD_HEADERS = [
@@ -76,8 +78,19 @@ async def refresh_token_func():
             )
 
 
-async def send_user_token():
-    tokens = auth_gid.find_one({'gid_id': MY_GID_ID})
+async def choose_user(message, handler):
+    users_list = list(auth_gid.find({}))
+    await message.answer(
+        'Выберите пользователя',
+        parse_mode=ParseMode.HTML,
+        reply_markup=kb.users_menu(users_list, handler),
+    )
+
+
+@router.callback_query(F.data.startswith('auth-get_'))
+async def get_users_tokens(callback: CallbackQuery):
+    _, id = callback.data.split('_')
+    tokens = auth_gid.find_one({'_id': ObjectId(id)})
     await bot.send_message(chat_id=ADMIN_TELEGRAM_ID, text='Access_token')
     await bot.send_message(chat_id=ADMIN_TELEGRAM_ID, text=tokens['access_token'])
     await bot.send_message(chat_id=ADMIN_TELEGRAM_ID, text='Refresh_token')
