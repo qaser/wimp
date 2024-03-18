@@ -9,7 +9,7 @@ from config.bot_config import bot
 from config.telegram_config import ADMIN_TELEGRAM_ID
 from handlers.gid_auth import refresh_token_func
 from utils.constants import COMMENTS_POST
-from config.mongo_config import buffer_gid
+from config.mongo_config import buffer_gid, auth_gid
 from aiogram.enums import ParseMode
 
 
@@ -29,61 +29,65 @@ ADD_HEADERS = [
 
 
 async def get_posts_and_comments():
-    user_id = MY_GID_ID
+    users = list(auth_gid.find({'automatization': True}))
+    # user_id = MY_GID_ID
     await bot.send_message(ADMIN_TELEGRAM_ID, 'Запуск задачи чтения постов')
     await refresh_token_func()
-    resp_code, resp_data = get_response(URL_POSTS)
-    if resp_code == 201 or resp_code == 200:
-        buffer_id = buffer_gid.insert_one({
-            'likes': 0,
-            'replies': 0,
-            'posts': [],
-            'errors': 0,
-            'errors_log': [],
-            'energy': 0,
-        }).inserted_id
-        posts = resp_data['result']  # list of dicts
-        for post in posts:
-            post_id = post['id']
-            post_title = post['title']
-            post_code, post_data = get_response(
-                f'{URL_POST}{post_id}',
-                add_headers=ADD_HEADERS,
-                user_id=user_id
+    for user in users:
+        user_id = user['gid_id']
+        username = user['username']
+        resp_code, resp_data = get_response(URL_POSTS)
+        if resp_code == 201 or resp_code == 200:
+            buffer_id = buffer_gid.insert_one({
+                'likes': 0,
+                'replies': 0,
+                'posts': [],
+                'errors': 0,
+                'errors_log': [],
+                'energy': 0,
+            }).inserted_id
+            posts = resp_data['result']  # list of dicts
+            for post in posts:
+                post_id = post['id']
+                post_title = post['title']
+                post_code, post_data = get_response(
+                    f'{URL_POST}{post_id}',
+                    add_headers=ADD_HEADERS,
+                    user_id=user_id
+                )
+                if post_code == 200:
+                    is_liked = post_data['result']['reactions']['currentReaction']
+                    if is_liked != 'LIKE':
+                        await send_reaction(post_id, user_id, buffer_id)
+                    await send_replay(post_id, user_id, buffer_id)
+                    await send_comment(post_id, post_title, user_id, buffer_id)
+                else:
+                    buffer_gid.update_one({'_id': buffer_id}, {'$inc': {'errors': 1}})
+                    buffer_gid.update_one({'_id': buffer_id}, {'$push': {'errors_log': post_data}})
+            # формирование отчета по работе бота
+            res = buffer_gid.find_one({'_id': buffer_id})
+            report = f'<b>{username}</b>\n'
+            if len(res['posts']) > 0:
+                for f in res['posts']:
+                    report = f'{report}{f}\n'
+            report = f'{report}\nЛайков: {res["likes"]}\n'
+            report = f'{report}Реакций: {res["replies"]}\n'
+            report = f'{report}Энергия: {res["energy"]}\n'
+            report = f'{report}Ошибок: {res["errors"]}\n'
+            if res['errors'] > 0:
+                for e in res['errors_log']:
+                    report = f'{report}{e}\n'
+            await bot.send_message(
+                ADMIN_TELEGRAM_ID,
+                f'Задачa чтения постов завершена\n\n{report}',
+                parse_mode=ParseMode.HTML,
             )
-            if post_code == 200:
-                is_liked = post_data['result']['reactions']['currentReaction']
-                if is_liked != 'LIKE':
-                    await send_reaction(post_id, user_id, buffer_id)
-                await send_replay(post_id, user_id, buffer_id)
-                await send_comment(post_id, post_title, user_id, buffer_id)
-            else:
-                buffer_gid.update_one({'_id': buffer_id}, {'$inc': {'errors': 1}})
-                buffer_gid.update_one({'_id': buffer_id}, {'$push': {'errors_log': post_data}})
-        # формирование отчета по работе бота
-        res = buffer_gid.find_one({'_id': buffer_id})
-        report = ''
-        if len(res['posts']) > 0:
-            for f in res['posts']:
-                report = f'{report}{f}\n'
-        report = f'{report}\nЛайков: {res["likes"]}\n'
-        report = f'{report}Реакций: {res["replies"]}\n'
-        report = f'{report}Энергия: {res["energy"]}\n'
-        report = f'{report}Ошибок: {res["errors"]}\n'
-        if res['errors'] > 0:
-            for e in res['errors_log']:
-                report = f'{report}{e}\n'
-        await bot.send_message(
-            ADMIN_TELEGRAM_ID,
-            f'Задачa чтения постов завершена\n\n{report}',
-            parse_mode=ParseMode.HTML,
-        )
-        buffer_gid.delete_one({'_id': buffer_id})
-    else:
-        await bot.send_message(
-            ADMIN_TELEGRAM_ID,
-            f'Получение списка постов: {resp_data["error"]}',
-        )
+            buffer_gid.delete_one({'_id': buffer_id})
+        else:
+            await bot.send_message(
+                ADMIN_TELEGRAM_ID,
+                f'Получение списка постов: {resp_data["error"]}',
+            )
 
 
 async def send_reaction(post_id, user_id, buffer_id):

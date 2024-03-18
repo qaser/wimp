@@ -65,6 +65,11 @@ async def send_logs(message: Message):
         await bot.send_document(chat_id=ADMIN_TELEGRAM_ID, document=content)
 
 
+@router.message(Command('set_automatization'))
+async def set_automatization(message: Message):
+    await choose_user(message, 'auto')
+
+
 @router.message(Command('get_tokens'))
 async def get_tokens(message: Message):
     await choose_user(message, 'get')

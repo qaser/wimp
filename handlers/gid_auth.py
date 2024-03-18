@@ -89,6 +89,7 @@ async def choose_user(message, handler):
 
 @router.callback_query(F.data.startswith('auth-get_'))
 async def get_users_tokens(callback: CallbackQuery):
+    await callback.message.delete()
     _, id = callback.data.split('_')
     tokens = auth_gid.find_one({'_id': ObjectId(id)})
     await bot.send_message(chat_id=ADMIN_TELEGRAM_ID, text='Access_token')
@@ -97,3 +98,40 @@ async def get_users_tokens(callback: CallbackQuery):
     await bot.send_message(chat_id=ADMIN_TELEGRAM_ID, text=tokens['refresh_token'])
     await bot.send_message(chat_id=ADMIN_TELEGRAM_ID, text='CSRF')
     await bot.send_message(chat_id=ADMIN_TELEGRAM_ID, text=tokens['csrf'])
+
+
+@router.callback_query(F.data.startswith('auth-auto_'))
+async def set_users_automatization(callback: CallbackQuery):
+    await callback.message.delete()
+    _, id = callback.data.split('_')
+    user = auth_gid.find_one({'_id': ObjectId(id)})
+    user_state = user.get('automatization')
+    username = user['username']
+    if user_state is False or user_state is None:
+        await bot.send_message(
+            chat_id=ADMIN_TELEGRAM_ID,
+            text=f'Автоматизация для пользователя "{username}" выключена.\nХотите включить?',
+            reply_markup=kb.yes_or_no(id, 'disabled'),
+        )
+    else:
+        await bot.send_message(
+            chat_id=ADMIN_TELEGRAM_ID,
+            text=f'Автоматизация для пользователя "{username}" включена.\nХотите выключить?',
+            reply_markup=kb.yes_or_no(id, 'enabled'),
+        )
+
+
+@router.callback_query(F.data.startswith('auto_'))
+async def confirm_automatization(callback: CallbackQuery):
+    await callback.message.delete()
+    _, choose, id = callback.data.split('_')
+    if choose == 'yes':
+        auth_gid.update_one(
+            {'_id': ObjectId(id)},
+            {'$set': {'automatization': True}}
+        )
+    elif choose == 'no':
+        auth_gid.update_one(
+            {'_id': ObjectId(id)},
+            {'$set': {'automatization': False}}
+        )

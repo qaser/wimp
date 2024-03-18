@@ -10,7 +10,7 @@ from config.bot_config import bot
 from config.telegram_config import ADMIN_TELEGRAM_ID
 from handlers.gid_auth import refresh_token_func
 from utils.constants import COMMENTS_FEED
-from config.mongo_config import buffer_gid
+from config.mongo_config import buffer_gid, auth_gid
 from aiogram.enums import ParseMode
 
 
@@ -25,53 +25,62 @@ ADD_HEADERS = [
     'sentry-trace: 24745024fbbc4112903eb33b91fec441-ba8792fcbb7852c7',
 ]
 
+def get_user():
+    today = dt.datetime.today().strftime('%d.%m.%Y')
+    users = list(auth_gid.find({'automatization': True, 'latest_action': {'$ne': today}}))
+
+
 
 async def get_feeds():
-    user_id = MY_GID_ID
+    users = list(auth_gid.find({'automatization': True}))
+    # user_id = MY_GID_ID
     await bot.send_message(ADMIN_TELEGRAM_ID, 'Запуск задачи чтения новостей')
     await refresh_token_func()
-    resp_code, resp_data = get_response(URL_FEEDS)
-    if resp_code == 200:
-        buffer_id = buffer_gid.insert_one({
-            'likes': 0,
-            'feeds': [],
-            'errors': 0,
-            'errors_log': [],
-            'energy': 0,
-        }).inserted_id
-        feeds = resp_data['items']  # list of dicts
-        for feed in feeds:
-            feed_id = feed['id']
-            feed_title = feed['title']
-            comment_enabled = feed['isCommentsEnabled']
-            is_liked = feed['rating']['myRating']
-            if is_liked != 'LIKE':
-                await send_like(feed_id, user_id, buffer_id)
-            if comment_enabled is True:
-                await send_comment(feed_id, feed_title, user_id, buffer_id)
-        # формирование отчета по работе бота
-        res = buffer_gid.find_one({'_id': buffer_id})
-        report = ''
-        if len(res['feeds']) > 0:
-            for f in res['feeds']:
-                report = f'{report}{f}\n'
-        report = f'{report}\nЛайков: {res["likes"]}\n'
-        report = f'{report}Энергия: {res["energy"]}\n'
-        report = f'{report}Ошибок: {res["errors"]}\n'
-        if res['errors'] > 0:
-            for e in res['errors_log']:
-                report = f'{report}{e}\n'
-        await bot.send_message(
-            ADMIN_TELEGRAM_ID,
-            f'Задачa чтения новостей завершена\n\n{report}',
-            parse_mode=ParseMode.HTML,
-        )
-        buffer_gid.delete_one({'_id': buffer_id})
-    else:
-        await bot.send_message(
-            ADMIN_TELEGRAM_ID,
-            f'Получение списка новостей: {resp_data["error"]}'
-        )
+    for user in users:
+        user_id = user['gid_id']
+        username = user['username']
+        resp_code, resp_data = get_response(URL_FEEDS)
+        if resp_code == 200:
+            buffer_id = buffer_gid.insert_one({
+                'likes': 0,
+                'feeds': [],
+                'errors': 0,
+                'errors_log': [],
+                'energy': 0,
+            }).inserted_id
+            feeds = resp_data['items']  # list of dicts
+            for feed in feeds:
+                feed_id = feed['id']
+                feed_title = feed['title']
+                comment_enabled = feed['isCommentsEnabled']
+                is_liked = feed['rating']['myRating']
+                if is_liked != 'LIKE':
+                    await send_like(feed_id, user_id, buffer_id)
+                if comment_enabled is True:
+                    await send_comment(feed_id, feed_title, user_id, buffer_id)
+            # формирование отчета по работе бота
+            res = buffer_gid.find_one({'_id': buffer_id})
+            report = f'<b>{username}</b>\n'
+            if len(res['feeds']) > 0:
+                for f in res['feeds']:
+                    report = f'{report}{f}\n'
+            report = f'{report}\nЛайков: {res["likes"]}\n'
+            report = f'{report}Энергия: {res["energy"]}\n'
+            report = f'{report}Ошибок: {res["errors"]}\n'
+            if res['errors'] > 0:
+                for e in res['errors_log']:
+                    report = f'{report}{e}\n'
+            await bot.send_message(
+                ADMIN_TELEGRAM_ID,
+                f'Задачa чтения новостей завершена\n\n{report}',
+                parse_mode=ParseMode.HTML,
+            )
+            buffer_gid.delete_one({'_id': buffer_id})
+        else:
+            await bot.send_message(
+                ADMIN_TELEGRAM_ID,
+                f'Получение списка новостей: {resp_data["error"]}'
+            )
 
 
 async def send_like(feed_id, user_id, buffer_id):
