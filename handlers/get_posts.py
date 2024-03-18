@@ -66,7 +66,7 @@ async def get_posts_and_comments():
                     buffer_gid.update_one({'_id': buffer_id}, {'$push': {'errors_log': post_data}})
             # формирование отчета по работе бота
             res = buffer_gid.find_one({'_id': buffer_id})
-            report = f'<b>{username}</b>\n'
+            report = ''
             if len(res['posts']) > 0:
                 for f in res['posts']:
                     report = f'{report}{f}\n'
@@ -79,7 +79,7 @@ async def get_posts_and_comments():
                     report = f'{report}{e}\n'
             await bot.send_message(
                 ADMIN_TELEGRAM_ID,
-                f'Задачa чтения постов завершена\n\n{report}',
+                f'Задачa чтения постов пользователем <i>"{username}"</i> завершена\n\n{report}',
                 parse_mode=ParseMode.HTML,
             )
             buffer_gid.delete_one({'_id': buffer_id})

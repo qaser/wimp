@@ -25,11 +25,6 @@ ADD_HEADERS = [
     'sentry-trace: 24745024fbbc4112903eb33b91fec441-ba8792fcbb7852c7',
 ]
 
-def get_user():
-    today = dt.datetime.today().strftime('%d.%m.%Y')
-    users = list(auth_gid.find({'automatization': True, 'latest_action': {'$ne': today}}))
-
-
 
 async def get_feeds():
     users = list(auth_gid.find({'automatization': True}))
@@ -60,7 +55,7 @@ async def get_feeds():
                     await send_comment(feed_id, feed_title, user_id, buffer_id)
             # формирование отчета по работе бота
             res = buffer_gid.find_one({'_id': buffer_id})
-            report = f'<b>{username}</b>\n'
+            report = ''
             if len(res['feeds']) > 0:
                 for f in res['feeds']:
                     report = f'{report}{f}\n'
@@ -72,7 +67,7 @@ async def get_feeds():
                     report = f'{report}{e}\n'
             await bot.send_message(
                 ADMIN_TELEGRAM_ID,
-                f'Задачa чтения новостей завершена\n\n{report}',
+                f'Задачa чтения новостей пользователем <i>"{username}"</i> завершена\n\n{report}',
                 parse_mode=ParseMode.HTML,
             )
             buffer_gid.delete_one({'_id': buffer_id})
