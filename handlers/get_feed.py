@@ -76,6 +76,7 @@ async def get_feeds():
                 ADMIN_TELEGRAM_ID,
                 f'Получение списка новостей: {resp_data["error"]}'
             )
+            break
 
 
 async def send_like(feed_id, user_id, buffer_id):

@@ -28,7 +28,8 @@ ADD_HEADERS = [
 
 
 async def refresh_token_func():
-    users = list(auth_gid.find({}))
+    users = list(auth_gid.find({'automatization': True}))
+    await bot.send_message(ADMIN_TELEGRAM_ID, 'Запуск задачи обновления токена')
     for user in users:
         time.sleep(5)
         username = user['username']

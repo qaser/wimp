@@ -30,7 +30,6 @@ ADD_HEADERS = [
 
 async def get_posts_and_comments():
     users = list(auth_gid.find({'automatization': True}))
-    # user_id = MY_GID_ID
     await bot.send_message(ADMIN_TELEGRAM_ID, 'Запуск задачи чтения постов')
     await refresh_token_func()
     for user in users:
@@ -88,6 +87,7 @@ async def get_posts_and_comments():
                 ADMIN_TELEGRAM_ID,
                 f'Получение списка постов: {resp_data["error"]}',
             )
+            break
 
 
 async def send_reaction(post_id, user_id, buffer_id):
