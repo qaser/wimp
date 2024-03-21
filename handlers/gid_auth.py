@@ -72,6 +72,10 @@ async def refresh_token_func():
                 }},
                 upsert=True
             )
+            await bot.send_message(
+                ADMIN_TELEGRAM_ID,
+                f'Токен пользователя "{username}" успешно обновлен'
+            )
         else:
             await bot.send_message(
                 chat_id=ADMIN_TELEGRAM_ID,

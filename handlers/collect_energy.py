@@ -40,7 +40,7 @@ async def collect_energy_func(user_id, event, buffer_id):
     c.setopt(c.COOKIEFILE, f'X-CSRF-TOKEN={csrf}')
     if event == 'news_comment_send':
         c.setopt(c.POSTFIELDS, get_request_data_comment(user_id))
-        energy = 30
+        energy = 10
     elif event == 'thanks_new_create_click':
         c.setopt(c.POSTFIELDS, get_request_data_thanks(user_id))
         energy = 50
@@ -49,7 +49,6 @@ async def collect_energy_func(user_id, event, buffer_id):
         energy = 5
     c.perform()
     resp_code = c.getinfo(c.RESPONSE_CODE)
-    # body = buffer.getvalue()
     c.close()
     if resp_code == 202:
         buffer_gid.update_one({'_id': buffer_id}, {'$inc': {'energy': energy}})
