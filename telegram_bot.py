@@ -47,10 +47,8 @@ async def main():
     # )
     scheduler.add_job(
         get_posts_and_comments,
-        'cron',
-        day_of_week='mon-sun',
-        hour=10,
-        minute=0,
+        'interval',
+        hours=5,
         timezone=const.TIME_ZONE
     )
     scheduler.add_job(
@@ -63,10 +61,8 @@ async def main():
     )
     scheduler.add_job(
         get_feeds,
-        'cron',
-        day_of_week='mon-sun',
-        hour=15,
-        minute=0,
+        'interval',
+        hours=4,
         timezone=const.TIME_ZONE
     )
 
