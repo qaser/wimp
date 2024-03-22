@@ -26,12 +26,6 @@ async def cmd_reset(message: Message, state: FSMContext):
 async def main():
     scheduler = AsyncIOScheduler()
     # scheduler.add_job(
-    #     refresh_token_func,
-    #     'interval',
-    #     minutes=27,
-    #     timezone=const.TIME_ZONE
-    # )
-    # scheduler.add_job(
     #     send_gratitude_func,
     #     'interval',
     #     minutes=30,
@@ -47,8 +41,10 @@ async def main():
     # )
     scheduler.add_job(
         get_posts_and_comments,
-        'interval',
-        hours=5,
+        'cron',
+        day_of_week='mon-sun',
+        hour=8,
+        minute=0,
         timezone=const.TIME_ZONE
     )
     scheduler.add_job(
@@ -61,8 +57,26 @@ async def main():
     )
     scheduler.add_job(
         get_feeds,
-        'interval',
-        hours=4,
+        'cron',
+        day_of_week='mon-sun',
+        hour=10,
+        minute=0,
+        timezone=const.TIME_ZONE
+    )
+    scheduler.add_job(
+        get_posts_and_comments,
+        'cron',
+        day_of_week='mon-sun',
+        hour=15,
+        minute=0,
+        timezone=const.TIME_ZONE
+    )
+    scheduler.add_job(
+        get_feeds,
+        'cron',
+        day_of_week='mon-sun',
+        hour=20,
+        minute=0,
         timezone=const.TIME_ZONE
     )
 

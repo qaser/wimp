@@ -1,8 +1,8 @@
 import json
 import random
 
-from config.gid_config import MY_GID_ID
 from handlers.collect_energy import collect_energy_func
+from handlers.get_profile import get_profile
 from handlers.get_response import get_response
 
 from config.bot_config import bot
@@ -13,8 +13,10 @@ from config.mongo_config import buffer_gid, auth_gid
 from aiogram.enums import ParseMode
 
 
+NUM_COMENTS = 10
+NUM_POSTS = 10
 LIKE_OR_DISLIKE = ['like', 'dislike']
-URL_POSTS = 'https://web.gid.ru/api/ugc/post/public/v1//post?limit=20'  # эндпоин для списка постов
+URL_POSTS = f'https://web.gid.ru/api/ugc/post/public/v1//post?limit={NUM_POSTS}'  # эндпоин для списка постов
 URL_LIKE = 'https://web.gid.ru/api/ugc/reactions/public/v1/ugc/reaction/'  # эндпоинт для лайка
 URL_COMMENTS = 'https://web.gid.ru/api/ugc/comments/public/v1/post/'  # эндпоинт для comments
 URL_POST = 'https://web.gid.ru/api/ugc/post/public/v1/post/'  # эндпоинт для одного поста
@@ -32,6 +34,7 @@ async def get_posts_and_comments():
     users = list(auth_gid.find({'automatization': True}))
     await bot.send_message(ADMIN_TELEGRAM_ID, 'Запуск задачи чтения постов')
     await refresh_token_func()
+    await get_profile(user_id)
     for user in users:
         user_id = user['gid_id']
         username = user['username']
@@ -43,7 +46,6 @@ async def get_posts_and_comments():
                 'posts': [],
                 'errors': 0,
                 'errors_log': [],
-                'energy': 0,
             }).inserted_id
             posts = resp_data['result']  # list of dicts
             for post in posts:
@@ -71,7 +73,6 @@ async def get_posts_and_comments():
                     report = f'{report}{f}\n'
             report = f'{report}\nЛайков: {res["likes"]}\n'
             report = f'{report}Реакций: {res["replies"]}\n'
-            report = f'{report}Энергия: {res["energy"]}\n'
             report = f'{report}Ошибок: {res["errors"]}\n'
             if res['errors'] > 0:
                 for e in res['errors_log']:
@@ -81,6 +82,7 @@ async def get_posts_and_comments():
                 f'Задачa чтения постов пользователем <i>"{username}"</i> завершена\n\n{report}',
                 parse_mode=ParseMode.HTML,
             )
+            await get_profile(user_id)
             buffer_gid.delete_one({'_id': buffer_id})
         else:
             await bot.send_message(
@@ -107,7 +109,7 @@ async def send_reaction(post_id, user_id, buffer_id):
 
 async def send_replay(post_id, user_id, buffer_id):
     coms_code, coms_data = get_response(
-        f'{URL_COMMENTS}{post_id}?offset=0&limit=3',
+        f'{URL_COMMENTS}{post_id}?offset=0&limit={NUM_COMENTS}',
         add_headers=ADD_HEADERS,
         user_id=user_id
     )

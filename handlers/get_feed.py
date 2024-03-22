@@ -4,6 +4,7 @@ import datetime as dt
 
 from config.gid_config import MY_GID_ID
 from handlers.collect_energy import collect_energy_func
+from handlers.get_profile import get_profile
 from handlers.get_response import get_response
 
 from config.bot_config import bot
@@ -14,8 +15,9 @@ from config.mongo_config import buffer_gid, auth_gid
 from aiogram.enums import ParseMode
 
 
+NUM_FEEDS = 10
 LIKE_OR_DISLIKE = ['like', 'dislike']
-URL_FEEDS = 'https://web.gid.ru/api/public/v3/feed?gidOnly=true&pinsOnly=false&recommendationsOnly=false&limit=5'  # эндпоин для списка новостей
+URL_FEEDS = f'https://web.gid.ru/api/public/v3/feed?gidOnly=true&pinsOnly=false&recommendationsOnly=false&limit={NUM_FEEDS}'  # эндпоин для списка новостей
 URL_FEED = 'https://web.gid.ru/api/feed/'  # эндпоинт для лайка h9qT5wJyHPbw/reactions
 ADD_HEADERS = [
     'Accept: application/json, text/plain, */*',
@@ -28,9 +30,9 @@ ADD_HEADERS = [
 
 async def get_feeds():
     users = list(auth_gid.find({'automatization': True}))
-    # user_id = MY_GID_ID
     await bot.send_message(ADMIN_TELEGRAM_ID, 'Запуск задачи чтения новостей')
     await refresh_token_func()
+    await get_profile(user_id)
     for user in users:
         user_id = user['gid_id']
         username = user['username']
@@ -41,7 +43,6 @@ async def get_feeds():
                 'feeds': [],
                 'errors': 0,
                 'errors_log': [],
-                'energy': 0,
             }).inserted_id
             feeds = resp_data['items']  # list of dicts
             for feed in feeds:
@@ -60,7 +61,6 @@ async def get_feeds():
                 for f in res['feeds']:
                     report = f'{report}{f}\n'
             report = f'{report}\nЛайков: {res["likes"]}\n'
-            report = f'{report}Энергия: {res["energy"]}\n'
             report = f'{report}Ошибок: {res["errors"]}\n'
             if res['errors'] > 0:
                 for e in res['errors_log']:
@@ -70,6 +70,7 @@ async def get_feeds():
                 f'Задачa чтения новостей пользователем <i>"{username}"</i> завершена\n\n{report}',
                 parse_mode=ParseMode.HTML,
             )
+            await get_profile(user_id)
             buffer_gid.delete_one({'_id': buffer_id})
         else:
             await bot.send_message(
