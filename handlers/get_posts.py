@@ -34,10 +34,10 @@ async def get_posts_and_comments():
     users = list(auth_gid.find({'automatization': True}))
     await bot.send_message(ADMIN_TELEGRAM_ID, 'Запуск задачи чтения постов')
     await refresh_token_func()
-    await get_profile(user_id)
     for user in users:
         user_id = user['gid_id']
         username = user['username']
+        await get_profile(user_id)
         resp_code, resp_data = get_response(URL_POSTS)
         if resp_code == 201 or resp_code == 200:
             buffer_id = buffer_gid.insert_one({

@@ -32,10 +32,10 @@ async def get_feeds():
     users = list(auth_gid.find({'automatization': True}))
     await bot.send_message(ADMIN_TELEGRAM_ID, 'Запуск задачи чтения новостей')
     await refresh_token_func()
-    await get_profile(user_id)
     for user in users:
         user_id = user['gid_id']
         username = user['username']
+        await get_profile(user_id)
         resp_code, resp_data = get_response(URL_FEEDS)
         if resp_code == 200:
             buffer_id = buffer_gid.insert_one({
