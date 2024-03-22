@@ -57,14 +57,6 @@ async def manual_change_name(message: Message):
     await change_name()
 
 
-@router.message(Command('log'))
-async def send_logs(message: Message):
-    file = f'logs_bot.log'
-    with open(file, 'rb') as f:
-        content = f.read()
-        await bot.send_document(chat_id=ADMIN_TELEGRAM_ID, document=content)
-
-
 @router.message(Command('set_automatization'))
 async def set_automatization(message: Message):
     await choose_user(message, 'auto')
