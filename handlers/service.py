@@ -1,6 +1,6 @@
 from aiogram import F, Router
 from aiogram.filters import Command
-from aiogram.types import CallbackQuery, Message
+from aiogram.types import CallbackQuery, Message, FSInputFile
 from bson.objectid import ObjectId
 
 from config.bot_config import bot
@@ -78,6 +78,13 @@ async def get_tokens(message: Message):
 @router.message(Command('set_tokens'))
 async def set_tokens(message: Message):
     await choose_user(message, 'set')
+
+
+@router.message(Command('log'))
+async def send_logs(message: Message):
+    document = FSInputFile(path=r'logs_bot.log')
+    await message.answer_document(document=document)
+    await message.delete()
 
 
 @router.callback_query(F.data.startswith('auth-set_'))
