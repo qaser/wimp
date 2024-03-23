@@ -8,11 +8,12 @@ from config.gid_config import MY_GID_ID
 from config.telegram_config import ADMIN_TELEGRAM_ID
 from aiogram.fsm.context import FSMContext
 from aiogram.fsm.state import State, StatesGroup
-from handlers.collect_energy import collect_energy_func
+from handlers.collect_energy import collect_daily_energy, collect_energy_func
 from config.mongo_config import auth_gid
 from handlers.get_courses import get_courses
 from handlers.get_feed import get_feeds
 from handlers.get_posts import change_name, get_posts_and_comments
+from handlers.get_profile import get_profile
 from handlers.gid_auth import refresh_token_func, choose_user
 
 router = Router()
@@ -49,7 +50,12 @@ async def manual_get_feeds(message: Message):
 
 @router.message(Command('collect'))
 async def manual_collect_energy(message: Message):
-    await collect_energy_func(MY_GID_ID, 'news_comment_send')
+    await collect_daily_energy()
+
+
+@router.message(Command('energy'))
+async def get_energy(message: Message):
+    await get_profile(MY_GID_ID)
 
 
 @router.message(Command('name'))

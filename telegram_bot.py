@@ -56,28 +56,28 @@ async def main():
         minute=0,
         timezone=const.TIME_ZONE
     )
-    # scheduler.add_job(
-    #     get_feeds,
-    #     'cron',
-    #     day_of_week='mon-sun',
-    #     hour=10,
-    #     minute=0,
-    #     timezone=const.TIME_ZONE
-    # )
-    # scheduler.add_job(
-    #     get_posts_and_comments,
-    #     'cron',
-    #     day_of_week='mon-sun',
-    #     hour=15,
-    #     minute=0,
-    #     timezone=const.TIME_ZONE
-    # )
     scheduler.add_job(
         collect_daily_energy,
         'cron',
         day_of_week='mon-sun',
-        hour=0,
-        minute=25,
+        hour=18,
+        minute=0,
+        timezone=const.TIME_ZONE
+    )
+    scheduler.add_job(
+        collect_daily_energy,
+        'cron',
+        day_of_week='mon-sun',
+        hour=14,
+        minute=0,
+        timezone=const.TIME_ZONE
+    )
+    scheduler.add_job(
+        collect_daily_energy,
+        'cron',
+        day_of_week='mon-sun',
+        hour=8,
+        minute=0,
         timezone=const.TIME_ZONE
     )
 
