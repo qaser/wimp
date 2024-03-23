@@ -97,7 +97,8 @@ async def send_like(feed_id, user_id, buffer_id):
 
 
 async def send_comment(feed_id, feed_title, user_id, buffer_id):
-    com_text = random.choice(COMMENTS_FEED)
+    # com_text = random.choice(COMMENTS_FEED)
+    com_text = ':|'
     request_data = json.dumps({'content': com_text})
     com_code, com_data = get_response(
         f'{URL_FEED}{feed_id}/comments',
