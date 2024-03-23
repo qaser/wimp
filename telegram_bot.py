@@ -55,14 +55,14 @@ async def main():
         minute=0,
         timezone=const.TIME_ZONE
     )
-    scheduler.add_job(
-        get_feeds,
-        'cron',
-        day_of_week='mon-sun',
-        hour=10,
-        minute=0,
-        timezone=const.TIME_ZONE
-    )
+    # scheduler.add_job(
+    #     get_feeds,
+    #     'cron',
+    #     day_of_week='mon-sun',
+    #     hour=10,
+    #     minute=0,
+    #     timezone=const.TIME_ZONE
+    # )
     scheduler.add_job(
         get_posts_and_comments,
         'cron',
@@ -71,14 +71,14 @@ async def main():
         minute=0,
         timezone=const.TIME_ZONE
     )
-    scheduler.add_job(
-        get_feeds,
-        'cron',
-        day_of_week='mon-sun',
-        hour=20,
-        minute=0,
-        timezone=const.TIME_ZONE
-    )
+    # scheduler.add_job(
+    #     get_feeds,
+    #     'cron',
+    #     day_of_week='mon-sun',
+    #     hour=20,
+    #     minute=0,
+    #     timezone=const.TIME_ZONE
+    # )
 
     scheduler.start()
     dp.include_router(service.router)

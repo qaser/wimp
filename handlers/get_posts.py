@@ -15,7 +15,7 @@ from aiogram.enums import ParseMode
 
 NUM_COMENTS = 10
 NUM_POSTS = 10
-LIKE_OR_DISLIKE = ['like', 'dislike']
+# LIKE_OR_DISLIKE = ['like', 'dislike']
 URL_POSTS = f'https://web.gid.ru/api/ugc/post/public/v1//post?limit={NUM_POSTS}'  # эндпоин для списка постов
 URL_LIKE = 'https://web.gid.ru/api/ugc/reactions/public/v1/ugc/reaction/'  # эндпоинт для лайка
 URL_COMMENTS = 'https://web.gid.ru/api/ugc/comments/public/v1/post/'  # эндпоинт для comments
@@ -93,7 +93,7 @@ async def get_posts_and_comments():
 
 
 async def send_reaction(post_id, user_id, buffer_id):
-    url_action = random.choice(LIKE_OR_DISLIKE)
+    url_action = 'like'
     like_code, _ = get_response(
         f'{URL_LIKE}{post_id}/{url_action}',
         'POST',
@@ -119,7 +119,7 @@ async def send_replay(post_id, user_id, buffer_id):
             comments = coms_data['items']
             for comment in comments:
                 comment_id = comment['id']
-                request_data = json.dumps({'content': ':)'})
+                request_data = json.dumps({'content': ':|'})
                 get_response(
                     f'{URL_COMMENTS}{post_id}/comments/{comment_id}/replies',
                     'POST',
@@ -135,7 +135,8 @@ async def send_replay(post_id, user_id, buffer_id):
 
 
 async def send_comment(post_id, post_title, user_id, buffer_id):
-    com_text = random.choice(COMMENTS_POST)
+    com_text = ':|'
+    # com_text = random.choice(COMMENTS_POST)
     request_data = json.dumps({'content': com_text})
     com_code, com_data = get_response(
         f'{URL_COMMENTS}{post_id}',
