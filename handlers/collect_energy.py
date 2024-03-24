@@ -1,5 +1,6 @@
 import datetime as dt
 import json
+import time
 import uuid
 from io import BytesIO
 
@@ -9,6 +10,8 @@ import pycurl
 from config.bot_config import bot
 from config.mongo_config import auth_gid, buffer_gid
 from config.telegram_config import ADMIN_TELEGRAM_ID
+from handlers.get_profile import get_profile
+from handlers.gid_auth import refresh_token_func
 from utils.constants import HEADERS
 
 
@@ -24,12 +27,16 @@ ADD_HEADERS = [
 
 async def collect_energy_daily():
     users = list(auth_gid.find({"$or":[{'automatization': True}, {'donor': True}]}))
+    await refresh_token_func()
     for user in users:
         user_id = user['gid_id']
+        await get_profile(user_id)
         await collect_energy_func(user_id, 'course_lesson_finish')
+        await get_profile(user_id)
 
 
 async def collect_energy_func(user_id, event):
+    time.sleep(5)
     user = auth_gid.find_one({'gid_id': user_id})
     token = user.get('access_token')
     csrf = user.get('csrf')
