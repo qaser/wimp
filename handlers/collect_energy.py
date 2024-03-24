@@ -72,7 +72,7 @@ async def collect_energy_func(user_id, event):
         c.setopt(c.POSTFIELDS, get_request_data_thanks(user_id))
     elif event == 'reaction_comment_click':
         c.setopt(c.POSTFIELDS, get_request_data_reaction(user_id))
-    elif event == 'lms_course_lesson_finish':
+    elif event == 'course_lesson_finish':
         c.setopt(c.POSTFIELDS, get_request_data_course(user_id))
     c.perform()
     resp_code = c.getinfo(c.RESPONSE_CODE)
@@ -151,7 +151,7 @@ def get_request_data_course(user_id):
         'batch': [
             {
                 'anonymousId': str(uuid.uuid4()),
-                'event': 'lms_course_lesson_finish',
+                'event': 'course_lesson_finish',
                 'messageId': str(uuid.uuid4()),
                 'properties': {
                     'course_id':'f0ef3232-078b-403a-bb65-9fcf29d84f12',
