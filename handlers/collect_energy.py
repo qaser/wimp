@@ -46,6 +46,8 @@ async def collect_energy_func(user_id, event, buffer_id):
         c.setopt(c.POSTFIELDS, get_request_data_thanks(user_id))
     elif event == 'reaction_comment_click':
         c.setopt(c.POSTFIELDS, get_request_data_reaction(user_id))
+    elif event == 'lms_course_lesson_finish':
+        c.setopt(c.POSTFIELDS, get_request_data_course(user_id))
     c.perform()
     resp_code = c.getinfo(c.RESPONSE_CODE)
     c.close()
@@ -113,5 +115,29 @@ def get_request_data_reaction(user_id):
         ],
         'sentAt': f'{today}.916Z',
         'writeKey': 'sdk'
+    }).encode()
+    return data
+
+
+def get_request_data_course(user_id):
+    today = dt.datetime.today().strftime('%Y-%m-%dT%H:%M:%S')
+    data = json.dumps({
+        'batch': [
+            {
+                'anonymousId': str(uuid.uuid4()),
+                'event': 'lms_course_lesson_finish',
+                'messageId': str(uuid.uuid4()),
+                'properties': {
+                    'course_id':'f0ef3232-078b-403a-bb65-9fcf29d84f12',
+                    'lesson_id':'e992f695-36ea-4566-9815-9dab6bc07c09',
+                    'user_id':'8d68107c-b224-4817-93d2-7144bc428dc3'
+                },
+                'timestamp': f'{today}.967Z',
+                'type': 'track',
+                'userId': f'[{user_id},80f8a415-c1ad-4d70-957b-587e42f6ac03]'
+            }
+        ],
+        'sentAt': f'{today}.916Z',
+        'writeKey': '900100'
     }).encode()
     return data
