@@ -47,7 +47,7 @@ async def collect_daily_energy():
         await bot.send_message(ADMIN_TELEGRAM_ID, 'Задача накопления энергии завершена')
 
 
-async def collect_energy_func(user_id, event, buffer_id):
+async def collect_energy_func(user_id, event):
     time.sleep(random.randint(5, 8))
     user = auth_gid.find_one({'gid_id': user_id})
     token = user.get('access_token')
@@ -77,8 +77,8 @@ async def collect_energy_func(user_id, event, buffer_id):
     c.perform()
     resp_code = c.getinfo(c.RESPONSE_CODE)
     c.close()
-    if resp_code != 202:
-        buffer_gid.update_one({'_id': buffer_id}, {'$inc': {'errors': 1}}, upsert=True)
+    # if resp_code != 202:
+    #     buffer_gid.update_one({'_id': buffer_id}, {'$inc': {'errors': 1}}, upsert=True)
 
 
 def get_request_data_comment(user_id):
