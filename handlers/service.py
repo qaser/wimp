@@ -50,7 +50,7 @@ async def manual_get_feeds(message: Message):
 
 @router.message(Command('collect'))
 async def manual_collect_energy(message: Message):
-    await collect_energy_func(MY_GID_ID, 'news_comment_send')
+    await collect_energy_func(MY_GID_ID, 'lms_course_lesson_finish')
 
 
 @router.message(Command('name'))
