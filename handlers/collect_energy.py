@@ -8,15 +8,17 @@ import certifi
 import pycurl
 
 from config.bot_config import bot
+from config.gid_config import MY_GID_ID
 from config.mongo_config import auth_gid, buffer_gid
 from config.telegram_config import ADMIN_TELEGRAM_ID
 from handlers.get_profile import get_profile
+from handlers.get_response import get_response
 from handlers.gid_auth import refresh_token_func
 from utils.constants import HEADERS
 
 
 URL = 'https://web.gid.ru/api/event-tracker/public/v1/collect'
-
+TRANSFER_URL = 'https://app.gid.ru/api/loyalty/public/v1/operations/transfer'
 ADD_HEADERS = [
     'Accept: application/json, text/plain, */*',
     'Content-Type: application/json; charset=utf-8',
@@ -26,6 +28,7 @@ ADD_HEADERS = [
 
 
 async def collect_energy_daily():
+    await bot.send_message(ADMIN_TELEGRAM_ID, 'Запуск задачи майнинга энергии')
     users = list(auth_gid.find({"$or":[{'automatization': True}, {'donor': True}]}))
     await refresh_token_func()
     for user in users:
@@ -34,6 +37,20 @@ async def collect_energy_daily():
         for _ in range(20):
             await collect_energy_func(user_id, 'reaction_comment_click')
         await get_profile(user_id)
+    await bot.send_message(ADMIN_TELEGRAM_ID, 'Задача майнинга энергии завершена')
+
+
+async def transfer_power():
+    await bot.send_message(ADMIN_TELEGRAM_ID, 'Запуск задачи трансфера баллов')
+    await get_profile(MY_GID_ID)
+    users = list(auth_gid.find({'donor': True}))
+    for user in users:
+        user_id = user['gid_id']
+        data = json.dumps({'power': 50, 'comment': '', 'accountId': MY_GID_ID})
+        resp_code, _ = get_response(TRANSFER_URL, 'POST', fields_data=data, no_data=True, user_id=user_id)
+        if resp_code == 201:
+            await bot.send_message(ADMIN_TELEGRAM_ID, 'Задача трансфера баллов завершена успешно')
+            await get_profile(MY_GID_ID)
 
 
 async def collect_energy_func(user_id, event):
