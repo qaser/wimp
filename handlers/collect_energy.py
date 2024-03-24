@@ -22,7 +22,14 @@ ADD_HEADERS = [
 ]
 
 
-async def collect_energy_func(user_id, event, buffer_id):
+async def collect_energy_daily():
+    users = list(auth_gid.find({"$or":[{'automatization': True}, {'donor': True}]}))
+    for user in users:
+        user_id = user['gid_id']
+        collect_energy_func(user_id, 'course_lesson_finish')
+
+
+async def collect_energy_func(user_id, event):
     user = auth_gid.find_one({'gid_id': user_id})
     token = user.get('access_token')
     csrf = user.get('csrf')
@@ -51,8 +58,12 @@ async def collect_energy_func(user_id, event, buffer_id):
     c.perform()
     resp_code = c.getinfo(c.RESPONSE_CODE)
     c.close()
-    if resp_code != 202:
-        buffer_gid.update_one({'_id': buffer_id}, {'$inc': {'errors': 1}})
+    if resp_code == 202:
+        await bot.send_message(
+            ADMIN_TELEGRAM_ID,
+            f'Получилось!!!',
+        )
+    #     buffer_gid.update_one({'_id': buffer_id}, {'$inc': {'errors': 1}})
 
 
 def get_request_data_comment(user_id):

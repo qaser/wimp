@@ -8,7 +8,7 @@ from config.gid_config import MY_GID_ID
 from config.telegram_config import ADMIN_TELEGRAM_ID
 from aiogram.fsm.context import FSMContext
 from aiogram.fsm.state import State, StatesGroup
-from handlers.collect_energy import collect_energy_func
+from handlers.collect_energy import collect_energy_daily, collect_energy_func
 from config.mongo_config import auth_gid
 from handlers.get_courses import get_courses
 from handlers.get_feed import get_feeds
@@ -48,9 +48,9 @@ async def manual_get_feeds(message: Message):
     await get_feeds()
 
 
-# @router.message(Command('collect'))
-# async def manual_collect_energy(message: Message):
-#     await collect_energy_func(MY_GID_ID, 'lms_course_lesson_finish')
+@router.message(Command('collect'))
+async def manual_collect_energy(message: Message):
+    await collect_energy_daily()
 
 
 @router.message(Command('name'))

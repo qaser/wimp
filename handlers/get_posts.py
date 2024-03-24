@@ -31,7 +31,7 @@ ADD_HEADERS = [
 
 
 async def get_posts_and_comments():
-    users = list(auth_gid.find({'automatization': True}))
+    users = list(auth_gid.find({"$or":[{'automatization': True}, {'donor': True}]}))
     await bot.send_message(ADMIN_TELEGRAM_ID, 'Запуск задачи чтения постов')
     await refresh_token_func()
     for user in users:

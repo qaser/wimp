@@ -27,7 +27,7 @@ ADD_HEADERS = [
 
 
 async def get_courses():
-    users = list(auth_gid.find({'automatization': True}))
+    users = list(auth_gid.find({"$or":[{'automatization': True}, {'donor': True}]}))
     await refresh_token_func()
     for user in users:
         new_courses = 0
