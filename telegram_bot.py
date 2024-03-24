@@ -5,7 +5,7 @@ from aiogram.filters.command import Command
 from aiogram.fsm.context import FSMContext
 from aiogram.types import Message
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
-from handlers.collect_energy import collect_daily_energy
+# from handlers.collect_energy import collect_daily_energy
 from handlers.get_feed import get_feeds
 from handlers.get_posts import get_posts_and_comments, send_emotion
 
@@ -56,30 +56,14 @@ async def main():
         minute=15,
         timezone=const.TIME_ZONE
     )
-    scheduler.add_job(
-        collect_daily_energy,
-        'cron',
-        day_of_week='mon-sun',
-        hour=18,
-        minute=0,
-        timezone=const.TIME_ZONE
-    )
-    scheduler.add_job(
-        collect_daily_energy,
-        'cron',
-        day_of_week='mon-sun',
-        hour=14,
-        minute=0,
-        timezone=const.TIME_ZONE
-    )
-    scheduler.add_job(
-        collect_daily_energy,
-        'cron',
-        day_of_week='mon-sun',
-        hour=8,
-        minute=0,
-        timezone=const.TIME_ZONE
-    )
+    # scheduler.add_job(
+    #     collect_daily_energy,
+    #     'cron',
+    #     day_of_week='mon-sun',
+    #     hour=18,
+    #     minute=0,
+    #     timezone=const.TIME_ZONE
+    # )
 
     scheduler.start()
     dp.include_router(service.router)
