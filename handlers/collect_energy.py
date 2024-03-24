@@ -1,7 +1,5 @@
 import datetime as dt
 import json
-import random
-import time
 import uuid
 from io import BytesIO
 
@@ -11,8 +9,6 @@ import pycurl
 from config.bot_config import bot
 from config.mongo_config import auth_gid, buffer_gid
 from config.telegram_config import ADMIN_TELEGRAM_ID
-from handlers.get_profile import get_profile
-from handlers.gid_auth import refresh_token_func
 from utils.constants import HEADERS
 
 
@@ -26,6 +22,7 @@ ADD_HEADERS = [
 ]
 
 
+<<<<<<< HEAD
 async def collect_daily_energy():
     users = list(auth_gid.find({'automatization': True}))
     await bot.send_message(ADMIN_TELEGRAM_ID, 'Запуск задачи накопления энергии')
@@ -49,6 +46,9 @@ async def collect_daily_energy():
 
 async def collect_energy_func(user_id, event):
     time.sleep(random.randint(5, 8))
+=======
+async def collect_energy_func(user_id, event, buffer_id):
+>>>>>>> parent of 3d7287b (fix)
     user = auth_gid.find_one({'gid_id': user_id})
     token = user.get('access_token')
     csrf = user.get('csrf')
@@ -77,8 +77,13 @@ async def collect_energy_func(user_id, event):
     c.perform()
     resp_code = c.getinfo(c.RESPONSE_CODE)
     c.close()
+<<<<<<< HEAD
     # if resp_code != 202:
     #     buffer_gid.update_one({'_id': buffer_id}, {'$inc': {'errors': 1}}, upsert=True)
+=======
+    if resp_code != 202:
+        buffer_gid.update_one({'_id': buffer_id}, {'$inc': {'errors': 1}})
+>>>>>>> parent of 3d7287b (fix)
 
 
 def get_request_data_comment(user_id):
