@@ -42,7 +42,7 @@ async def collect_daily_energy():
         # for _ in range(3):
         #     await collect_energy_func(user_id, 'thanks_new_create_click', buffer_id)
         for _ in range(3):
-            await collect_energy_func(user_id, 'course_lesson_finish', buffer_id)
+            await collect_energy_func(user_id, 'course_lesson_finish')
         await get_profile(user_id)
         await bot.send_message(ADMIN_TELEGRAM_ID, 'Задача накопления энергии завершена')
 
