@@ -18,7 +18,7 @@ jobs:
         key: ${{ secrets.SSH_KEY }}
         passphrase: ${{ secrets.PASSPHRASE }}
         script: |
-          cd gks_56_bot/
+          cd wimp/
           rm logs_bot.log
           git pull
           pm2 restart wimp

@@ -22,33 +22,7 @@ ADD_HEADERS = [
 ]
 
 
-<<<<<<< HEAD
-async def collect_daily_energy():
-    users = list(auth_gid.find({'automatization': True}))
-    await bot.send_message(ADMIN_TELEGRAM_ID, 'Запуск задачи накопления энергии')
-    await refresh_token_func()
-    for user in users:
-        buffer_id = buffer_gid.insert_one({
-            'errors': 0,
-            'errors_log': [],
-        }).inserted_id
-        user_id = user['gid_id']
-        await get_profile(user_id)
-        # for _ in range(20):
-        #     await collect_energy_func(user_id, 'reaction_comment_click', buffer_id)
-        # for _ in range(3):
-        #     await collect_energy_func(user_id, 'thanks_new_create_click', buffer_id)
-        for _ in range(3):
-            await collect_energy_func(user_id, 'course_lesson_finish')
-        await get_profile(user_id)
-        await bot.send_message(ADMIN_TELEGRAM_ID, 'Задача накопления энергии завершена')
-
-
-async def collect_energy_func(user_id, event):
-    time.sleep(random.randint(5, 8))
-=======
 async def collect_energy_func(user_id, event, buffer_id):
->>>>>>> parent of 3d7287b (fix)
     user = auth_gid.find_one({'gid_id': user_id})
     token = user.get('access_token')
     csrf = user.get('csrf')
@@ -77,13 +51,8 @@ async def collect_energy_func(user_id, event, buffer_id):
     c.perform()
     resp_code = c.getinfo(c.RESPONSE_CODE)
     c.close()
-<<<<<<< HEAD
-    # if resp_code != 202:
-    #     buffer_gid.update_one({'_id': buffer_id}, {'$inc': {'errors': 1}}, upsert=True)
-=======
     if resp_code != 202:
         buffer_gid.update_one({'_id': buffer_id}, {'$inc': {'errors': 1}})
->>>>>>> parent of 3d7287b (fix)
 
 
 def get_request_data_comment(user_id):
