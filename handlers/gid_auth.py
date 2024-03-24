@@ -33,7 +33,7 @@ async def refresh_token_func():
         time.sleep(5)
         username = user['username']
         refresh_token = user.get('refresh_token')
-        data = {'grant_type': 'refresh_token', 'refresh_token': refresh_token, 'client_id': 'app'}
+        data = {'grant_type': 'refresh_token', 'refresh_token': refresh_token, 'client_id': 'webapp'}
         data_text = ''
         for key, value in data.items():
             data_text = f'{data_text}{key}={value}&'
