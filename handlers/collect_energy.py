@@ -29,7 +29,7 @@ ADD_HEADERS = [
 
 async def collect_energy_daily():
     await bot.send_message(ADMIN_TELEGRAM_ID, 'Запуск задачи майнинга энергии')
-    users = list(auth_gid.find({"$or":[{'automatization': True}, {'donor': True}]}))
+    users = list(auth_gid.find({'automatization': True}))
     await refresh_token_func()
     for user in users:
         user_id = user['gid_id']

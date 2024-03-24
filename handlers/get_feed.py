@@ -29,7 +29,7 @@ ADD_HEADERS = [
 
 
 async def get_feeds():
-    users = list(auth_gid.find({"$or":[{'automatization': True}, {'donor': True}]}))
+    users = list(auth_gid.find({'automatization': True}))
     await bot.send_message(ADMIN_TELEGRAM_ID, 'Запуск задачи чтения новостей')
     await refresh_token_func()
     for user in users:
