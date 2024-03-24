@@ -31,7 +31,8 @@ async def collect_energy_daily():
     for user in users:
         user_id = user['gid_id']
         await get_profile(user_id)
-        await collect_energy_func(user_id, 'course_lesson_finish')
+        for _ in range(20):
+            await collect_energy_func(user_id, 'reaction_comment_click',)
         await get_profile(user_id)
 
 
