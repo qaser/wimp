@@ -7,12 +7,11 @@ import certifi
 import pycurl
 from aiogram import F, Router
 from aiogram.enums import ParseMode
-from aiogram.types import CallbackQuery, Message
+from aiogram.types import CallbackQuery
 from bson.objectid import ObjectId
 
 import keyboards.for_gid as kb
 from config.bot_config import bot
-from config.gid_config import MY_GID_ID
 from config.mongo_config import auth_gid
 from config.telegram_config import ADMIN_TELEGRAM_ID
 from utils.constants import HEADERS
@@ -139,4 +138,41 @@ async def confirm_automatization(callback: CallbackQuery):
         auth_gid.update_one(
             {'_id': ObjectId(id)},
             {'$set': {'automatization': False}}
+        )
+
+
+@router.callback_query(F.data.startswith('auth-donor_'))
+async def set_users_donor(callback: CallbackQuery):
+    await callback.message.delete()
+    _, id = callback.data.split('_')
+    user = auth_gid.find_one({'_id': ObjectId(id)})
+    user_state = user.get('donor')
+    username = user['username']
+    if user_state is False or user_state is None:
+        await bot.send_message(
+            chat_id=ADMIN_TELEGRAM_ID,
+            text=f'Функция донора для пользователя "{username}" выключена.\nХотите включить?',
+            reply_markup=kb.donor_yes_or_no(id, 'disabled'),
+        )
+    else:
+        await bot.send_message(
+            chat_id=ADMIN_TELEGRAM_ID,
+            text=f'Функция донора для пользователя "{username}" включена.\nХотите выключить?',
+            reply_markup=kb.donor_yes_or_no(id, 'enabled'),
+        )
+
+
+@router.callback_query(F.data.startswith('donor_'))
+async def confirm_donor(callback: CallbackQuery):
+    await callback.message.delete()
+    _, choose, id = callback.data.split('_')
+    if choose == 'yes':
+        auth_gid.update_one(
+            {'_id': ObjectId(id)},
+            {'$set': {'donor': True}}
+        )
+    elif choose == 'no':
+        auth_gid.update_one(
+            {'_id': ObjectId(id)},
+            {'$set': {'donor': False}}
         )

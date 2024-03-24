@@ -3,17 +3,13 @@ from aiogram.filters import Command
 from aiogram.types import CallbackQuery, Message, FSInputFile
 from bson.objectid import ObjectId
 
-from config.bot_config import bot
-from config.gid_config import MY_GID_ID
-from config.telegram_config import ADMIN_TELEGRAM_ID
 from aiogram.fsm.context import FSMContext
 from aiogram.fsm.state import State, StatesGroup
-from handlers.collect_energy import collect_energy_daily, collect_energy_func
+from handlers.collect_energy import collect_energy_daily
 from config.mongo_config import auth_gid
 from handlers.get_courses import get_courses
 from handlers.get_feed import get_feeds
 from handlers.get_posts import change_name, get_posts_and_comments
-from handlers.get_profile import get_profile
 from handlers.gid_auth import refresh_token_func, choose_user
 
 router = Router()
@@ -61,6 +57,11 @@ async def manual_change_name(message: Message):
 @router.message(Command('set_automatization'))
 async def set_automatization(message: Message):
     await choose_user(message, 'auto')
+
+
+@router.message(Command('set_donor'))
+async def set_donor(message: Message):
+    await choose_user(message, 'donor')
 
 
 @router.message(Command('get_tokens'))

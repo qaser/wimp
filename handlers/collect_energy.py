@@ -32,7 +32,7 @@ async def collect_energy_daily():
         user_id = user['gid_id']
         await get_profile(user_id)
         for _ in range(20):
-            await collect_energy_func(user_id, 'reaction_comment_click',)
+            await collect_energy_func(user_id, 'reaction_comment_click')
         await get_profile(user_id)
 
 
@@ -64,14 +64,7 @@ async def collect_energy_func(user_id, event):
     elif event == 'course_lesson_finish':
         c.setopt(c.POSTFIELDS, get_request_data_course(user_id))
     c.perform()
-    resp_code = c.getinfo(c.RESPONSE_CODE)
     c.close()
-    if resp_code == 202:
-        await bot.send_message(
-            ADMIN_TELEGRAM_ID,
-            f'Получилось!!!',
-        )
-    #     buffer_gid.update_one({'_id': buffer_id}, {'$inc': {'errors': 1}})
 
 
 def get_request_data_comment(user_id):

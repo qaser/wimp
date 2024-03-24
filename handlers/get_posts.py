@@ -101,7 +101,7 @@ async def send_reaction(post_id, user_id, buffer_id):
         user_id=user_id,
     )
     if like_code == 200:
-        await collect_energy_func(user_id, 'reaction_comment_click', buffer_id)
+        await collect_energy_func(user_id, 'reaction_comment_click')
         buffer_gid.update_one({'_id': buffer_id}, {'$inc': {'likes': 1}})
     else:
         buffer_gid.update_one({'_id': buffer_id}, {'$inc': {'errors': 1}})
@@ -146,7 +146,7 @@ async def send_comment(post_id, post_title, user_id, buffer_id):
         user_id=user_id,
     )
     if com_code == 201:
-        await collect_energy_func(user_id, 'news_comment_send', buffer_id)
+        await collect_energy_func(user_id, 'news_comment_send')
         buffer_gid.update_one(
             {'_id': buffer_id},
             {'$push': {'posts': f'<b>"{post_title}"</b>: {com_text}'}}

@@ -108,7 +108,7 @@ async def send_comment(feed_id, feed_title, user_id, buffer_id):
         user_id=user_id
     )
     if com_code == 201:
-        await collect_energy_func(user_id, 'news_comment_send', buffer_id)
+        await collect_energy_func(user_id, 'news_comment_send')
         buffer_gid.update_one(
             {'_id': buffer_id},
             {'$push': {'feeds': f'<b>"{feed_title}"</b>: {com_text}'}}

@@ -29,3 +29,15 @@ def yes_or_no(user_id, state) -> InlineKeyboardMarkup:
         kb.button(text='Да', callback_data=f'auto_no_{user_id}')
     kb.adjust(2)
     return kb.as_markup()
+
+
+def donor_yes_or_no(user_id, state) -> InlineKeyboardMarkup:
+    kb = InlineKeyboardBuilder()
+    if state == 'disabled':
+        kb.button(text='Да', callback_data=f'donor_yes_{user_id}')
+        kb.button(text='Нет', callback_data=f'donor_no_{user_id}')
+    else:
+        kb.button(text='Нет', callback_data=f'donor_yes_{user_id}')
+        kb.button(text='Да', callback_data=f'donor_no_{user_id}')
+    kb.adjust(2)
+    return kb.as_markup()
