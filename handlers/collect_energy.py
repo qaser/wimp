@@ -26,7 +26,7 @@ async def collect_energy_daily():
     users = list(auth_gid.find({"$or":[{'automatization': True}, {'donor': True}]}))
     for user in users:
         user_id = user['gid_id']
-        collect_energy_func(user_id, 'course_lesson_finish')
+        await collect_energy_func(user_id, 'course_lesson_finish')
 
 
 async def collect_energy_func(user_id, event):
