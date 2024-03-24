@@ -143,7 +143,7 @@ def get_request_data_course(user_id):
         'batch': [
             {
                 'anonymousId': str(uuid.uuid4()),
-                'event': 'course_lesson_finish',
+                'event': 'lms_course_lesson_finish',
                 'messageId': str(uuid.uuid4()),
                 'properties': {
                     'course_id':'f0ef3232-078b-403a-bb65-9fcf29d84f12',
