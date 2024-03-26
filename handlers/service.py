@@ -5,11 +5,13 @@ from bson.objectid import ObjectId
 
 from aiogram.fsm.context import FSMContext
 from aiogram.fsm.state import State, StatesGroup
+from config.gid_config import MY_GID_ID
 from handlers.collect_energy import collect_energy_daily, transfer_power
 from config.mongo_config import auth_gid
 from handlers.get_courses import get_courses
 from handlers.get_feed import get_feeds
 from handlers.get_posts import change_name, get_posts_and_comments
+from handlers.get_profile import get_profile
 from handlers.gid_auth import refresh_token_func, choose_user
 
 router = Router()
@@ -52,6 +54,11 @@ async def manual_collect_energy(message: Message):
 @router.message(Command('transfer'))
 async def manual_transfer_power(message: Message):
     await transfer_power()
+
+
+@router.message(Command('profile'))
+async def manual_profile(message: Message):
+    await get_profile(MY_GID_ID)
 
 
 @router.message(Command('name'))
