@@ -48,7 +48,7 @@ async def transfer_power():
     # for user in users:
     #     user_id = user['gid_id']
     data = json.dumps({'power': 50, 'comment': '', 'accountId': MY_GID_ID})
-    resp_code, _ = get_response(TRANSFER_URL, 'POST', fields_data=data, no_data=True, add_headers=ADD_HEADERS, user_id=MY_GID_ID)
+    resp_code = get_response(TRANSFER_URL, 'POST', fields_data=data, no_data=True, add_headers=ADD_HEADERS, user_id=MY_GID_ID)
     if resp_code == 201:
         await bot.send_message(ADMIN_TELEGRAM_ID, 'Задача трансфера баллов завершена успешно')
         await get_profile(MY_GID_ID)
