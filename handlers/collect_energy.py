@@ -53,7 +53,7 @@ async def transfer_power():
         await bot.send_message(ADMIN_TELEGRAM_ID, 'Задача трансфера баллов завершена успешно')
         await get_profile(MY_GID_ID)
     else:
-        await bot.send_message(ADMIN_TELEGRAM_ID, 'Трансфер баллов не удался')
+        await bot.send_message(ADMIN_TELEGRAM_ID, f'Трансфер баллов не удался: ошибка {resp_code}')
 
 
 async def collect_energy_func(user_id, event):
