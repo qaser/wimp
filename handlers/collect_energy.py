@@ -42,6 +42,7 @@ async def collect_energy_daily():
 
 async def transfer_power():
     await bot.send_message(ADMIN_TELEGRAM_ID, 'Запуск задачи трансфера баллов')
+    await refresh_token_func()
     await get_profile(MY_GID_ID)
     users = list(auth_gid.find({'donor': True}))
     for user in users:
@@ -51,6 +52,8 @@ async def transfer_power():
         if resp_code == 201:
             await bot.send_message(ADMIN_TELEGRAM_ID, 'Задача трансфера баллов завершена успешно')
             await get_profile(MY_GID_ID)
+        else:
+            await bot.send_message(ADMIN_TELEGRAM_ID, 'Трансфера баллов не удался')
 
 
 async def collect_energy_func(user_id, event):

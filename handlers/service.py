@@ -5,7 +5,7 @@ from bson.objectid import ObjectId
 
 from aiogram.fsm.context import FSMContext
 from aiogram.fsm.state import State, StatesGroup
-from handlers.collect_energy import collect_energy_daily
+from handlers.collect_energy import collect_energy_daily, transfer_power
 from config.mongo_config import auth_gid
 from handlers.get_courses import get_courses
 from handlers.get_feed import get_feeds
@@ -47,6 +47,11 @@ async def manual_get_feeds(message: Message):
 @router.message(Command('collect'))
 async def manual_collect_energy(message: Message):
     await collect_energy_daily()
+
+
+@router.message(Command('transfer'))
+async def manual_transfer_power(message: Message):
+    await transfer_power()
 
 
 @router.message(Command('name'))
