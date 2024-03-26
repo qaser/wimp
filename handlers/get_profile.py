@@ -18,7 +18,7 @@ async def get_profile(user_id):
     if resp_code == 200:
         await bot.send_message(
             ADMIN_TELEGRAM_ID,
-            f'Энергия: {resp_data["energy"]}\nБаллы: {resp_data['power']}',
+            f'Энергия: {resp_data["energy"]}\nБаллы: {resp_data["power"]}',
         )
     else:
         await bot.send_message(
