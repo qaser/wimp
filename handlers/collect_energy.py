@@ -9,13 +9,12 @@ import pycurl
 
 from config.bot_config import bot
 from config.gid_config import MY_GID_ID
-from config.mongo_config import auth_gid, buffer_gid
+from config.mongo_config import auth_gid
 from config.telegram_config import ADMIN_TELEGRAM_ID
 from handlers.get_profile import get_profile
 from handlers.get_response import get_response
 from handlers.gid_auth import refresh_token_func
 from utils.constants import HEADERS
-
 
 
 URL = 'https://web.gid.ru/api/event-tracker/public/v1/collect'
@@ -38,14 +37,14 @@ async def collect_energy_daily():
         await get_profile(user_id, username)
         for _ in range(20):
             await collect_energy_func(user_id, 'reaction_comment_click')
-        await get_profile(user_id)
+        await get_profile(user_id, username)
     await bot.send_message(ADMIN_TELEGRAM_ID, 'Задача майнинга энергии завершена')
 
 
 async def transfer_power():
     await bot.send_message(ADMIN_TELEGRAM_ID, 'Запуск задачи трансфера баллов')
     await refresh_token_func()
-    await get_profile(MY_GID_ID)
+    await get_profile(MY_GID_ID, 'Сайгин А.В.')
     users = list(auth_gid.find({'donor': True}))
     for user in users:
         user_id = user['gid_id']
@@ -60,7 +59,7 @@ async def transfer_power():
         )
         if resp_code == 201:
             await bot.send_message(ADMIN_TELEGRAM_ID, 'Задача трансфера баллов завершена успешно')
-            await get_profile(MY_GID_ID)
+            await get_profile(MY_GID_ID, 'Сайгин А.В.')
         else:
             await bot.send_message(ADMIN_TELEGRAM_ID, f'Трансфер баллов не удался: ошибка {resp_code}')
 

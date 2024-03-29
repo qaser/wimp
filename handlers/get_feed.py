@@ -35,7 +35,7 @@ async def get_feeds():
     for user in users:
         user_id = user['gid_id']
         username = user['username']
-        await get_profile(user_id)
+        await get_profile(user_id, username)
         resp_code, resp_data = get_response(URL_FEEDS)
         if resp_code == 200:
             buffer_id = buffer_gid.insert_one({
@@ -70,7 +70,7 @@ async def get_feeds():
                 f'Задачa чтения новостей пользователем <i>"{username}"</i> завершена\n\n{report}',
                 parse_mode=ParseMode.HTML,
             )
-            await get_profile(user_id)
+            await get_profile(user_id, username)
             buffer_gid.delete_one({'_id': buffer_id})
         else:
             await bot.send_message(

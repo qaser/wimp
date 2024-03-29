@@ -58,7 +58,12 @@ async def manual_transfer_power(message: Message):
 
 @router.message(Command('profile'))
 async def manual_profile(message: Message):
-    await get_profile(MY_GID_ID)
+    users = list(auth_gid.find({'automatization': True}))
+    await refresh_token_func()
+    for user in users:
+        user_id = user['gid_id']
+        username = user['username']
+        await get_profile(user_id, username)
 
 
 @router.message(Command('name'))
