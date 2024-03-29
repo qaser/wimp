@@ -17,6 +17,7 @@ from handlers.gid_auth import refresh_token_func
 from utils.constants import HEADERS
 
 
+
 URL = 'https://web.gid.ru/api/event-tracker/public/v1/collect'
 TRANSFER_URL = 'https://app.gid.ru/api/loyalty/public/v1/operations/transfer'
 ADD_HEADERS = [
