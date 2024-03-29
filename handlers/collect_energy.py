@@ -44,16 +44,23 @@ async def transfer_power():
     await bot.send_message(ADMIN_TELEGRAM_ID, 'Запуск задачи трансфера баллов')
     await refresh_token_func()
     await get_profile(MY_GID_ID)
-    # users = list(auth_gid.find({'donor': True}))
-    # for user in users:
-    #     user_id = user['gid_id']
-    data = json.dumps({'power': 50, 'comment': '', 'accountId': MY_GID_ID})
-    resp_code = get_response(TRANSFER_URL, 'POST', fields_data=data, no_data=True, add_headers=ADD_HEADERS, user_id=MY_GID_ID)
-    if resp_code == 201:
-        await bot.send_message(ADMIN_TELEGRAM_ID, 'Задача трансфера баллов завершена успешно')
-        await get_profile(MY_GID_ID)
-    else:
-        await bot.send_message(ADMIN_TELEGRAM_ID, f'Трансфер баллов не удался: ошибка {resp_code}')
+    users = list(auth_gid.find({'donor': True}))
+    for user in users:
+        user_id = user['gid_id']
+        data = json.dumps({'power': 50, 'comment': '', 'accountId': MY_GID_ID})
+        resp_code = get_response(
+            TRANSFER_URL,
+            'POST',
+            fields_data=data,
+            no_data=True,
+            add_headers=ADD_HEADERS,
+            user_id=user_id
+        )
+        if resp_code == 201:
+            await bot.send_message(ADMIN_TELEGRAM_ID, 'Задача трансфера баллов завершена успешно')
+            await get_profile(MY_GID_ID)
+        else:
+            await bot.send_message(ADMIN_TELEGRAM_ID, f'Трансфер баллов не удался: ошибка {resp_code}')
 
 
 async def collect_energy_func(user_id, event):
