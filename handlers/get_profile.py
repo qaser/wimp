@@ -13,12 +13,12 @@ ADD_HEADERS = [
     'sentry-trace: 24745024fbbc4112903eb33b91fec441-ba8792fcbb7852c7',
 ]
 
-async def get_profile(user_id):
+async def get_profile(user_id, username='Сайгин А.В.'):
     resp_code, resp_data = get_response(PROFILE_URL, add_headers=ADD_HEADERS, user_id=user_id)
     if resp_code == 200:
         await bot.send_message(
             ADMIN_TELEGRAM_ID,
-            f'Энергия: {resp_data["energy"]}\nБаллы: {resp_data["power"]}',
+            f'Ресурсы пользователя {username}\nЭнергия: {resp_data["energy"]}\nБаллы: {resp_data["power"]}',
         )
     else:
         await bot.send_message(

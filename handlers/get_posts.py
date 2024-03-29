@@ -159,19 +159,25 @@ async def send_comment(post_id, post_title, user_id, buffer_id):
 async def send_emotion():
     await bot.send_message(ADMIN_TELEGRAM_ID, 'Запуск задачи отправки эмоции')
     request_data = json.dumps({'values':[1,1,1]})
-    code, data = get_response(
-        URL_EMOTIONS,
-        'POST',
-        request_data,
-        add_headers=ADD_HEADERS
-    )
-    if code == 201 or code == 200:
-        await bot.send_message(ADMIN_TELEGRAM_ID, 'Эмоция отправлена')
-    else:
-        await bot.send_message(
-            ADMIN_TELEGRAM_ID,
-            f'Отправка настроения.\n{data["error"]}'
+    users = list(auth_gid.find({'automatization': True}))
+    await refresh_token_func()
+    for user in users:
+        user_id = user['gid_id']
+        username = user['username']
+        code, data = get_response(
+            URL_EMOTIONS,
+            'POST',
+            request_data,
+            add_headers=ADD_HEADERS,
+            user_id=user_id
         )
+        if code == 201 or code == 200:
+            await bot.send_message(ADMIN_TELEGRAM_ID, f'Эмоция "{username}" отправлена')
+        else:
+            await bot.send_message(
+                ADMIN_TELEGRAM_ID,
+                f'Отправка настроения.\n{data["error"]}'
+            )
 
 
 async def change_name():

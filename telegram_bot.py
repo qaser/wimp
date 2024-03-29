@@ -7,6 +7,7 @@ from aiogram.types import Message
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
 from handlers.collect_energy import collect_energy_daily
 
+from handlers.get_posts import send_emotion
 import utils.constants as const
 from config.bot_config import bot, dp
 from handlers import gid_auth, gpa_params, oil, report, service
@@ -28,14 +29,14 @@ async def main():
     #     minutes=30,
     #     timezone=const.TIME_ZONE
     # )
-    # scheduler.add_job(
-    #     send_emotion,
-    #     'cron',
-    #     day_of_week='mon-sun',
-    #     hour=8,
-    #     minute=0,
-    #     timezone=const.TIME_ZONE
-    # )
+    scheduler.add_job(
+        send_emotion,
+        'cron',
+        day_of_week='mon-sun',
+        hour=8,
+        minute=0,
+        timezone=const.TIME_ZONE
+    )
     # scheduler.add_job(
     #     get_posts_and_comments,
     #     'cron',
@@ -48,8 +49,8 @@ async def main():
         get_courses,
         'cron',
         day_of_week='mon-sun',
-        hour=23,
-        minute=15,
+        hour=12,
+        minute=0,
         timezone=const.TIME_ZONE
     )
     scheduler.add_job(
