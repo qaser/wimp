@@ -17,7 +17,7 @@ def get_response(url, method='GET', fields_data='', no_data=False, add_headers=[
     Переменная no_data используется для маркировки запроса, при котором север не возвращает данных.
     Переменная add_headers используется для передачи дополнительных заголовков запроса
     '''
-    time.sleep(random.randint(2, 3))
+    time.sleep(random.randint(5, 8))
     auth_param = auth_gid.find_one({'gid_id': user_id})
     token = auth_param['access_token']
     csrf = auth_param['csrf']

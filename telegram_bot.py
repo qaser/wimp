@@ -57,7 +57,7 @@ async def main():
         collect_energy_daily,
         'cron',
         day_of_week='mon-sun',
-        hour=8,
+        hour=10,
         minute=0,
         timezone=const.TIME_ZONE
     )
