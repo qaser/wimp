@@ -19,12 +19,12 @@ def get_response(url, method='GET', fields_data='', no_data=False, add_headers=[
     '''
     time.sleep(random.randint(5, 8))
     auth_param = auth_gid.find_one({'gid_id': user_id})
-    token = auth_param['access_token']
-    csrf = auth_param['csrf']
+    # token = auth_param['access_token']
+    # csrf = auth_param['csrf']
     auth_headers = [
-        f'X-CSRF-TOKEN: {csrf}',
-        f'Authorization: Bearer {token}',
-        f'Cookie: X-CSRF-TOKEN={csrf}',
+        # f'X-CSRF-TOKEN: {csrf}',
+        # f'Authorization: Bearer {token}',
+        # f'Cookie: X-CSRF-TOKEN={csrf}',
     ]
     buffer = BytesIO()
     c = pycurl.Curl()
@@ -33,7 +33,7 @@ def get_response(url, method='GET', fields_data='', no_data=False, add_headers=[
     c.setopt(c.CAINFO, certifi.where())
     c.setopt(c.HTTPHEADER, HEADERS + add_headers + auth_headers)
     c.setopt(c.TIMEOUT_MS, 10000)
-    c.setopt(c.COOKIEFILE, f'X-CSRF-TOKEN={csrf}')
+    # c.setopt(c.COOKIEFILE, f'X-CSRF-TOKEN={csrf}')
     if method == 'PUT':
         c.setopt(c.CUSTOMREQUEST, 'PUT')
         c.setopt(c.POSTFIELDS, fields_data)
