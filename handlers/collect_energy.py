@@ -70,9 +70,9 @@ async def collect_energy_func(user_id, event):
     token = user.get('access_token')
     csrf = user.get('csrf')
     headers_with_tokens = [
-        f'X-CSRF-TOKEN: {csrf}',
-        f'Authorization: Bearer {token}',
-        f'Cookie: X-CSRF-TOKEN={csrf}',
+        # f'X-CSRF-TOKEN: {csrf}',
+        # f'Authorization: Bearer {token}',
+        # f'Cookie: X-CSRF-TOKEN={csrf}',
     ]
     buffer = BytesIO()
     c = pycurl.Curl()
@@ -82,7 +82,7 @@ async def collect_energy_func(user_id, event):
     c.setopt(c.HTTPHEADER, HEADERS + ADD_HEADERS + headers_with_tokens)
     c.setopt(c.POST, 1)
     c.setopt(c.TIMEOUT_MS, 10000)
-    c.setopt(c.COOKIEFILE, f'X-CSRF-TOKEN={csrf}')
+    # c.setopt(c.COOKIEFILE, f'X-CSRF-TOKEN={csrf}')
     if event == 'news_comment_send':
         c.setopt(c.POSTFIELDS, get_request_data_comment(user_id))
     elif event == 'thanks_new_create_click':
