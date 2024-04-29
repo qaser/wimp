@@ -1,11 +1,4 @@
 import json
-import time
-from io import BytesIO
-
-import certifi
-import pycurl
-from aiogram import Router
-from aiogram.filters import Command
 
 from config.bot_config import bot
 from config.mongo_config import courses_gid, auth_gid
