@@ -30,14 +30,14 @@ ADD_HEADERS = [
 async def collect_energy_daily():
     await bot.send_message(ADMIN_TELEGRAM_ID, 'Запуск задачи майнинга энергии')
     users = list(auth_gid.find({'automatization': True}))
-    await refresh_token_func()
+    # await refresh_token_func()
     for user in users:
         user_id = user['gid_id']
-        username = user['username']
-        await get_profile(user_id, username)
+        # username = user['username']
+        # await get_profile(user_id, username)
         for _ in range(20):
             await collect_energy_func(user_id, 'reaction_comment_click')
-        await get_profile(user_id, username)
+        # await get_profile(user_id, username)
     await bot.send_message(ADMIN_TELEGRAM_ID, 'Задача майнинга энергии завершена')
 
 
