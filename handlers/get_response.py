@@ -19,11 +19,11 @@ def get_response(url, method='GET', fields_data='', no_data=False, add_headers=[
     '''
     time.sleep(random.randint(5, 8))
     auth_param = auth_gid.find_one({'gid_id': user_id})
-    # token = auth_param['access_token']
+    token = auth_param['access_token']
     csrf = auth_param['csrf']
     auth_headers = [
         f'X-CSRF-TOKEN: {csrf}',
-        # f'Authorization: Bearer {token}',
+        f'Authorization: Bearer {token}',
         f'Cookie: X-CSRF-TOKEN={csrf}',
     ]
     buffer = BytesIO()
