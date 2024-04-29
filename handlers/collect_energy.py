@@ -35,7 +35,7 @@ async def collect_energy_daily():
         user_id = user['gid_id']
         username = user['username']
         await get_profile(user_id, username)
-        for _ in range(20):
+        for _ in range(2):
             await collect_energy_func(user_id, 'reaction_comment_click')
         await get_profile(user_id, username)
     await bot.send_message(ADMIN_TELEGRAM_ID, 'Задача майнинга энергии завершена')
