@@ -5,7 +5,7 @@ from aiogram.filters.command import Command
 from aiogram.fsm.context import FSMContext
 from aiogram.types import Message
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
-from handlers.collect_energy import collect_energy_daily
+from handlers.collect_energy import collect_energy_daily, transfer_power
 
 from handlers.get_posts import send_emotion
 import utils.constants as const
@@ -37,27 +37,19 @@ async def main():
     #     minute=0,
     #     timezone=const.TIME_ZONE
     # )
-    # scheduler.add_job(
-    #     get_posts_and_comments,
-    #     'cron',
-    #     day_of_week='mon-sun',
-    #     hour=8,
-    #     minute=0,
-    #     timezone=const.TIME_ZONE
-    # )
-    # scheduler.add_job(
-    #     get_courses,
-    #     'cron',
-    #     day_of_week='mon-sun',
-    #     hour=12,
-    #     minute=0,
-    #     timezone=const.TIME_ZONE
-    # )
     scheduler.add_job(
-        collect_energy_daily,
+        transfer_power,
         'cron',
         day_of_week='mon-sun',
-        hour=10,
+        hour=3,
+        minute=0,
+        timezone=const.TIME_ZONE
+    )
+    scheduler.add_job(
+        get_courses,
+        'cron',
+        day_of_week='mon-sun',
+        hour=12,
         minute=0,
         timezone=const.TIME_ZONE
     )
@@ -65,7 +57,7 @@ async def main():
         collect_energy_daily,
         'cron',
         day_of_week='mon-sun',
-        hour=15,
+        hour=21,
         minute=0,
         timezone=const.TIME_ZONE
     )
@@ -73,7 +65,15 @@ async def main():
         collect_energy_daily,
         'cron',
         day_of_week='mon-sun',
-        hour=20,
+        hour=22,
+        minute=0,
+        timezone=const.TIME_ZONE
+    )
+    scheduler.add_job(
+        collect_energy_daily,
+        'cron',
+        day_of_week='mon-sun',
+        hour=23,
         minute=0,
         timezone=const.TIME_ZONE
     )
