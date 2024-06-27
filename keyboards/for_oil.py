@@ -4,10 +4,7 @@ from aiogram.utils.keyboard import InlineKeyboardBuilder
 
 def close_kb() -> InlineKeyboardMarkup:
     kb = InlineKeyboardBuilder()
-    kb.button(
-        text=f'Закрыть',
-        callback_data='close'
-    )
+    kb.button(text=f'Закрыть', callback_data='close')
     return kb.as_markup()
 
 

@@ -30,14 +30,10 @@ ADD_HEADERS = [
 async def collect_energy_daily():
     await bot.send_message(ADMIN_TELEGRAM_ID, 'Запуск задачи майнинга энергии')
     users = list(auth_gid.find({'automatization': True}))
-    # await refresh_token_func()
     for user in users:
         user_id = user['gid_id']
-        # username = user['username']
-        # await get_profile(user_id, username)
         for _ in range(20):
             await collect_energy_func(user_id, 'reaction_comment_click')
-        # await get_profile(user_id, username)
     await bot.send_message(ADMIN_TELEGRAM_ID, 'Задача майнинга энергии завершена')
 
 
@@ -48,7 +44,7 @@ async def transfer_power():
     users = list(auth_gid.find({'donor': True}))
     for user in users:
         user_id = user['gid_id']
-        data = json.dumps({'power': 50, 'comment': '', 'accountId': MY_GID_ID})
+        data = json.dumps({'power': 150, 'comment': '', 'accountId': MY_GID_ID})
         resp_code = get_response(
             TRANSFER_URL,
             'POST',
@@ -65,15 +61,9 @@ async def transfer_power():
 
 
 async def collect_energy_func(user_id, event):
-    time.sleep(5)
+    time.sleep(4)
     user = auth_gid.find_one({'gid_id': user_id})
-    token = user.get('access_token')
-    csrf = user.get('csrf')
-    headers_with_tokens = [
-        # f'X-CSRF-TOKEN: {csrf}',
-        # f'Authorization: Bearer {token}',
-        # f'Cookie: X-CSRF-TOKEN={csrf}',
-    ]
+    headers_with_tokens = []
     buffer = BytesIO()
     c = pycurl.Curl()
     c.setopt(c.URL, URL)
@@ -82,7 +72,6 @@ async def collect_energy_func(user_id, event):
     c.setopt(c.HTTPHEADER, HEADERS + ADD_HEADERS + headers_with_tokens)
     c.setopt(c.POST, 1)
     c.setopt(c.TIMEOUT_MS, 10000)
-    # c.setopt(c.COOKIEFILE, f'X-CSRF-TOKEN={csrf}')
     if event == 'news_comment_send':
         c.setopt(c.POSTFIELDS, get_request_data_comment(user_id))
     elif event == 'thanks_new_create_click':
