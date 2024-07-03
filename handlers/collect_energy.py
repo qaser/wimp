@@ -86,7 +86,7 @@ async def collect_energy_func(user_id, event):
     resp_code = c.getinfo(c.RESPONSE_CODE)
     body = buffer.getvalue()
     c.close()
-    resp_data = {'error': f'Ошибка {resp_code}\n{body}'}
+    resp_data = f'Ошибка {resp_code}\n{body}'
     await bot.send_message(ADMIN_TELEGRAM_ID, resp_data)
 
 
