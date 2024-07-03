@@ -83,7 +83,10 @@ async def collect_energy_func(user_id, event):
     elif event == 'course_lesson_start':
         c.setopt(c.POSTFIELDS, get_request_course_start(user_id))
     c.perform()
+    resp_code = c.getinfo(c.RESPONSE_CODE)
+    body = buffer.getvalue()
     c.close()
+    resp_data = {'error': f'Ошибка {resp_code}\n{body}'}
 
 
 def get_request_data_comment(user_id):
