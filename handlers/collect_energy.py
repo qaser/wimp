@@ -34,7 +34,7 @@ async def collect_energy_daily():
         user_id = user['gid_id']
         for _ in range(1):
             # await collect_energy_func(user_id, 'course_lesson_finish')
-            await collect_energy_func(user_id, 'course_lesson_start')
+            await collect_energy_func(user_id, 'thanks_new_create_click')
     await bot.send_message(ADMIN_TELEGRAM_ID, 'Задача майнинга энергии завершена')
 
 
