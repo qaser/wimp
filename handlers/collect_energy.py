@@ -188,8 +188,8 @@ def get_request_course_start(user_id):
                 'event': 'lms_course_started',
                 'messageId': str(uuid.uuid4()),
                 'properties': {
-                    'course_id': '0499488b-00d3-4a59-9f32-283dc4e079dd',
-                    'lesson_id': 'e992f695-36ea-4566-9815-9dab6bc07c09',
+                    'course_id': 'b87eaee3-0595-4654-9e1e-57edbf3e6363',
+                    # 'lesson_id': 'e992f695-36ea-4566-9815-9dab6bc07c09',
                     'user_id': f'{user_id}'
                 },
                 'timestamp': f'{today}.967Z',
