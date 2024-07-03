@@ -32,8 +32,8 @@ async def collect_energy_daily():
     users = list(auth_gid.find({'automatization': True}))
     for user in users:
         user_id = user['gid_id']
-        for _ in range(20):
-            await collect_energy_func(user_id, 'reaction_comment_click')
+        for _ in range(1):
+            await collect_energy_func(user_id, 'course_lesson_start')
     await bot.send_message(ADMIN_TELEGRAM_ID, 'Задача майнинга энергии завершена')
 
 
@@ -80,6 +80,8 @@ async def collect_energy_func(user_id, event):
         c.setopt(c.POSTFIELDS, get_request_data_reaction(user_id))
     elif event == 'course_lesson_finish':
         c.setopt(c.POSTFIELDS, get_request_data_course(user_id))
+    elif event == 'course_lesson_start':
+        c.setopt(c.POSTFIELDS, get_request_course_start(user_id))
     c.perform()
     c.close()
 
@@ -157,9 +159,33 @@ def get_request_data_course(user_id):
                 'event': 'lms_course_lesson_finish',
                 'messageId': str(uuid.uuid4()),
                 'properties': {
-                    'course_id':'f0ef3232-078b-403a-bb65-9fcf29d84f12',
+                    'course_id':'0499488b-00d3-4a59-9f32-283dc4e079dd',
                     'lesson_id':'e992f695-36ea-4566-9815-9dab6bc07c09',
                     'user_id':'8d68107c-b224-4817-93d2-7144bc428dc3'
+                },
+                'timestamp': f'{today}.967Z',
+                'type': 'track',
+                'userId': f'[{user_id},80f8a415-c1ad-4d70-957b-587e42f6ac03]'
+            }
+        ],
+        'sentAt': f'{today}.916Z',
+        'writeKey': '900100'
+    }).encode()
+    return data
+
+
+def get_request_course_start(user_id):
+    today = dt.datetime.today().strftime('%Y-%m-%dT%H:%M:%S')
+    data = json.dumps({
+        'batch': [
+            {
+                'anonymousId': str(uuid.uuid4()),
+                'event': 'en_lms_course_started',
+                'messageId': str(uuid.uuid4()),
+                'properties': {
+                    'course_id': '0499488b-00d3-4a59-9f32-283dc4e079dd',
+                    # 'lesson_id': 'e992f695-36ea-4566-9815-9dab6bc07c09',
+                    'user_id': f'{user_id}'
                 },
                 'timestamp': f'{today}.967Z',
                 'type': 'track',
