@@ -32,7 +32,7 @@ async def collect_energy_daily():
     users = list(auth_gid.find({'automatization': True}))
     for user in users:
         user_id = user['gid_id']
-        for _ in range(1):
+        for _ in range(2):
             await collect_energy_func(user_id, 'lms_course_lesson_finish')
     await bot.send_message(ADMIN_TELEGRAM_ID, 'Задача майнинга энергии завершена')
 
