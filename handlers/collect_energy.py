@@ -34,6 +34,7 @@ async def collect_energy_daily():
         user_id = user['gid_id']
         for _ in range(2):
             await collect_energy_func(user_id, 'course_lesson_finish')
+            # await collect_energy_func(user_id, 'course_lesson_start')
     await bot.send_message(ADMIN_TELEGRAM_ID, 'Задача майнинга энергии завершена')
 
 
@@ -163,7 +164,7 @@ def get_request_data_course(user_id):
                 'event': 'lms_course_lesson_finish',
                 'messageId': str(uuid.uuid4()),
                 'properties': {
-                    'course_id':'0499488b-00d3-4a59-9f32-283dc4e079dd',
+                    'course_id':'3464fdc9-a433-4e89-8b63-f27dfa076e2b',
                     'lesson_id':'e992f695-36ea-4566-9815-9dab6bc07c09',
                     'user_id':'8d68107c-b224-4817-93d2-7144bc428dc3'
                 },
