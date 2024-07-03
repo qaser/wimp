@@ -188,9 +188,7 @@ def get_request_course_start(user_id):
                 'event': 'lms_course_started',
                 'messageId': str(uuid.uuid4()),
                 'properties': {
-                    'course_id': 'b87eaee3-0595-4654-9e1e-57edbf3e6363',
-                    # 'lesson_id': 'e992f695-36ea-4566-9815-9dab6bc07c09',
-                    'user_id': f'{user_id}'
+                    'course_id': 'f0ef3232-078b-403a-bb65-9fcf29d84f12',
                 },
                 'timestamp': f'{today}.967Z',
                 'type': 'track',
@@ -198,6 +196,6 @@ def get_request_course_start(user_id):
             }
         ],
         'sentAt': f'{today}.916Z',
-        'writeKey': '900100'
+        'writeKey': 'sdk'
     }).encode()
     return data
