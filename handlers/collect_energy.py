@@ -32,7 +32,7 @@ async def collect_energy_daily():
     users = list(auth_gid.find({'automatization': True}))
     for user in users:
         user_id = user['gid_id']
-        for _ in range(2):
+        for _ in range(1):
             # await collect_energy_func(user_id, 'course_lesson_finish')
             await collect_energy_func(user_id, 'course_lesson_start')
     await bot.send_message(ADMIN_TELEGRAM_ID, 'Задача майнинга энергии завершена')
@@ -80,7 +80,7 @@ async def collect_energy_func(user_id, event):
     elif event == 'reaction_comment_click':
         c.setopt(c.POSTFIELDS, get_request_data_reaction(user_id))
     elif event == 'course_lesson_finish':
-        c.setopt(c.POSTFIELDS, get_request_data_course(user_id))
+        c.setopt(c.POSTFIELDS, get_request_course_finish(user_id))
     elif event == 'course_lesson_start':
         c.setopt(c.POSTFIELDS, get_request_course_start(user_id))
     c.perform()
@@ -155,7 +155,7 @@ def get_request_data_reaction(user_id):
     return data
 
 
-def get_request_data_course(user_id):
+def get_request_course_finish(user_id):
     today = dt.datetime.today().strftime('%Y-%m-%dT%H:%M:%S')
     data = json.dumps({
         'batch': [
@@ -185,7 +185,7 @@ def get_request_course_start(user_id):
         'batch': [
             {
                 'anonymousId': str(uuid.uuid4()),
-                'event': 'en_lms_course_started',
+                'event': 'lms_course_started',
                 'messageId': str(uuid.uuid4()),
                 'properties': {
                     'course_id': '0499488b-00d3-4a59-9f32-283dc4e079dd',
