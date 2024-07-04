@@ -37,6 +37,7 @@ async def collect_energy_daily():
             # await collect_energy_func(user_id, 'course_lesson_finish')
             await collect_energy_func(user_id, 'comics_read')
             # await collect_energy_func(user_id, 'thanks_new_create_click')
+        await refresh_token_func()
         await get_profile(user_id, user['username'])
     await bot.send_message(ADMIN_TELEGRAM_ID, 'Задача майнинга энергии завершена')
 
