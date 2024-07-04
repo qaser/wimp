@@ -18,7 +18,7 @@ from handlers.gid_auth import refresh_token_func
 from utils.constants import HEADERS
 
 
-URL = 'https://web.gid.ru/api/event-tracker/public/v1/collect'
+URL = 'https://app.gid.ru/api/event-tracker/public/v1/collect'
 TRANSFER_URL = 'https://app.gid.ru/api/loyalty/public/v1/operations/transfer'
 ADD_HEADERS = [
     'Accept: application/json, text/plain, */*',
@@ -37,6 +37,7 @@ async def collect_energy_daily():
             # await collect_energy_func(user_id, 'course_lesson_finish')
             await collect_energy_func(user_id, 'comics_read')
             # await collect_energy_func(user_id, 'thanks_new_create_click')
+        await get_profile(user_id, user['username'])
     await bot.send_message(ADMIN_TELEGRAM_ID, 'Задача майнинга энергии завершена')
 
 
