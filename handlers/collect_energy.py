@@ -50,7 +50,7 @@ async def transfer_power():
     await refresh_token_func()
     await get_profile(MY_GID_ID, 'Сайгин А.В.')
     users = list(auth_gid.find({'donor': True}))
-    price = 1000 // len(users)
+    price = 1000 // len(users) if len(users) > 1 else 500
     for user in users:
         user_id = user['gid_id']
         data = json.dumps({'power': price, 'comment': '', 'accountId': MY_GID_ID})
