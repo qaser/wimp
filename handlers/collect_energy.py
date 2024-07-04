@@ -33,12 +33,13 @@ async def collect_energy_daily():
     users = list(auth_gid.find({'automatization': True}))
     for user in users:
         user_id = user['gid_id']
-        for _ in range(10):
+        for _ in range(5):
             # await collect_energy_func(user_id, 'course_lesson_finish')
-            await collect_energy_func(user_id, 'comics_read')
+            await collect_energy_func(user_id, 'mood_question_click')
+            # await collect_energy_func(user_id, 'comics_read')
             # await collect_energy_func(user_id, 'thanks_new_create_click')
-        await refresh_token_func()
-        await get_profile(user_id, user['username'])
+        # await refresh_token_func()
+        # await get_profile(user_id, user['username'])
     await bot.send_message(ADMIN_TELEGRAM_ID, 'Задача майнинга энергии завершена')
 
 
@@ -89,6 +90,8 @@ async def collect_energy_func(user_id, event):
         c.setopt(c.POSTFIELDS, get_request_course_start(user_id))
     elif event == 'comics_read':
         c.setopt(c.POSTFIELDS, get_request_comics_read(user_id))
+    elif event == 'mood_question_click':
+        c.setopt(c.POSTFIELDS, get_request_mood(user_id))
     c.perform()
     resp_code = c.getinfo(c.RESPONSE_CODE)
     body = buffer.getvalue()
@@ -215,11 +218,32 @@ def get_request_comics_read(user_id):
             {
                 'type': 'track',
                 'anonymousId': str(uuid.uuid4()),
-                'event': 'comics_5_click',
+                'event': f'comics_{comix_id}_click',
                 'messageId': str(uuid.uuid4()),
                 'properties': {},
                 'timestamp': f'{today}.967Z',
                 'userId': f'[{user_id},80f8a415-c1ad-4d70-957b-587e42f6ac03]'
+            }
+        ],
+        'sentAt': f'{today}.916Z',
+        'writeKey': '900100'
+    }).encode()
+    return data
+
+
+def get_request_mood(user_id):
+    today = dt.datetime.today().strftime('%Y-%m-%dT%H:%M:%S')
+    data = json.dumps({
+        'batch': [
+            {
+                'type': 'track',
+                'anonymousId': str(uuid.uuid4()),
+                'event': 'mood_question_click',
+                'messageId': str(uuid.uuid4()),
+                'properties': {"index": "1", "time": "Thu Jul 04 2024 14:51:42 GMT+0500"},
+                'timestamp': f'{today}.967Z',
+                'userId': f'[{user_id},80f8a415-c1ad-4d70-957b-587e42f6ac03]',
+                "integrations": {}
             }
         ],
         'sentAt': f'{today}.916Z',
