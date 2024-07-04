@@ -20,6 +20,7 @@ from utils.constants import HEADERS
 
 URL = 'https://app.gid.ru/api/event-tracker/public/v1/collect'
 TRANSFER_URL = 'https://app.gid.ru/api/loyalty/public/v1/operations/transfer'
+PROFILE_URL = 'https://web.gid.ru/api/loyalty/public/v1/profile'
 ADD_HEADERS = [
     'Accept: application/json, text/plain, */*',
     'Content-Type: application/json; charset=utf-8',
@@ -33,10 +34,11 @@ async def collect_energy_daily():
     users = list(auth_gid.find({'automatization': True}))
     for user in users:
         user_id = user['gid_id']
-        for _ in range(5):
+        for _ in range(3):
             await collect_energy_func(user_id, 'course_lesson_finish')
             await collect_energy_func(user_id, 'mood_question_click')
             await collect_energy_func(user_id, 'comics_read')
+            await collect_energy_func(user_id, 'course_lesson_start')
             # await collect_energy_func(user_id, 'thanks_new_create_click')
         # await refresh_token_func()
         # await get_profile(user_id, user['username'])
@@ -48,9 +50,10 @@ async def transfer_power():
     await refresh_token_func()
     await get_profile(MY_GID_ID, 'Сайгин А.В.')
     users = list(auth_gid.find({'donor': True}))
+    price = 1000 // len(users)
     for user in users:
         user_id = user['gid_id']
-        data = json.dumps({'power': 150, 'comment': '', 'accountId': MY_GID_ID})
+        data = json.dumps({'power': price, 'comment': '', 'accountId': MY_GID_ID})
         resp_code = get_response(
             TRANSFER_URL,
             'POST',
