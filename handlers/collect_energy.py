@@ -34,12 +34,14 @@ async def collect_energy_daily():
     users = list(auth_gid.find({'automatization': True}))
     for user in users:
         user_id = user['gid_id']
-        for _ in range(3):
+        for _ in range(5):
             await collect_energy_func(user_id, 'course_lesson_finish')
+            await collect_energy_func(user_id, 'course_lesson_start')
             await collect_energy_func(user_id, 'mood_question_click')
             await collect_energy_func(user_id, 'comics_read')
-            await collect_energy_func(user_id, 'course_lesson_start')
-            # await collect_energy_func(user_id, 'thanks_new_create_click')
+            await collect_energy_func(user_id, 'thanks_new_create_click')
+            await collect_energy_func(user_id, 'reaction_comment_click')
+            await collect_energy_func(user_id, 'news_comment_send')
         # await refresh_token_func()
         # await get_profile(user_id, user['username'])
     await bot.send_message(ADMIN_TELEGRAM_ID, 'Задача майнинга энергии завершена')
@@ -214,7 +216,7 @@ def get_request_course_start(user_id):
 
 
 def get_request_comics_read(user_id):
-    comix_id = random.randint(1, 9)
+    comix_id = random.randint(1, 11)
     today = dt.datetime.today().strftime('%Y-%m-%dT%H:%M:%S')
     data = json.dumps({
         'batch': [
@@ -243,7 +245,7 @@ def get_request_mood(user_id):
                 'anonymousId': str(uuid.uuid4()),
                 'event': 'mood_question_click',
                 'messageId': str(uuid.uuid4()),
-                'properties': {"index": "1", "time": "Thu Jul 04 2024 14:51:42 GMT+0500"},
+                'properties': {"index": "1", "time": "Thu Jul 05 2024 14:51:42 GMT+0500"},
                 'timestamp': f'{today}.967Z',
                 'userId': f'[{user_id},80f8a415-c1ad-4d70-957b-587e42f6ac03]',
                 "integrations": {}
