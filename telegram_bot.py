@@ -22,7 +22,7 @@ async def cmd_reset(message: Message, state: FSMContext):
 
 
 async def main():
-    scheduler = AsyncIOScheduler()
+    # scheduler = AsyncIOScheduler()
     # scheduler.add_job(
     #     send_gratitude_func,
     #     'interval',
@@ -37,48 +37,47 @@ async def main():
     #     minute=0,
     #     timezone=const.TIME_ZONE
     # )
-    scheduler.add_job(
-        transfer_power,
-        'cron',
-        day_of_week='mon-sun',
-        hour=3,
-        minute=0,
-        timezone=const.TIME_ZONE
-    )
-    scheduler.add_job(
-        get_courses,
-        'cron',
-        day_of_week='mon-sun',
-        hour=12,
-        minute=0,
-        timezone=const.TIME_ZONE
-    )
-    scheduler.add_job(
-        collect_energy_daily,
-        'cron',
-        day_of_week='mon-sun',
-        hour=21,
-        minute=0,
-        timezone=const.TIME_ZONE
-    )
-    scheduler.add_job(
-        collect_energy_daily,
-        'cron',
-        day_of_week='mon-sun',
-        hour=22,
-        minute=0,
-        timezone=const.TIME_ZONE
-    )
-    scheduler.add_job(
-        collect_energy_daily,
-        'cron',
-        day_of_week='mon-sun',
-        hour=23,
-        minute=0,
-        timezone=const.TIME_ZONE
-    )
-
-    scheduler.start()
+    # scheduler.add_job(
+    #     transfer_power,
+    #     'cron',
+    #     day_of_week='mon-sun',
+    #     hour=3,
+    #     minute=0,
+    #     timezone=const.TIME_ZONE
+    # )
+    # scheduler.add_job(
+    #     get_courses,
+    #     'cron',
+    #     day_of_week='mon-sun',
+    #     hour=12,
+    #     minute=0,
+    #     timezone=const.TIME_ZONE
+    # )
+    # scheduler.add_job(
+    #     collect_energy_daily,
+    #     'cron',
+    #     day_of_week='mon-sun',
+    #     hour=21,
+    #     minute=0,
+    #     timezone=const.TIME_ZONE
+    # )
+    # scheduler.add_job(
+    #     collect_energy_daily,
+    #     'cron',
+    #     day_of_week='mon-sun',
+    #     hour=22,
+    #     minute=0,
+    #     timezone=const.TIME_ZONE
+    # )
+    # scheduler.add_job(
+    #     collect_energy_daily,
+    #     'cron',
+    #     day_of_week='mon-sun',
+    #     hour=23,
+    #     minute=0,
+    #     timezone=const.TIME_ZONE
+    # )
+    # scheduler.start()
     dp.include_router(service.router)
     dp.include_router(report.router)
     dp.include_router(gpa_params.router)
