@@ -14,6 +14,38 @@ from config.telegram_config import ADMIN_TELEGRAM_ID
 from handlers import gid_auth, gpa_params, oil, report, service
 from handlers.get_courses import get_courses
 from subprocess import run
+from pathlib import Path
+
+
+GIT_FOLDER = '/root/spelljack'
+
+
+def git_pull(path: str):
+    path_obj = Path(path)
+    if not path_obj.exists():
+        return f"❌ Папка {path} не найдена"
+    try:
+        result = run(
+            ["git", "pull"],
+            cwd=path,  # Указываем директорию, в которой выполнять команду
+            capture_output=True,
+            text=True
+        )
+        if result.returncode == 0:
+            return f"✅ Git pull выполнен:\n{result.stdout}"
+        else:
+            return f"❌ Ошибка:\n{result.stderr}"
+    except Exception as e:
+        return f"❌ Исключение: {str(e)}"
+
+
+@dp.message(Command('git_pull'))
+async def git_pull_handler(message: Message):
+    if message.from_user.id == ADMIN_TELEGRAM_ID:
+        await message.answer("⛔ Доступ запрещён")
+        return
+    result = git_pull(GIT_FOLDER)
+    await message.answer(result[:4096])
 
 
 @dp.message(Command('reset'))
