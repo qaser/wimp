@@ -48,7 +48,7 @@ async def transfer_power():
     users = list(auth_gid.find({'donor': True}))
     for user in users:
         user_id = user['gid_id']
-        data = json.dumps({'power': 50, 'comment': '', 'accountId': MY_GID_ID})
+        data = json.dumps({'power': 100, 'comment': '', 'accountId': MY_GID_ID})
         resp_code = get_response(
             TRANSFER_URL,
             'POST',
