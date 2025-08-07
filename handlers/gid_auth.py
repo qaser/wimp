@@ -30,7 +30,7 @@ async def refresh_token_func():
     users = list(auth_gid.find({"$or":[{'automatization': True}, {'donor': True}]}))
     await bot.send_message(ADMIN_TELEGRAM_ID, 'Запуск задачи обновления токена')
     for user in users:
-        time.sleep(5)
+        time.sleep(4)
         username = user['username']
         refresh_token = user.get('refresh_token')
         data = {'grant_type': 'refresh_token', 'refresh_token': refresh_token, 'client_id': 'webapp'}
@@ -71,10 +71,10 @@ async def refresh_token_func():
                 }},
                 upsert=True
             )
-            await bot.send_message(
-                ADMIN_TELEGRAM_ID,
-                f'Токен пользователя "{username}" успешно обновлен'
-            )
+            # await bot.send_message(
+            #     ADMIN_TELEGRAM_ID,
+            #     f'Токен пользователя "{username}" успешно обновлен'
+            # )
         else:
             await bot.send_message(
                 chat_id=ADMIN_TELEGRAM_ID,

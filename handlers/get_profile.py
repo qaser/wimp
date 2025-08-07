@@ -20,8 +20,8 @@ async def get_profile(user_id, username):
             ADMIN_TELEGRAM_ID,
             f'Ресурсы пользователя {username}\nЭнергия: {resp_data["energy"]}\nБаллы: {resp_data["power"]}',
         )
-    else:
-        await bot.send_message(
-            ADMIN_TELEGRAM_ID,
-            f'Получение информации об энергии: {resp_data["error"]}',
-        )
+    # else:
+    #     await bot.send_message(
+    #         ADMIN_TELEGRAM_ID,
+    #         f'Получение информации об энергии: {resp_data["error"]}',
+    #     )
